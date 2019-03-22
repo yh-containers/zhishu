@@ -1,36 +1,39 @@
-actor: Tester
-paths:
-    tests: tests
-    log: tests/_output
-    data: tests/_data
-    helpers: tests/_support
-settings:
-    bootstrap: _bootstrap.php
-    memory_limit: 1024M
-    colors: true
-modules:
-    config:
-        Yii2:
-            configFile: 'config/test.php'
+    server {
+        listen       80;
+        server_name  localhost;
+        root   /usr/share/nginx/html;
+        location / {
+        index  index.html index.htm index.php;
+      #autoindex  on;
+        }
+      # location ~ \.php(.*)$ {
+      #     fastcgi_pass   php56:9000;
+      #     fastcgi_index  index.php;
+      #     fastcgi_split_path_info  ^((?U).+\.php)(/?.+)$;
+      #     fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+      #     fastcgi_param  PATH_INFO  $fastcgi_path_info;
+      #     fastcgi_param  PATH_TRANSLATED  $document_root$fastcgi_path_info;
+      #     include        fastcgi_params;
+      # }
 
-# To enable code coverage:
-#coverage:
-#    #c3_url: http://localhost:8080/index-test.php/
-#    enabled: true
-#    #remote: true
-#    #remote_config: '../codeception.yml'
-#    whitelist:
-#        include:
-#            - models/*
-#            - controllers/*
-#            - commands/*
-#            - mail/*
-#    blacklist:
-#        include:
-#            - assets/*
-#            - config/*
-#            - runtime/*
-#            - vendor/*
-#            - views/*
-#            - web/*
-#            - tests/*
+        location ~ /lv56/ {
+        fastcgi_pass   php72:9000;
+        fastcgi_index  index.php;
+        fastcgi_split_path_info  ^((?U).+\.php)(/?.+)$;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        fastcgi_param  PATH_INFO  $fastcgi_path_info;
+        fastcgi_param  PATH_TRANSLATED  $document_root$fastcgi_path_info;
+        include        fastcgi_params;
+        }
+
+        location ~ /tp5/ {
+
+        fastcgi_pass   php56:9000;
+        fastcgi_index  index.php;
+        fastcgi_split_path_info  ^((?U).+\.php)(/?.+)$;
+        fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+        fastcgi_param  PATH_INFO  $fastcgi_path_info;
+        fastcgi_param  PATH_TRANSLATED  $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+        }
+    }

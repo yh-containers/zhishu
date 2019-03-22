@@ -15,6 +15,7 @@ class DefaultController extends Controller
 
     public function behaviors()
     {
+
         $session = \yii::$app->session;
         //开启session
         $session->open();

@@ -9,8 +9,10 @@ class ChatController extends CommonController
 {
     public function actionIndex()
     {
-
-        return $this->render('index');
+        $type = $this->request->get('type',0);
+        return $this->render('index',[
+            'type' =>$type
+        ]);
     }
 
 
@@ -20,15 +22,15 @@ class ChatController extends CommonController
         $f_uid = $this->request->get('id');
         $users = [$f_uid,$this->user_id];
         //我要聊天对象的信息
-        $chat_obj_info = \app\models\User::find()->where(['in','id',$users])->all();
+        $users_all = \app\models\User::find()->where(['in','id',$users])->all();
         $user_info = [];
-        foreach ($chat_obj_info as $vo){
+        foreach ($users_all as $vo){
             $user_info[$vo['id']] = [
                 'id'         =>  $vo['id'],
                 'face'       =>  $vo['face'],
                 'money'      =>  $vo['money'],
                 'type'       =>  $vo['type'],
-                'online'     =>  0,//在线状态 0离线 1在线
+                'online'     =>  $vo->getOnline(),//在线状态 0离线 1在线
                 'type_name'  =>  \app\models\User::getUserType($vo['type'],'name'),
                 'level'      =>  $vo['level'],
                 'level_name' =>  \app\models\User::getUserLevel($vo['level'],'name'),
@@ -37,6 +39,7 @@ class ChatController extends CommonController
         return $this->render('talk',[
             'f_uid'=>$f_uid,
             'user_info' => $user_info,
+            'chart_obj_info' => isset($user_info[$f_uid])?$user_info[$f_uid]:'',
         ]);
     }
 

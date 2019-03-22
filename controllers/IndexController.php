@@ -147,7 +147,7 @@ class IndexController extends CommonController
             //待开奖id
             'id'        => $model->getAttribute('id'),
             //关闭请求
-            'is_close'  => 0,
+            'is_close'  => 1,
             //距离下次开奖剩余时间
             'ons'       => (int)$open_next_second,
             //开盘价

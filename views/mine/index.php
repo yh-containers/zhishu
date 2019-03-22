@@ -33,8 +33,8 @@ $this->params = [
                     <p>余额：<span><?=$user_model['money']?></span></p>
                 </div>
                 <div class="right">
-                    <a href="recharge.html" class="red"><i class="icon iconfont icon-chongzhi"></i>充值</a>
-                    <a href="withdraw.html" class="green"><i class="icon iconfont icon-tixian"></i>提现</a>
+                    <a href="<?=\yii\helpers\Url::to(['mine/recharge'])?>" class="red"><i class="icon iconfont icon-chongzhi"></i>充值</a>
+                    <a href="<?=\yii\helpers\Url::to(['mine/withdraw'])?>" class="green"><i class="icon iconfont icon-tixian"></i>提现</a>
                 </div>
             </div>
         </div>

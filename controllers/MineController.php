@@ -151,7 +151,24 @@ class MineController extends CommonController
      * */
     public function actionShowList()
     {
-        $query = \app\models\User::find()->where(['status'=>1]);
+        $type = $this->request->get('type',0);
+        if($type){
+            //我的好友
+            $query = \app\models\User::find()->joinWith(['friends'],true,' right join ')->where(['status'=>1]);
+            if($type==3){//黑名单
+                $query->andWhere(['is_black'=>1]);
+
+            }elseif ($type==2){//陌生人
+                $query->andWhere(['is_know'=>0]);
+
+            }else{
+                $query->andWhere(['is_black'=>0,'is_know'=>1]);
+            }
+        }else{
+            $query = \app\models\User::find()->where(['status'=>1])->andWhere(['!=','id',$this->user_id]);
+
+        }
+
         $count = $query->count();
         $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount' => $count]));
         $list = $query->offset($pagination->offset)
@@ -165,7 +182,7 @@ class MineController extends CommonController
                 'face'       =>  $vo['face'],
                 'money'      =>  $vo['money'],
                 'type'       =>  $vo['type'],
-                'online'     =>  0,//在线状态 0离线 1在线
+                'online'     =>  $vo->getOnline(),//在线状态 0离线 1在线
                 'type_name'  =>  \app\models\User::getUserType($vo['type'],'name'),
                 'level'      =>  $vo['level'],
                 'level_name' =>  \app\models\User::getUserLevel($vo['level'],'name'),
@@ -217,5 +234,186 @@ class MineController extends CommonController
         }catch (\Exception $e){
             $this->asJson(['code'=>0,'msg'=>$e->getMessage()]);
         }
+    }
+
+    /*
+     * 交易记录
+     * */
+    public function actionMoneyLogs()
+    {
+        if($this->request->isAjax){
+            $query = \app\models\UserMoneyLogs::find()->where(['uid'=>$this->user_id]);
+
+            $count = $query->count();
+            $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount' => $count]));
+            $list = $query->orderBy('id desc')->offset($pagination->offset)
+                ->limit($pagination->limit)
+                ->all();
+            $data = [];
+
+            foreach ($list as $vo){
+                $cr_date = substr($vo['create_time'],0,7);
+                if(isset($date) && $cr_date == $date){
+                    $data[]=[1,$vo['money'],$vo['create_time'],$vo['intro'] ];
+
+                }else{
+                    //重计时间
+                    $date = $cr_date;
+                    $map =['like','create_time',$date.'%',false];
+                    //支出
+                    $out = \app\models\UserMoneyLogs::find()->andWhere($map)->andWhere(['<','money',0])->sum('money');
+                    //收入
+                    $in = \app\models\UserMoneyLogs::find()->andWhere($map)->andWhere(['>','money',0])->sum('money');
+                    $data[]=[0,$date,$out?abs($out):0.00,$in?$in:0.00];
+                    $data[]=[1,$vo['money'],$vo['create_time'],$vo['intro'] ];
+                }
+            }
+            return $this->asJson(['code'=>1,'msg'=>'获取成功','data'=>$data,'page'=>$pagination->pageCount]);
+        }
+        //总收入
+        $in_total =\app\models\UserMoneyLogs::find()->andWhere(['>','money',0])->sum('money');
+        //总支出
+        $out_total =\app\models\UserMoneyLogs::find()->andWhere(['<','money',0])->sum('money');
+        return $this->render('moneyLogs',[
+            'in_total' => $in_total?$in_total:0.00,
+            'out_total' => $out_total?abs($out_total):0.00,
+        ]);
+    }
+
+    /*
+     * 转账动作
+     * */
+    public function actionTransfer()
+    {
+        if($this->request->isAjax){
+            $money = $this->request->post('money',0);
+            $to_uid = $this->request->post('to_uid',0);
+            try{
+                $this->user_model->transfer($to_uid,$money);
+                return $this->asJson(['code'=>1,'msg'=>'转账成功']);
+            }catch (\Exception $e){
+                return $this->asJson(['code'=>0,'msg'=>$e->getMessage()]);
+            }
+        }
+
+        $uid = $this->request->get('uid',0);
+        $charge_user_info = \app\models\User::findOne($uid);
+        return $this->render('transfer',[
+            'charge_user_info' => $charge_user_info,
+            'user_model'    => $this->user_model
+        ]);
+    }
+
+    /*
+     * 投诉
+     * */
+    public function actionComplaint()
+    {
+        if($this->request->isAjax){
+            $php_input = $this->request->post();
+            $php_input['uid']  = $this->user_id;//投诉者id
+            isset($php_input['img']) && $php_input['img']= ($php_input['img']?implode(',',$php_input['img']):'');
+            $model = new \app\models\UserComplaint();
+            $model->scenario = \app\models\UserComplaint::SCENARIO_COMPLAINT;
+            $result = $model->actionSave($php_input);
+            return $this->asJson($result);
+
+        }
+
+        $uid = $this->request->get('uid',0);
+        //投诉对象
+        $complaint_user_info = \app\models\User::findOne($uid);
+
+        return $this->render('complaint',[
+            'complaint_user_info' => $complaint_user_info,
+        ]);
+    }
+
+    /*
+     * 提现
+     * */
+    public function actionWithdraw()
+    {
+        return $this->render('withdraw',[
+
+        ]);
+    }
+
+    /*
+     * 提现
+     * */
+    public function actionWithdrawUp()
+    {
+        if($this->request->isAjax){
+            $php_input = $this->request->post();
+            $php_input['uid']  = $this->user_id;//
+            $php_input['my_money']  = $this->user_model['money'];//我的余额
+            $model = new \app\models\UserWithdraw();
+            $model->scenario = \app\models\UserWithdraw::SCENARIO_UP;
+            $result = $model->actionSave($php_input);
+            return $this->asJson($result);
+
+        }
+
+        return $this->render('withdrawUp',[
+            'user_model' => $this->user_model,
+        ]);
+    }
+
+    /*
+     * 可提现列表
+     * */
+    public function actionWithdrawList()
+    {
+        //指定用户
+        $uid = $this->request->get('uid',0);
+        $where=[];
+        //按用户查询
+        $uid && $where['uid'] = $uid;
+
+        $query = \app\models\UserWithdraw::find()
+            ->joinWith(['userInfo'])->where($where);
+        $count = $query->count();
+        $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount' => $count]));
+        $list = $query->offset($pagination->offset)
+            ->limit($pagination->limit)
+            ->all();
+        $data = [];
+        foreach ($list as $vo){
+            $data[] =[
+                'id'            => $vo['id'],
+                'uid'           => $vo['uid'],
+                'money'         => $vo['money'],
+                'price'         => $vo['price'],
+                'label'         => $vo['label'],
+                'update_time'   => $vo['update_time'],
+                'face'          => $vo['userInfo']['face'],
+                'type'          => $vo['userInfo']['type'],
+                'type_name'     => $vo['userInfo']->getTypeName(),
+                'level'         => $vo['userInfo']['level'],
+                'level_name'    => $vo['userInfo']->getLevelName(),
+            ];
+        }
+        return $this->asJson(['code'=>1,'msg'=>'获取成功','data'=>$data,'page'=>$pagination->pageCount]);
+    }
+
+    /*
+     * 删除提现列
+     * */
+    public function actionWithdrawDel()
+    {
+        //指定
+        $id = $this->request->post('id',0);
+        $model = new \app\models\UserWithdraw();
+        $result = $model->actionDel(['uid'=>$this->user_id,'id'=>$id]);
+        return $this->asJson($result);
+    }
+
+    /*
+     * 删除提现列
+     * */
+    public function actionRecharge()
+    {
+        return $this->render('recharge');
     }
 }

@@ -24,6 +24,8 @@ class UserMoneyLogs extends BaseModel
                 'attributes' => [
                     \yii\db\ActiveRecord::EVENT_BEFORE_INSERT => ['create_time'],
                 ],
+                // if you're using datetime instead of UNIX timestamp:
+                 'value' => date('Y-m-d H:i:s'),
             ];
         }
         return $behaviors;

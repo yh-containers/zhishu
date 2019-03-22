@@ -14,8 +14,8 @@ $this->params = [
 <?php $this->beginBlock('content')?>
 <header class="header red">
     <a href="javascript:window.history.back()" class="header_left"><i class="icon iconfont icon-jiantou"></i><span>返回</span></a>
-    <div class="header_title"><p>ID439657<br /><span>（在线）</span></p></div>
-    <div class="header_right"><a href="complaint.html" class="shangjia">投诉</a></div>
+    <div class="header_title"><p>ID<?=!empty($chart_obj_info)?$chart_obj_info['id']:''?><br /><span>（<?=!empty($chart_obj_info)?($chart_obj_info['online']?'在线':'离线'):'离线'?>）</span></p></div>
+    <div class="header_right"><a href="<?=\yii\helpers\Url::to(['mine/complaint','uid'=>$f_uid])?>" class="shangjia">投诉</a></div>
 </header>
 
 <main class="main mgtop">
@@ -43,8 +43,8 @@ $this->params = [
                 <a href="javascript:;"  id="test1"><i class="icon iconfont icon-font29"></i></a>
             </li>
             <li id="meditor" class="mcont"><a href="javascript:;" class="mbar"><i class="icon iconfont icon-weixiao"></i></a></li>
-            <li><a href="recording.html"><i class="icon iconfont icon-jiaoyijilu-"></i></a></li>
-            <li><a href="transfer.html"><i class="icon iconfont icon-huhuan"></i></a></li>
+            <li><a href="<?=\yii\helpers\Url::to(['mine/money-logs'])?>"><i class="icon iconfont icon-jiaoyijilu-"></i></a></li>
+            <li><a href="<?=\yii\helpers\Url::to(['mine/transfer','uid'=>$f_uid])?>"><i class="icon iconfont icon-huhuan"></i></a></li>
         </ul>
     </div>
 </footer>

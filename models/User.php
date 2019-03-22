@@ -381,7 +381,35 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         }
     }
 
+    /**
+     * @title 转账
+     * @param $to_uid int 用户id
+     * @param $money float 转账余额
+     * @throws
+     * */
+    public function transfer($to_uid,$money)
+    {
+        if($money>$this->getAttribute('money')) throw new \Exception('用户余额不足,无法转账');
+        $rec_user_info = self::findOne($to_uid);
+        if(empty($rec_user_info))  throw new \Exception('接收对象异常');
+        try{
+            //开启事务
+            $transaction = self::getDb()->beginTransaction();
+            //用户支出
+            self::modMoney($this->id,-$money,'转出'.\Yii::$app->params['money_name'],['to_uid'=>$to_uid]);
+            self::modMoney($to_uid,$money,'获得转让'.\Yii::$app->params['money_name'],['send_uid'=>$this->id],true);
+            $transaction->commit();
+        }catch (\Exception $e){
+            $transaction->rollBack();
+            throw new \Exception('转账异常:'.$e->getMessage());
+        }
 
+    }
+    //获取用户是否在线
+    public function getOnline()
+    {
+        return 0;
+    }
     //用户类型--名称
     public function getTypeName()
     {
@@ -608,6 +636,12 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             ];
         }
 
+    }
+
+    //关联朋友
+    public function getFriends()
+    {
+        return $this->hasMany(UserFriend::className(),['uid'=>'id']);
     }
 
 }

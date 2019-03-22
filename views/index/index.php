@@ -248,7 +248,7 @@ $this->params = [
             var date = new Date();
             var is_new_obj=true;
             var index = layer.load(0, {time: 3000});
-            var h_i = date.getMinutes()+':'+date.getSeconds()
+            var h_i = date.getHours()+':'+date.getMinutes()+':'+date.getSeconds()
             var url = "<?=\yii\helpers\Url::to(['index/pan-data'])?>";
             url = request_date ==='' ? (url+'?date='+h_i) : (url+'?is_init=1&date='+request_date)
             $.get(url,function(result){

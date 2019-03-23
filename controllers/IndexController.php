@@ -169,4 +169,9 @@ class IndexController extends CommonController
 //        $model->save();
         var_dump(\app\models\Pan::getLastOpenSecond(0));
     }
+
+    public function actionPhpinfo()
+    {
+        phpinfo();
+    }
 }

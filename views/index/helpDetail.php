@@ -1,5 +1,5 @@
 <?php
-$this->title = '忘记密码';
+$this->title = $model['title'];
 $this->params = [
     'body_style' => 'style="background: #fff;"',
     'current_active'   => 'index/help',

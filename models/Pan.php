@@ -214,7 +214,8 @@ class Pan extends BaseModel
         }
 
         if(isset($fnc[$type])){
-            $data = $this->$fnc[$type]($need_field);
+            $fnc = $fnc[$type];
+            $data = $this->$fnc($need_field);
             if($next_data) return $data?$data:[];
         }
 

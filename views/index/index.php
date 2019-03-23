@@ -283,10 +283,10 @@ $this->params = [
                         option.series.data=req_data.map(showData);
                     }else{
                         //x坐标
-                        option.xAxis.data.shift();
+                        option.xAxis.data.length<15 && option.xAxis.data.shift();
                         option.xAxis.data.push(showxAxisData(req_data));
                         //数据
-                        option.series.data.shift();
+                        option.series.data.length<15 && option.series.data.shift();
                         option.series.data.push(showData(req_data));
 
                     }

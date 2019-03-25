@@ -303,8 +303,7 @@ $this->params = [
         //加载投票倒计时
         var vote_info = function(second,is_close){
             second=second?second:3
-            is_close=is_close?is_close:0
-            if(!is_close){
+            if(is_close){
                 $("#vote-second").text('已停盘')
                 return false;
             }

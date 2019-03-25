@@ -169,6 +169,23 @@ class Pan extends BaseModel
 
         return $behaviors;
     }
+    /**
+     * 获取是否还在开盘状态
+     * */
+    public static function getTypeState($type=0)
+    {
+        $is_close = 1; //1bi 0open
+        $current_date_time = date('H:i:s');
+        $con = self::get_type($type,'con');
+        foreach ($con as $key=>$vo) {
+            if($current_date_time<$vo && $current_date_time>$key) {
+                $is_close=0;
+                break;
+            }
+        }
+        return $is_close;
+
+    }
 
     /**
      * 获取类型
@@ -176,7 +193,7 @@ class Pan extends BaseModel
     public static function get_type($type=null,$fields='')
     {
         $data = [
-            ['name'=>'上证指数','url'=>'http://hq.sinajs.cn/list=sh000001'],
+            ['name'=>'上证指数','url'=>'http://hq.sinajs.cn/list=sh000001','con'=>['09:00:00'=>'11:30:00','14:00:00'=>'16:00:00']],
             ['name'=>'德国','url'=>''],
         ];
         if(is_null($type)){

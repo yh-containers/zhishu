@@ -7,7 +7,7 @@ use app\models\Pan;
 
 class IndexController extends CommonController
 {
-    protected $ignore_action = 'login,registered,send-mailer,forget';
+    protected $ignore_action = 'login,registered,send-mailer,forget,handle';
 
     public function actionIndex()
     {
@@ -174,6 +174,12 @@ class IndexController extends CommonController
 //        $model->current_price = rand(3080,3099);
 //        $model->save();
         var_dump(\app\models\Pan::getLastOpenSecond(0));
+    }
+
+    //处理结果
+    public function actionHandle()
+    {
+        return 'handle';
     }
 
     public function actionPhpinfo()

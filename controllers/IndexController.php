@@ -186,8 +186,11 @@ class IndexController extends CommonController
             $current_model = $vo;
             //下一条数据
             $next_model = isset($vo[$key+1])?$vo[$key+1]:null;
+            var_dump($key);
+            var_dump('--------------------$current_model--------------------------');
             var_dump($current_model);
-            var_dump($next_model);
+            var_dump('--------------------$next_model--------------------------');
+            var_dump($next_model);exit;
             //下一条数据有值
             if(!empty($next_model)) {
 

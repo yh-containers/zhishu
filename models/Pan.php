@@ -202,7 +202,7 @@ class Pan extends BaseModel
      * */
     public function getPanData($type=0,$next_data = true)
     {
-        $fnc = ['getSHData'];
+//        $fnc = ['getSHData'];
         $pool=[];
         $need_field = ['time'=>'','today_price'=>'','current_price'=>'','down_price'=>'','top_price'=>'','compare'=>0];
         if(!$next_data) {
@@ -213,11 +213,11 @@ class Pan extends BaseModel
             }
         }
 
-        if(isset($fnc[$type])){
-            $fnc = $fnc[$type];
-            $data = $this->$fnc($need_field);
-            if($next_data) return $data?$data:[];
-        }
+//        if(isset($fnc[$type])){
+//            $fnc = $fnc[$type];
+//            $data = $this->$fnc($need_field);
+//            if($next_data) return $data?$data:[];
+//        }
 
         return $pool;
 

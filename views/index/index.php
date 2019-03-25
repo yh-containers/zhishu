@@ -262,7 +262,7 @@ $this->params = [
                 var open_data = result.hasOwnProperty('open_data')?result.open_data:[];
                 var close_data = result.hasOwnProperty('close_data')?result.close_data:[];
                 //距离下次开奖剩余时间
-                var ons = result.hasOwnProperty('ons')?result.ons:10;
+                var ons = result.hasOwnProperty('ons')?result.ons:60;
                 console.log(open_data.hasOwnProperty(0))
                 if(open_data.hasOwnProperty(0)){
                     console.log(open_data[0])
@@ -302,7 +302,7 @@ $this->params = [
 
         //加载投票倒计时
         var vote_info = function(second,is_close){
-            second=second?second:60
+            second=second?second:3
             is_close=is_close?is_close:0
             if(!is_close){
                 $("#vote-second").text('已停盘')

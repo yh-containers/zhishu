@@ -117,12 +117,18 @@ class Pan extends BaseModel
 
                 $user_vote_info = [];
                 foreach ($model->each() as $item){
-                    $charge = $item['money']-$item['result_money']; //平台手续费
-                    if(array_key_exists($item['uid'],$user_vote_info)){
-                        $user_vote_info[$item['uid']] += $charge;
+
+                    if($compare==3){
+                        //平
+                        User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id']],true);
+
                     }else{
-                        $user_vote_info[$item['uid']] = $charge;
-                    }
+                        $charge = $item['money']-$item['result_money']; //平台手续费
+                        if(array_key_exists($item['uid'],$user_vote_info)){
+                            $user_vote_info[$item['uid']] += $charge;
+                        }else{
+                            $user_vote_info[$item['uid']] = $charge;
+                        }
 
                         $get_money = 0;
                         //开奖
@@ -147,6 +153,9 @@ class Pan extends BaseModel
                         $item->save();
                         //获胜 获得 压注金额(扣手续费)+奖励金额
                         $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜');
+                    }
+
+
 
                 }
 

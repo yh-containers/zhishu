@@ -143,7 +143,8 @@ class IndexController extends CommonController
         $current_minute_second = strtotime($time);
         //距离下一分钟时间
         $next_minute_second = strtotime('+1 minute',strtotime(date('H:i')));
-        $open_next_second = $next_minute_second-$current_minute_second;//\app\models\Pan::getLastOpenSecond($type);
+        //延迟3秒
+        $open_next_second = $next_minute_second-$current_minute_second+3;//\app\models\Pan::getLastOpenSecond($type);
 
         //获取之前开盘数据
         list($open_data,$close_data) =\app\models\Pan::getCachePanData($type);

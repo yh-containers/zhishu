@@ -59,13 +59,13 @@ $config = [
         ],
         'db' => $db,
 
-        'urlManager' => [
+        /*'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
                 'debug/<controller>/<action>' => 'debug/<controller>/<action>',
             ],
-        ],
+        ],*/
         'formatter' => [
             'dateFormat' => 'yyyy-MM-dd',
             'timeFormat' => 'HH:mm:ss',

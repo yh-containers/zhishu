@@ -211,6 +211,9 @@ class Pan extends BaseModel
             foreach ($data as $vo){
                 array_unshift($pool,self::handleNeedData($need_field,$vo));
             }
+        }else{
+            $data = self::find()->asArray()->where(['date'=>$this->watch])->orderBy('id desc')->limit(1)->one();
+            $pool = $data?self::handleNeedData($need_field,$data):[];
         }
 
 //        if(isset($fnc[$type])){

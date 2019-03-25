@@ -138,8 +138,8 @@ class IndexController extends CommonController
         $model || $model= new \app\models\Pan();
         $data = $model->getPanData($type,$is_init);
         //最近一次开奖时间
-        $time = $model->getAttribute('time');
-        $time = $time?$time:date('H:i:s');
+//        $time = $model->getAttribute('time');
+        $time = date('H:i:s');
         $current_minute_second = strtotime($time);
         //距离下一分钟时间
         $next_minute_second = strtotime('+1 minute',strtotime(date('H:i')));

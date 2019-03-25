@@ -231,7 +231,8 @@ class Pan extends BaseModel
         return $behaviors;
     }
     /**
-     * 获取是否还在开盘状态
+     * @description  获取是否还在开盘状态
+     *
      * */
     public static function getTypeState($type=0)
     {
@@ -254,7 +255,7 @@ class Pan extends BaseModel
     public static function get_type($type=null,$fields='')
     {
         $data = [
-            ['name'=>'上证指数','url'=>'http://hq.sinajs.cn/list=sh000001','con'=>['09:00:00'=>'11:30:00','14:00:00'=>'16:00:00']],
+            ['name'=>'上证指数','url'=>'http://hq.sinajs.cn/list=sh000001','con'=>['09:00:00'=>'11:30:00','14:00:00'=>'15:00:00']],
             ['name'=>'德国','url'=>''],
         ];
         if(is_null($type)){

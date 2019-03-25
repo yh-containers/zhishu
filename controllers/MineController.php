@@ -142,7 +142,7 @@ class MineController extends CommonController
             $this->user_model->vote($id,$money,$is_up,$type);
             $this->asJson(['code'=>1,'msg'=>'投票成功']);
         }catch (\Exception $e){
-            $this->asJson(['code'=>0,'msg'=>'异常:'.$e->getMessage()]);
+            $this->asJson(['code'=>0,'msg'=>$e->getMessage()]);
         }
     }
 

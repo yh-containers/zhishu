@@ -186,8 +186,11 @@ class IndexController extends CommonController
             $current_model = $vo;
             //下一条数据
             $next_model = isset($vo[$key+1])?$vo[$key+1]:null;
+            var_dump($current_model);
+            var_dump($next_model);
             //下一条数据有值
             if(!empty($next_model)) {
+
                 //说明有数据--更新此次同步数据
                 $current_model->compare=$next_model['current_price']>$next_model['current_price']?1:2;//价格比较1涨 我跌
                 $current_model->up_date=$next_model['date'];

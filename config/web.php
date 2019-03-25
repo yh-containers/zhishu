@@ -59,13 +59,13 @@ $config = [
         ],
         'db' => $db,
 
-        /*'urlManager' => [
+        'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
                 'debug/<controller>/<action>' => 'debug/<controller>/<action>',
             ],
-        ],*/
+        ],
         'formatter' => [
             'dateFormat' => 'yyyy-MM-dd',
             'timeFormat' => 'HH:mm:ss',
@@ -94,7 +94,7 @@ if (YII_ENV_DEV) {
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
         // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
+        'allowedIPs' => ['127.0.0.1', '::1', '*.*.*.*'],
     ];
 
     $config['bootstrap'][] = 'gii';

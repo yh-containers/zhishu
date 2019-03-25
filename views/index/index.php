@@ -195,7 +195,7 @@ $this->params = [
                         htmlStr += '当前价:'+value[2]+'<br>' ;
                         htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:#fff;"></span>';
                         //圆点后面显示的文本
-                        htmlStr += '涨跌:'+(value[5]>0?'涨':'跌')+'<br>' ;
+                        htmlStr += '涨跌:'+value[5]>0?(value[5]==1?'涨':(value[5]==2?'跌':'平')):'待开奖'+'<br>' ;
 
                         htmlStr += '</div>';
                     }

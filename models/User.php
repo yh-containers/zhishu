@@ -174,6 +174,49 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         }
         return $req_user_id;
     }
+    //投票数量
+    public function reqUserVoteTimes($event,$attr)
+    {
+        $fuid1 = $this->getAttribute('fuid1');//直接用户
+        $vote_times = $this->getAttribute('vote_times');
+        $user_type  = $this->getAttribute('type');
+        $type_info = self::getUserType($user_type+1);
+
+        //用户等级--满足投票次数-晋升活跃玩家
+        if(empty($user_type) && $vote_times){
+            //验证是否满足投票次数
+            if(array_key_exists('vote',$type_info) && $vote_times>=$type_info['vote']){
+                $this->type=$user_type+1;
+                $this->save(true,['type']);
+            }
+        }
+
+        //父级等级提升问题
+        if($fuid1){
+            //已邀请满足的用户
+            $count_user = self::find()->where(['>','type',0])->andWhere(['fuid1'=>$fuid1])->count();
+            $user_type_info = self::getUserType();
+            $level = 0;//会员等级信息
+            foreach ($user_type_info as $key=>$vo) {
+                if(array_key_exists('vote_user',$vo)){
+                    $vote_user = $vo['vote_user'];
+                    $min = isset($vote_user[0])?$vote_user[0]:0;
+                    $max = isset($vote_user[1])?$vote_user[1]:0;
+                    if(($min && $max && $count_user>=$min && $count_user<$max) || (empty($max) && $count_user>=$min)){
+                        $level=$key;
+                    }
+                }
+            }
+            $model_fuid1 = self::findOne($fuid1);
+            //满足条件升级等级
+            if(!empty($model_fuid1) && $level>1 && $level!=$model_fuid1['type']) {
+                $model_fuid1->type = $level;
+                $model_fuid1->save();
+            }
+        }
+
+    }
+
 
     public function behaviors()
     {
@@ -196,6 +239,9 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 'fuid1'  =>[
                     ActiveRecord::EVENT_BEFORE_INSERT => [$this,'reqUserInfo'],
                 ],
+                'vote_times'  =>[
+                    ActiveRecord::EVENT_AFTER_UPDATE => [$this,'reqUserVoteTimes'],
+                ],
             ]
         ]);
 
@@ -211,8 +257,12 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     public static function getUserType($type=null,$field='')
     {
         $type_info = [
-            ['name'=>'普通会员'],
-            ['name'=>'会员用户'],
+            ['name'=>'普通玩家'],
+            ['name'=>'活跃玩家','vote'=>'5'],
+            ['name'=>'青铜玩家','vote_user'=>[1,10]],
+            ['name'=>'白银玩家','vote_user'=>[10,30]],
+            ['name'=>'黄金玩家','vote_user'=>[30,100]],
+            ['name'=>'钻石玩家','vote_user'=>[100]],
         ];
         if(is_null($type)){
             return $type_info;
@@ -279,6 +329,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         try{
             //开启事务
             $transaction = self::getDb()->beginTransaction();
+            //增加投票数量
+            $this->updateCounters(['vote_times'=>1]);
             //投票动作
             self::modMoney($this->getAttribute('id'),-$money,'下注扣除'.\Yii::$app->params['money_name']);
             //投票费率

@@ -110,44 +110,105 @@ class Pan extends BaseModel
             $award_money = $compare==1?$lose_result_money:$win_result_money;
             //分钱的人数 涨win就那压涨的所有人数 跌win拿压跌的总人数
 //        $award_num   =  $compare==1?$win_num:$lose_num;
-            foreach ($model->each() as $item){
-                try{
-                    //开启事务
-                    $transaction = self::getDb()->beginTransaction();
-                    $get_money = 0;
-                    //开奖
-                    $item->award_state = $compare==1 ? 1 : 2;  //1涨 2跌
-                    $item->is_win = $item->award_state==$item['is_up']?1:2;
-                    $item->status = 2;//已开奖状态
-                    $item->open_time = date('Y-m-d H:i:s');
+            //统计每个用户产生了多了费用--平台手续费
+            //开启事务
+            $transaction = self::getDb()->beginTransaction();
+            try{
 
-                    if($item->is_up==1){
-                        //涨赢了
-                        if($item->is_win==1 && $win_result_money>0){
-                            $get_money = intval(($item->result_money/$win_result_money*$award_money)*100)/100;
+                $user_vote_info = [];
+                foreach ($model->each() as $item){
+                    $charge = $item['money']-$item['result_money']; //平台手续费
+                    if(array_key_exists($item['uid'],$user_vote_info)){
+                        $user_vote_info[$item['uid']] += $charge;
+                    }else{
+                        $user_vote_info[$item['uid']] = $charge;
+                    }
+
+                        $get_money = 0;
+                        //开奖
+                        $item->award_state = $compare==1 ? 1 : 2;  //1涨 2跌
+                        $item->is_win = $item->award_state==$item['is_up']?1:2;
+                        $item->status = 2;//已开奖状态
+                        $item->open_time = date('Y-m-d H:i:s');
+
+                        if($item->is_up==1){
+                            //涨赢了
+                            if($item->is_win==1 && $win_result_money>0){
+                                $get_money = intval(($item->result_money/$win_result_money*$award_money)*100)/100;
+                            }
+                        }elseif ($item->is_up==2){
+                            //跌
+                            if($item->is_win==1 && $lose_result_money>0){
+                                $get_money = intval(($item->result_money/$lose_result_money*$award_money)*100)/100;
+                            }
                         }
-                    }elseif ($item->is_up==2){
-                        //跌
-                        if($item->is_win==1 && $lose_result_money>0){
-                            $get_money = intval(($item->result_money/$lose_result_money*$award_money)*100)/100;
+                        $item->get_money = $get_money;//奖金
+
+                        $item->save();
+                        //获胜 获得 压注金额(扣手续费)+奖励金额
+                        $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜');
+
+                }
+
+                //统计手续费问题
+                $commission_money = [];
+                foreach ($user_vote_info as $key=>$vo) {
+                    //查询用户信息
+                    $f_user_model = User::findOne($key);
+                    if($f_user_model['fuid1']){
+                        $per = self::commissionMoney(0);
+                        $money = $vo*$per;//获得比例
+                        if(array_key_exists($f_user_model['fuid1'],$commission_money)){
+                            $commission_money[$f_user_model['fuid1']]['money']+=$money;
+                            $commission_money[$f_user_model['fuid1']]['extra'][]=['uid'=>$key,'com'=>$vo,'per'=>$per];
+                        }else{
+                            $commission_money[$f_user_model['fuid1']] = ['money'=>$money,'extra'=>[['uid'=>$key,'com'=>$vo,'per'=>$per]]];
+                        }
+
+                    }
+                    if($f_user_model['fuid2']){
+                        $per = self::commissionMoney(1);
+                        $money = $vo*$per;//获得比例
+                        if(array_key_exists($f_user_model['fuid2'],$commission_money)){
+                            $commission_money[$f_user_model['fuid2']]['money']+=$money;
+                            $commission_money[$f_user_model['fuid2']]['extra'][]=['uid'=>$key,'com'=>$vo,'per'=>$per];
+                        }else{
+                            $commission_money[$f_user_model['fuid2']] = ['money'=>$money,'extra'=>[['uid'=>$key,'com'=>$vo,'per'=>$per]]];
+                        }
+
+                    }
+                    if($f_user_model['fuid2']){
+                        $per = self::commissionMoney(2);
+                        $money = $vo*$per;//获得比例
+                        if(array_key_exists($f_user_model['fuid2'],$commission_money)){
+                            $commission_money[$f_user_model['fuid2']]['money']+=$money;
+                            $commission_money[$f_user_model['fuid2']]['extra'][]=['uid'=>$key,'com'=>$vo,'per'=>$per];
+                        }else{
+                            $commission_money[$f_user_model['fuid2']] = ['money'=>$money,'extra'=>[['uid'=>$key,'com'=>$vo,'per'=>$per]]];
                         }
                     }
-                    $item->get_money = $get_money;//奖金
-
-                    $item->save();
-                    //获胜 获得 压注金额(扣手续费)+奖励金额
-                    $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜');
-                    $transaction->commit();
-                }catch (\Exception $e){
-                    $transaction->rollBack();
                 }
-            }
 
+                foreach ($commission_money as $uid=>$info){
+                    $money = isset($info['money'])?$info['money']:0;
+                    $extra = isset($info['extra'])?$info['extra']:[];
+                    $money && User::modMoney($uid,$money,'佣金获取',$extra,true);
+                }
+                $transaction->commit();
+            }catch (\Exception $e){
+                $transaction->rollBack();
+                \Yii::info('分佣异常'.$e->getMessage());
+//                throw new \Exception('操作异常'.$e->getMessage());
+            }
 
         }
 
     }
-
+    public static function commissionMoney($index=null)
+    {
+        $per = [0.5,0.15,0.05];
+        return is_null($index)?$per:(isset($per[$index])?$per[$index]:0);
+    }
     /**
      * 自动添加时间戳，序列化参数
      * @return array

@@ -181,17 +181,12 @@ class IndexController extends CommonController
     {
         //查询所有未开奖数据
         $data = \app\models\Pan::find()->where(['type'=>0, 'compare'=>0])->orderBy('id desc')->all();
-        var_dump($data);
         foreach($data as $key=>$vo) {
 
             $current_model = $vo;
             //下一条数据
-            $next_model = isset($vo[$key+1])?$vo[$key+1]:null;
-            var_dump($key);
-            var_dump('--------------------$current_model--------------------------');
-            var_dump($current_model);
-            var_dump('--------------------$next_model--------------------------');
-            var_dump($next_model);exit;
+            $next_model = isset($data[$key+1])?$data[$key+1]:null;
+           
             //下一条数据有值
             if(!empty($next_model)) {
 

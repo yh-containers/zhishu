@@ -40,7 +40,7 @@ $this->params = [
         <div class="look">
             <div class="position">
                 <div class="bullish">
-                    <div class="num"><i class="icon iconfont icon-yuanbao-copy"></i><span>500000</span></div>
+                    <div class="num"><i class="icon iconfont icon-yuanbao-copy"></i><span id="up-money">500000</span></div>
                     <div class="red cylinder high"><p></p></div>
                     <div class="name">看涨元宝</div>
                 </div>
@@ -48,7 +48,7 @@ $this->params = [
             <div class="img"><img src="/assets/images/yuanbao.png"></div>
             <div class="position">
                 <div class="bearish">
-                    <div class="num"><i class="icon iconfont icon-yuanbao-copy"></i><span>400000</span></div>
+                    <div class="num"><i class="icon iconfont icon-yuanbao-copy"></i><span id="down-money">400000</span></div>
                     <div class="green cylinder"><p></p></div>
                     <div class="name">看跌元宝</div>
                 </div>
@@ -68,7 +68,7 @@ $this->params = [
                 <h2>看涨</h2>
                 <p>预收益率85.48%</p>
             </div>
-            <div class="price">2000</div>
+            <div class="price" id="press-up-money">0</div>
         </div>
         <div class="time">
             <p>下单时间</p>
@@ -88,7 +88,7 @@ $this->params = [
                 <h2>看跌</h2>
                 <p>预收益率94.75%</p>
             </div>
-            <div class="price">0</div>
+            <div class="price"  id="press-down-money">0</div>
         </div>
     </div>
 </main>
@@ -137,6 +137,7 @@ $this->params = [
     //待开奖id
     var wait_id=0;
     var is_up=0;
+    var type=<?=$type?>; //当前股票类型
     layui.use(['layer'],function(){
         var layer = layui.layer;
 
@@ -250,7 +251,7 @@ $this->params = [
             var index = layer.load(0, {time: 3000});
             var h_i = date.getHours()+':'+date.getMinutes()+':'+date.getSeconds()
             var url = "<?=\yii\helpers\Url::to(['index/pan-data'])?>";
-            url = request_date ==='' ? (url+'?date='+h_i) : (url+'?is_init=1&date='+request_date)
+            url = request_date ==='' ? (url+'?date='+h_i) : (url+'?is_init=1&date='+request_date+'&id='.wait_id)
             $.get(url,function(result){
                 //待开奖id
                 wait_id = result.hasOwnProperty('id')?result.id:0;
@@ -263,6 +264,8 @@ $this->params = [
                 var close_data = result.hasOwnProperty('close_data')?result.close_data:[];
                 //距离下次开奖剩余时间
                 var ons = result.hasOwnProperty('ons')?result.ons:60;
+                //其它数据
+                var o_data = result.hasOwnProperty('o_data')?result.o_data:[]
                 console.log(open_data.hasOwnProperty(0))
                 if(open_data.hasOwnProperty(0)){
                     console.log(open_data[0])
@@ -275,6 +278,10 @@ $this->params = [
                 close_data.hasOwnProperty(1) && $("#close-pan h2").text(close_data[1])
                 //收盘时间
                 close_data.hasOwnProperty(0) && $("#close-pan .time").text(close_data[0])
+                //押涨
+                o_data.hasOwnProperty(0) && $("#up-money").text(o_data[0])
+                //押跌
+                o_data.hasOwnProperty(1) && $("#down-money").text(o_data[1])
 
                 if(req_data.length>1){
                     var data_type = typeof req_data[0]
@@ -332,6 +339,13 @@ $this->params = [
             return [+item[1], +item[2], +item[3], +item[4], +item[5]];
         }
 
+        //押注数量
+        function getPressMoney() {
+             $.get("<?= \yii\helpers\Url::to(['press-money'])?>",{id:wait_id,type:type},function(result){
+                 result.hasOwnProperty(0) && $("#press-up-money").text(result[0])
+                 result.hasOwnProperty(1) && $("#press-down-money").text(result[1])
+             })
+        }
 
         $(function(){
             /*点击投注弹窗出现*/
@@ -354,7 +368,12 @@ $this->params = [
                         $.post("<?=\yii\helpers\Url::to(['mine/vote'])?>",obj,function(result){
                             layer.msg(result.msg)
                             layer.close(index)
+                            //获取下压数量
+                            getPressMoney()
+
                         })
+
+
                     })
                 }
 

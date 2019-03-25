@@ -11,10 +11,12 @@ class IndexController extends CommonController
 
     public function actionIndex()
     {
+        $type = (int)$this->request->get('type',0);
         //获取用户信息
         $user_info = \app\models\User::findOne($this->user_id);
         return $this->render('index',[
             'user_info' => $user_info,
+            'type' => $type,
         ]);
     }
 
@@ -133,6 +135,7 @@ class IndexController extends CommonController
     {
         $type = $this->request->get('type',0);
         $is_init = $this->request->get('is_init',0);
+        $id = $this->request->get('id',0); //等待开奖
         //获取今天最后一场
         $model = \app\models\Pan::find()->where(['type'=>$type,'date'=>date('Y-m-d')])->orderBy('id desc')->limit(1)->one();
         $model || $model= new \app\models\Pan();
@@ -148,6 +151,9 @@ class IndexController extends CommonController
 
         //获取之前开盘数据
         list($open_data,$close_data) =\app\models\Pan::getCachePanData($type);
+        //查询这一期结果
+        $up_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id])->sum('money');
+        $down_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id])->sum('money');
         //获取当前开盘价跟收盘加
         $result = [
             //待开奖id
@@ -160,9 +166,25 @@ class IndexController extends CommonController
             'open_data' => $open_data,
             //收盘价
             'close_data' => $close_data,
-            'data' => $data
+            'data' => $data,
+            'o_data' => [$up_money?$up_money:0,$down_money?$down_money:0],
         ];
         return $this->asJson($result);
+    }
+
+    //获取下压数据
+    public function actionPressMoney()
+    {
+        $id = $this->request->get('id',0); //多少期
+        $id=507;
+        $type = $this->request->get('type',0);
+        $where=['uid'=>$this->user_id];
+        //涨
+        $up_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id])->andWhere($where)->sum('money');
+        //跌
+        $down_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id])->andWhere($where)->sum('money');
+
+        return $this->asJson([$up_money?$up_money:0,$down_money?$down_money:0]);
     }
 
 

@@ -134,7 +134,7 @@ class IndexController extends CommonController
         $type = $this->request->get('type',0);
         $is_init = $this->request->get('is_init',0);
         //获取今天最后一场
-        $model = \app\models\Pan::find()->where(['type'=>$type])->orderBy('id desc')->limit(1)->one();
+        $model = \app\models\Pan::find()->where(['type'=>$type,'date'=>date('Y-m-d')])->orderBy('id desc')->limit(1)->one();
         $model || $model= new \app\models\Pan();
         $data = $model->getPanData($type,$is_init);
         //最近一次开奖时间

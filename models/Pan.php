@@ -81,7 +81,7 @@ class Pan extends BaseModel
         if($this->getAttribute('up_date')){
             //当前开奖id
             $id = $this->getAttribute('id');
-            //开奖结果 1涨 0跌
+            //开奖结果 1涨 2跌
             $compare = $this->getAttribute('compare');
             //查询投票信息--待开奖的数据
             $model = Vote::find()->where(['wid'=>$id,'status'=>1]);

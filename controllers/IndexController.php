@@ -179,7 +179,24 @@ class IndexController extends CommonController
     //处理结果
     public function actionHandle()
     {
-        return 'handle';
+        //查询所有未开奖数据
+        $data = \app\models\Pan::find()->where(['type'=>0, 'compare'=>0])->orderBy('id desc')->all();
+        foreach($data as $key=>$vo) {
+
+            $current_model = $vo;
+            //下一条数据
+            $next_model = isset($vo[$key+1])?$vo[$key+1]:null;
+            //下一条数据有值
+            if(!empty($next_model)) {
+                //说明有数据--更新此次同步数据
+                $current_model->compare=$next_model['current_price']>$next_model['current_price']?1:2;//价格比较1涨 我跌
+                $current_model->up_date=$next_model['date'];
+                $current_model->up_time=$next_model['time'];
+                $current_model->up_price=$next_model['current_price'];//当前价格
+                $current_model->save();
+            }
+
+        }
     }
 
     public function actionPhpinfo()

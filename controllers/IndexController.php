@@ -180,21 +180,21 @@ class IndexController extends CommonController
     public function actionHandle()
     {
         //查询所有未开奖数据
-        $data = \app\models\Pan::find()->where(['type'=>0, 'compare'=>0])->orderBy('id desc')->all();
+        $data = \app\models\Pan::find()->where(['type'=>0, 'compare'=>0])->orderBy('id asc')->all();
         foreach($data as $key=>$vo) {
 
             $current_model = $vo;
             //下一条数据
             $next_model = isset($data[$key+1])?$data[$key+1]:null;
-           
+
             //下一条数据有值
             if(!empty($next_model)) {
 
                 //说明有数据--更新此次同步数据
-                $current_model->compare=$next_model['current_price']>$next_model['current_price']?1:2;//价格比较1涨 我跌
                 $current_model->up_date=$next_model['date'];
                 $current_model->up_time=$next_model['time'];
                 $current_model->up_price=$next_model['current_price'];//当前价格
+                $current_model->compare=$current_model['current_price']>$current_model['up_price']?1:2;//价格比较1涨 我跌
                 $current_model->save();
             }
 

@@ -123,36 +123,47 @@ class Pan extends BaseModel
                         User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id']],true);
 
                     }else{
-                        $charge = $item['money']-$item['result_money']; //平台手续费
-                        if(array_key_exists($item['uid'],$user_vote_info)){
-                            $user_vote_info[$item['uid']] += $charge;
+                        $award_state = $compare==1 ? 1 : 2; //1涨 2跌
+                        $is_win = $award_state==$item['is_up']?1:2;
+                        if(empty($win_num) || empty($lose_num)){
+                            if($is_win){ //获胜返回
+                                User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id']],true);
+                            }
                         }else{
-                            $user_vote_info[$item['uid']] = $charge;
+
+                            $charge = $item['money']-$item['result_money']; //平台手续费
+                            if(array_key_exists($item['uid'],$user_vote_info)){
+                                $user_vote_info[$item['uid']] += $charge;
+                            }else{
+                                $user_vote_info[$item['uid']] = $charge;
+                            }
+
+                            $get_money = 0;
+                            //开奖
+                            $item->award_state = $award_state;  //1涨 2跌
+                            $item->is_win = $is_win;
+                            $item->status = 2;//已开奖状态
+                            $item->open_time = date('Y-m-d H:i:s');
+
+                            if($item->is_up==1){
+                                //涨赢了
+                                if($item->is_win==1 && $win_result_money>0){
+                                    $get_money = intval(($item->result_money/$win_result_money*$award_money)*100)/100;
+                                }
+                            }elseif ($item->is_up==2){
+                                //跌
+                                if($item->is_win==1 && $lose_result_money>0){
+                                    $get_money = intval(($item->result_money/$lose_result_money*$award_money)*100)/100;
+                                }
+                            }
+                            $item->get_money = $get_money;//奖金
+
+                            $item->save();
+                            //获胜 获得 压注金额(扣手续费)+奖励金额
+                            $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜');
+
                         }
 
-                        $get_money = 0;
-                        //开奖
-                        $item->award_state = $compare==1 ? 1 : 2;  //1涨 2跌
-                        $item->is_win = $item->award_state==$item['is_up']?1:2;
-                        $item->status = 2;//已开奖状态
-                        $item->open_time = date('Y-m-d H:i:s');
-
-                        if($item->is_up==1){
-                            //涨赢了
-                            if($item->is_win==1 && $win_result_money>0){
-                                $get_money = intval(($item->result_money/$win_result_money*$award_money)*100)/100;
-                            }
-                        }elseif ($item->is_up==2){
-                            //跌
-                            if($item->is_win==1 && $lose_result_money>0){
-                                $get_money = intval(($item->result_money/$lose_result_money*$award_money)*100)/100;
-                            }
-                        }
-                        $item->get_money = $get_money;//奖金
-
-                        $item->save();
-                        //获胜 获得 压注金额(扣手续费)+奖励金额
-                        $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜');
                     }
 
 

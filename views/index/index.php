@@ -222,7 +222,7 @@ $this->params = [
                 {
                 type: 'candlestick',
                 // 定义了每个维度的名称。这个名称会被显示到默认的 tooltip 中。
-                // name: '上证指数',
+                name: legend_title,
                 data: data,
                 itemStyle: {
                     normal: {

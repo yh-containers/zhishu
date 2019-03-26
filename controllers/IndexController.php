@@ -147,8 +147,7 @@ class IndexController extends CommonController
         //距离下一分钟时间
         $next_minute_second = strtotime('+1 minute',strtotime(date('H:i')));
         //延迟3秒
-        $open_next_second = $next_minute_second-$current_minute_second+5;//\app\models\Pan::getLastOpenSecond($type);
-
+        $open_next_second = $next_minute_second-$current_minute_second+3;//\app\models\Pan::getLastOpenSecond($type);
         //获取之前开盘数据
         list($open_data,$close_data) =\app\models\Pan::getCachePanData($type);
         //查询这一期结果
@@ -182,10 +181,19 @@ class IndexController extends CommonController
         $up_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id])->andWhere($where)->sum('money');
         //跌
         $down_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id])->andWhere($where)->sum('money');
-
-        return $this->asJson([$up_money?$up_money:0,$down_money?$down_money:0]);
+        //查询这一期结果
+        $up_money_total = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id])->sum('money');
+        $down_money_total = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id])->sum('money');
+        return $this->asJson([$up_money?$up_money:0,$down_money?$down_money:0,$up_money_total?$up_money_total:0,$down_money_total?$down_money_total:0]);
     }
 
+    //检测是否可以开奖
+    public function checkAwardStatus()
+    {
+        $id = $this->request->get('id',0); //多少期
+        $model = \app\models\Pan::findOne($id);
+        return $model['compare']>0?1:0;
+    }
 
     //test入口
     public function actionTest()
@@ -197,8 +205,9 @@ class IndexController extends CommonController
 //        var_dump(\app\models\Pan::getLastOpenSecond(0));
         //获取数据
         $content = file_get_contents("http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?id=GDAXI_UI&TYPE=r&rtntype=5");
-
-
+        $content = substr($content,1,-1);
+        $content = json_decode($content,true);
+        var_dump($content);exit;
 
     }
 
@@ -253,5 +262,13 @@ class IndexController extends CommonController
     public function actionPhpinfo()
     {
         phpinfo();
+    }
+
+    /*
+     * 获取当前时间
+     * */
+    public function actionGetTime()
+    {
+        var_dump(date('Y-m-d H:i:s'));
     }
 }

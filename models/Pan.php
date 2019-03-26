@@ -35,7 +35,6 @@ class Pan extends BaseModel
     //获取当前
     public static function getCachePanData($type)
     {
-
         $open_data = \Yii::$app->cache->get('open_pan_data_'.$type);
         $close_data = \Yii::$app->cache->get('close_pan_data_'.$type);
         return [$open_data?$open_data:[],$close_data?$close_data:[]];

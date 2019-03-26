@@ -326,6 +326,23 @@ $this->params = [
                 }
             },1000)
         }
+        // //验证是否已开奖
+        // var check_award = function(){
+        //     var second=3
+        //
+        //     var second_int = setInterval(function(){
+        //         second--
+        //         layer.load();
+        //         //小于零重新请求数据
+        //         if(second<=0){
+        //             layer.closeAll()
+        //             //清空倒计时
+        //             clearInterval(second_int)
+        //             //加载数据
+        //             ajaxShowData()
+        //         }
+        //     },1000)
+        // }
 
 
 
@@ -343,6 +360,10 @@ $this->params = [
              $.get("<?= \yii\helpers\Url::to(['press-money'])?>",{id:wait_id,type:type},function(result){
                  result.hasOwnProperty(0) && $("#press-up-money").text(result[0])
                  result.hasOwnProperty(1) && $("#press-down-money").text(result[1])
+                 //押涨
+                 result.hasOwnProperty(2) && $("#up-money").text(result[2])
+                 //押跌
+                 result.hasOwnProperty(3) && $("#down-money").text(result[3])
              })
         }
 

@@ -223,7 +223,6 @@ class IndexController extends CommonController
                 $current_model->compare=$current_model['current_price']>$current_model['up_price']?2:($current_model['current_price']<$current_model['up_price']?1:3);//价格比较1涨 2跌 3平
                 $current_model->save();
             }
-
         }
     }
     //处理结果--德国指数

@@ -12,10 +12,14 @@ class DefaultController extends Controller
     public $user_id=0;
     public $user_name=0;
     protected $ignore_action = 'admin/index/login;admin/index/captcha';
+    /**
+     * @var \yii\web\Request
+     * */
+    public $request;
 
     public function behaviors()
     {
-
+        $this->request = \Yii::$app->request;
         $session = \yii::$app->session;
         //开启session
         $session->open();

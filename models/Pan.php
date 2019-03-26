@@ -438,7 +438,7 @@ class Pan extends BaseModel
     /*
      * 数据关联
      * */
-    public function getVote()
+    public function getLinkVote()
     {
         return $this->hasMany(Vote::className(),['wid'=>'id']);
     }

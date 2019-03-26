@@ -40,7 +40,7 @@ $this->params = [
                         <td><?=$vo['down_money_total']?></td>
                         <td><?=\app\models\Pan::getCompareInfo($vo['compare'])?></td>
                         <td>
-
+                            <a href="<?=\yii\helpers\Url::to(['detail','id'=>$vo['id']])?>">查看</a>
                         </td>
                     </tr>
                 <?php }?>

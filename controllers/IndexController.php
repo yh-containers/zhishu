@@ -7,7 +7,7 @@ use app\models\Pan;
 
 class IndexController extends CommonController
 {
-    protected $ignore_action = 'login,registered,send-mailer,forget,handle';
+    protected $ignore_action = 'login,registered,send-mailer,forget,handle,handle-gdaxi';
 
     public function actionIndex()
     {
@@ -195,16 +195,42 @@ class IndexController extends CommonController
 //        $model->current_price = rand(3080,3099);
 //        $model->save();
 //        var_dump(\app\models\Pan::getLastOpenSecond(0));
+        //获取数据
+        $content = file_get_contents("http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?id=GDAXI_UI&TYPE=r&rtntype=5");
 
-//        $content = file_get_contents('http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cb=jQuery17204390821436871617_1553568378554&type=CT&cmd=GDAXI_UI&sty=OCGIFO&st=z&js=((x))&token=4f1862fc3b5e77c150a2b985b12db0fd&_=1553568698539');
-//        var_dump($content);
+
+
     }
 
-    //处理结果
+    //处理结果--上证指数
     public function actionHandle()
     {
-        //查询所有未开奖数据
+        //查询所有未开奖数据--上证指数
         $data = \app\models\Pan::find()->where(['type'=>0, 'compare'=>0])->orderBy('id asc')->all();
+        foreach($data as $key=>$vo) {
+
+            $current_model = $vo;
+            //下一条数据
+            $next_model = isset($data[$key+1])?$data[$key+1]:null;
+
+            //下一条数据有值
+            if(!empty($next_model)) {
+
+                //说明有数据--更新此次同步数据
+                $current_model->up_date=$next_model['date'];
+                $current_model->up_time=$next_model['time'];
+                $current_model->up_price=$next_model['current_price'];//当前价格
+                $current_model->compare=$current_model['current_price']>$next_model['up_price']?2:($current_model['current_price']<$current_model['up_price']?1:3);//价格比较1涨 2跌 3平
+                $current_model->save();
+            }
+
+        }
+    }
+    //处理结果--德国指数
+    public function actionHandleGdaxi()
+    {
+        //查询所有未开奖数据--上证指数
+        $data = \app\models\Pan::find()->where(['type'=>1, 'compare'=>0])->orderBy('id asc')->all();
         foreach($data as $key=>$vo) {
 
             $current_model = $vo;

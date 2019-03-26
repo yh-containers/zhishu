@@ -10,6 +10,9 @@ class Pan extends BaseModel
 {
     const DEFAULT_FLASH_SECOND=60;
     protected $_watch;
+    public $y_count=0;
+    public $up_money_total=0;
+    public $down_money_total=0;
     /*
      * 查看观察时间
      * */
@@ -403,6 +406,21 @@ class Pan extends BaseModel
     }
 
 
+    /*
+     * 状态
+     * */
+    public static function getCompareInfo($type=null)
+    {
+        $data = ['待开奖','涨','跌','平'];
+        if(is_null($type)){
+            return $data;
+        }else{
+            return isset($data[$type])?$data[$type]:'';
+        }
+
+
+    }
+
     public function rules()
     {
         return [[['type','today_price','yesterday_price','current_price','top_price','down_price','tran_num','tran_money','date','time','content','compare'],'safe']];
@@ -415,6 +433,14 @@ class Pan extends BaseModel
             $result[] = isset($arr[$key])?$arr[$key]:$vo;
         }
         return $result;
-
     }
+
+    /*
+     * 数据关联
+     * */
+    public function getVote()
+    {
+        return $this->hasMany(Vote::className(),['wid'=>'id']);
+    }
+
 }

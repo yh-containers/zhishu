@@ -1,55 +1,57 @@
 <?php
-    $this->title = '用户管理';
-    $this->params = [
-            'current_active' => ['transaction','transaction/index'],
-    ];
+$this->title = '数据管理';
+$this->params = [
+    'current_active' => ['transaction','transaction/index'],
+    'crumb'          => ['数据管理','数据列表'],
+];
 ?>
 <?php $this->beginBlock('content')?>
 
-    <!-- Content Wrapper. Contains page content -->
-    <div class="content-wrapper">
-        <!-- Content Header (Page header) -->
-        <section class="content-header">
-            <h1>
-                Blank page
-                <small>it all starts here</small>
-            </h1>
-            <ol class="breadcrumb">
-                <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                <li><a href="#">Examples</a></li>
-                <li class="active">Blank page</li>
-            </ol>
-        </section>
 
-        <!-- Main content -->
-        <section class="content">
-
-            <!-- Default box -->
-            <div class="box">
-                <div class="box-header with-border">
-                    <h3 class="box-title">Title</h3>
-
-                    <div class="box-tools pull-right">
-                        <button type="button" class="btn btn-box-tool" data-widget="collapse" data-toggle="tooltip"
-                                title="Collapse">
-                            <i class="fa fa-minus"></i></button>
-                        <button type="button" class="btn btn-box-tool" data-widget="remove" data-toggle="tooltip" title="Remove">
-                            <i class="fa fa-times"></i></button>
-                    </div>
-                </div>
-                <div class="box-body">
-                    Start creating your amazing application!
-                </div>
-                <!-- /.box-body -->
-                <div class="box-footer">
-                    Footer
-                </div>
-                <!-- /.box-footer-->
+    <div class="box">
+        <div class="box-header with-border">
+            <div class="btn-group">
+                <?php foreach (\app\models\Pan::get_type() as $key=>$vo) {?>
+                    <a href="<?=\yii\helpers\Url::to(['','type'=>$key])?>" type="button" class="btn <?=$type==$key?'bg-olive':''?> btn-default"><?=$vo['name']?></a>
+                <?php }?>
             </div>
-            <!-- /.box -->
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>成交时间</th>
+                    <th>交易数量</th>
+                    <th>金额（涨）</th>
+                    <th>金额（跌）</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($list as $key=>$vo) {?>
+                    <tr>
+                        <td><?=$key+1?></td>
+                        <td><?=$vo['date'].' '.$vo['time']?></td>
+                        <td><?=$vo['y_count']?></td>
+                        <td><?=$vo['up_money_total']?></td>
+                        <td><?=$vo['down_money_total']?></td>
+                        <td><?=\app\models\Pan::getCompareInfo($vo['compare'])?></td>
+                        <td>
 
-        </section>
-        <!-- /.content -->
+                        </td>
+                    </tr>
+                <?php }?>
+                </tbody>
+            </table>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer clearfix">
+            <?= \yii\widgets\LinkPager::widget(['pagination'=>$pagination])?>
+        </div>
     </div>
+
 
 <?php $this->endBlock()?>

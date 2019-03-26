@@ -147,7 +147,7 @@ class IndexController extends CommonController
         //距离下一分钟时间
         $next_minute_second = strtotime('+1 minute',strtotime(date('H:i')));
         //延迟3秒
-        $open_next_second = $next_minute_second-$current_minute_second+3;//\app\models\Pan::getLastOpenSecond($type);
+        $open_next_second = $next_minute_second-$current_minute_second+5;//\app\models\Pan::getLastOpenSecond($type);
 
         //获取之前开盘数据
         list($open_data,$close_data) =\app\models\Pan::getCachePanData($type);
@@ -218,7 +218,7 @@ class IndexController extends CommonController
                 $current_model->up_date=$next_model['date'];
                 $current_model->up_time=$next_model['time'];
                 $current_model->up_price=$next_model['current_price'];//当前价格
-                $current_model->compare=$current_model['current_price']>$current_model['up_price']?1:($current_model['current_price']<$current_model['up_price']?2:3);//价格比较1涨 2跌 3平
+                $current_model->compare=$current_model['current_price']>$next_model['up_price']?2:($current_model['current_price']<$current_model['up_price']?1:3);//价格比较1涨 2跌 3平
                 $current_model->save();
             }
 

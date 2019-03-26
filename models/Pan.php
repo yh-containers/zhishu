@@ -276,7 +276,7 @@ class Pan extends BaseModel
     {
         $data = [
             ['name'=>'上证指数','url'=>'http://hq.sinajs.cn/list=sh000001','con'=>['09:00:00'=>'11:30:00','14:00:00'=>'15:00:00']],
-            ['name'=>'德国','url'=>''],
+            ['name'=>'德国','url'=>'','con'=>['16:00:00'=>'23:59:59','00:00:00'=>'00:30:00']],
         ];
         if(is_null($type)){
             return $data;
@@ -306,12 +306,12 @@ class Pan extends BaseModel
         $need_field = ['time'=>'','today_price'=>'','current_price'=>'','down_price'=>'','top_price'=>'','compare'=>0];
         if(!$next_data) {
             //初始化页面数据
-            $data = self::find()->asArray()->where(['date'=>$this->watch])->orderBy('id desc')->limit(15)->all();
+            $data = self::find()->asArray()->where(['type'=>$type,'date'=>$this->watch])->orderBy('id desc')->limit(15)->all();
             foreach ($data as $vo){
                 array_unshift($pool,self::handleNeedData($need_field,$vo));
             }
         }else{
-            $data = self::find()->asArray()->where(['date'=>$this->watch])->orderBy('id desc')->limit(1)->one();
+            $data = self::find()->asArray()->where(['type'=>$type,'date'=>$this->watch])->orderBy('id desc')->limit(1)->one();
             $pool = $data?self::handleNeedData($need_field,$data):[];
         }
 

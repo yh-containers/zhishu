@@ -66,7 +66,7 @@ $this->params = [
         <div class="rise">
             <div class="button" data-is_up="1">
                 <h2>看涨</h2>
-                <p>预收益率85.48%</p>
+                <p></p>
             </div>
             <div class="price" id="press-up-money">0</div>
         </div>
@@ -86,7 +86,7 @@ $this->params = [
         <div class="fall">
             <div class="button" data-is_up="2">
                 <h2>看跌</h2>
-                <p>预收益率94.75%</p>
+                <p></p>
             </div>
             <div class="price"  id="press-down-money">0</div>
         </div>
@@ -250,7 +250,7 @@ $this->params = [
             var index = layer.load(0, {time: 3000});
             var h_i = date.getHours()+':'+date.getMinutes()+':'+date.getSeconds()
             var url = "<?=\yii\helpers\Url::to(['index/pan-data','type'=>$type])?>";
-            url = request_date ==='' ? (url+'&date='+h_i) : (url+'&is_init=1&date='+request_date+'&id='.wait_id)
+            url = request_date ==='' ? (url+'&date='+h_i) : (url+'&is_init=1'+'&id='+wait_id+'&date='+request_date)
             $.get(url,function(result){
                 //待开奖id
                 wait_id = result.hasOwnProperty('id')?result.id:0;

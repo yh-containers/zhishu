@@ -58,8 +58,8 @@ $this->params = [
     <div class="exponent">
         <div class="title"><i class="icon iconfont icon-xiadan"></i><p>下单<br />合约</p></div>
         <ul>
-            <li class="cur">上证指数一分钟线</li>
-            <li>德国指数一分钟线</li>
+            <li <?=$type?'':'class="cur"'?> onclick="window.location.href='<?=\yii\helpers\Url::to([''])?>'">上证指数一分钟线</li>
+            <li <?=$type==1?'class="cur"':''?> onclick="window.location.href='<?=\yii\helpers\Url::to(['','type'=>1])?>'">德国指数一分钟线</li>
         </ul>
     </div>
     <div class="betting">
@@ -145,8 +145,7 @@ $this->params = [
         // 基于准备好的dom，初始化echarts实例
         var myChart = echarts.init(document.getElementById('main'));
 
-        myChart.title = '上证指数';
-
+        var legend_title = type>0?'德国指数':'上证指数';
         var rawData = [];
         // var rawData = [['2015/12/31','3570.47','3539.18','3538.35','3580.6'],['2015/12/30','3566.73','3572.88','3538.11','3573.68'],['2015/12/29','3528.4','3563.74','3515.52','3564.17']].reverse();
 
@@ -156,7 +155,7 @@ $this->params = [
         var option = {
             backgroundColor: '#21202D',
             legend: {
-                data: ['上证指数'],
+                data: [legend_title],
                 inactiveColor: '#777',
                 textStyle: {
                     color: '#fff'
@@ -195,7 +194,7 @@ $this->params = [
                         htmlStr += '当前价:'+value[2]+'<br>' ;
                         htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:#fff;"></span>';
                         //圆点后面显示的文本
-                        htmlStr += '涨跌:'+value[5]>0?(value[5]==1?'涨':(value[5]==2?'跌':'平')):'待开奖'+'<br>' ;
+                        htmlStr += '涨跌:'+(value[5]>0?(value[5]==1?'涨':(value[5]==2?'跌':'平')):'待开奖')+'<br>' ;
 
                         htmlStr += '</div>';
                     }
@@ -221,9 +220,9 @@ $this->params = [
             animation: false,
             series:
                 {
-                    type: 'candlestick',
-// 定义了每个维度的名称。这个名称会被显示到默认的 tooltip 中。
-                name: '上证指数',
+                type: 'candlestick',
+                // 定义了每个维度的名称。这个名称会被显示到默认的 tooltip 中。
+                // name: '上证指数',
                 data: data,
                 itemStyle: {
                     normal: {
@@ -250,8 +249,8 @@ $this->params = [
             var is_new_obj=true;
             var index = layer.load(0, {time: 3000});
             var h_i = date.getHours()+':'+date.getMinutes()+':'+date.getSeconds()
-            var url = "<?=\yii\helpers\Url::to(['index/pan-data'])?>";
-            url = request_date ==='' ? (url+'?date='+h_i) : (url+'?is_init=1&date='+request_date+'&id='.wait_id)
+            var url = "<?=\yii\helpers\Url::to(['index/pan-data','type'=>$type])?>";
+            url = request_date ==='' ? (url+'&date='+h_i) : (url+'&is_init=1&date='+request_date+'&id='.wait_id)
             $.get(url,function(result){
                 //待开奖id
                 wait_id = result.hasOwnProperty('id')?result.id:0;
@@ -363,6 +362,7 @@ $this->params = [
                         var obj = {};
                         obj.money=money;
                         obj.id = wait_id;
+                        obj.type = type;
                         obj.is_up = is_up;
                         obj._csrf="<?= Yii::$app->request->csrfToken ?>";
                         $.post("<?=\yii\helpers\Url::to(['mine/vote'])?>",obj,function(result){

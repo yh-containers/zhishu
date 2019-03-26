@@ -194,7 +194,10 @@ class IndexController extends CommonController
 //        $model = \app\models\Pan::findOne(180);
 //        $model->current_price = rand(3080,3099);
 //        $model->save();
-        var_dump(\app\models\Pan::getLastOpenSecond(0));
+//        var_dump(\app\models\Pan::getLastOpenSecond(0));
+
+//        $content = file_get_contents('http://nufm.dfcfw.com/EM_Finance2014NumericApplication/JS.aspx?cb=jQuery17204390821436871617_1553568378554&type=CT&cmd=GDAXI_UI&sty=OCGIFO&st=z&js=((x))&token=4f1862fc3b5e77c150a2b985b12db0fd&_=1553568698539');
+//        var_dump($content);
     }
 
     //处理结果

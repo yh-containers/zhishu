@@ -198,6 +198,13 @@ class IndexController extends CommonController
     //test入口
     public function actionTest()
     {
+        $week = date("w");
+        var_dump($week);
+        $date_time='00:30:00';
+        if(($date_time>'16:00:00' && $date_time<'23:59:59') || ($date_time>'00:00:00' && $date_time<'00:30:00')){
+            echo '123';
+        }
+        echo 321321;exit;
         //测试
 //        $model = \app\models\Pan::findOne(180);
 //        $model->current_price = rand(3080,3099);

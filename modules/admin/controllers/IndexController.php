@@ -82,4 +82,14 @@ class IndexController extends DefaultController
         var_dump($result);
     }
 
+    public function actionBackup()
+    {
+        /** @var \demi\backup\Component $backup */
+        $backup = \Yii::$app->backup;
+
+        $file = $backup->create();
+        var_dump($file);
+//        $console->stdout('Backup file created: ' . $file . PHP_EOL, \yii\helpers\Console::FG_GREEN);
+    }
+
 }

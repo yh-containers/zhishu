@@ -10,9 +10,9 @@
 
 namespace SebastianBergmann\Environment;
 
-use PHPUnit\Framework\TestCase;
+use PHPUnit_Framework_TestCase;
 
-class ConsoleTest extends TestCase
+class ConsoleTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @var \SebastianBergmann\Environment\Console
@@ -42,6 +42,7 @@ class ConsoleTest extends TestCase
 
     /**
      * @covers \SebastianBergmann\Environment\Console::hasColorSupport
+     *
      * @uses   \SebastianBergmann\Environment\Console::isInteractive
      */
     public function testCanDetectColorSupport()
@@ -51,6 +52,7 @@ class ConsoleTest extends TestCase
 
     /**
      * @covers \SebastianBergmann\Environment\Console::getNumberOfColumns
+     *
      * @uses   \SebastianBergmann\Environment\Console::isInteractive
      */
     public function testCanDetectNumberOfColumns()

@@ -28,7 +28,7 @@
     ],
     "require": {
         "php": "^5.3.3 || ^7.0",
-        "sebastian/recursion-context": "^1.0"
+        "sebastian/recursion-context": "^2.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0",
@@ -41,7 +41,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.2.x-dev"
+            "dev-master": "2.0.x-dev"
         }
     }
 }

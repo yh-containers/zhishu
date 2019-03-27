@@ -41,6 +41,7 @@ class Menu extends Widget
                     ['name' => '用户协议','href'=>'system/protocol','child'=>[]],
                     ['name' => '帮助中心','href'=>'system/help-center','child'=>[]],
                     ['name' => '管理员列表','href'=>'system/manage','child'=>[]],
+                    ['name' => '数据库备份','href'=>'backup/index','child'=>[]],
                 ]
             ],
         ];

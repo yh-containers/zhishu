@@ -3,6 +3,33 @@
 $vendorDir = dirname(__DIR__);
 
 return array (
+  'yiisoft/yii2-faker' => 
+  array (
+    'name' => 'yiisoft/yii2-faker',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@yii/faker' => $vendorDir . '/yiisoft/yii2-faker/src',
+    ),
+  ),
+  'yiisoft/yii2-debug' => 
+  array (
+    'name' => 'yiisoft/yii2-debug',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@yii/debug' => $vendorDir . '/yiisoft/yii2-debug/src',
+    ),
+  ),
+  'open-ecommerce/yii2-backuprestore' => 
+  array (
+    'name' => 'open-ecommerce/yii2-backuprestore',
+    'version' => '9999999-dev',
+    'alias' => 
+    array (
+      '@oe/modules/backuprestore' => $vendorDir . '/open-ecommerce/yii2-backuprestore',
+    ),
+  ),
   'yiisoft/yii2-bootstrap' => 
   array (
     'name' => 'yiisoft/yii2-bootstrap',
@@ -21,13 +48,13 @@ return array (
       '@yii/swiftmailer' => $vendorDir . '/yiisoft/yii2-swiftmailer',
     ),
   ),
-  'yiisoft/yii2-debug' => 
+  'demi/backup' => 
   array (
-    'name' => 'yiisoft/yii2-debug',
-    'version' => '9999999-dev',
+    'name' => 'demi/backup',
+    'version' => '1.0.1.0',
     'alias' => 
     array (
-      '@yii/debug' => $vendorDir . '/yiisoft/yii2-debug/src',
+      '@demi/backup' => $vendorDir . '/demi/backup',
     ),
   ),
   'yiisoft/yii2-gii' => 
@@ -37,15 +64,6 @@ return array (
     'alias' => 
     array (
       '@yii/gii' => $vendorDir . '/yiisoft/yii2-gii/src',
-    ),
-  ),
-  'yiisoft/yii2-faker' => 
-  array (
-    'name' => 'yiisoft/yii2-faker',
-    'version' => '9999999-dev',
-    'alias' => 
-    array (
-      '@yii/faker' => $vendorDir . '/yiisoft/yii2-faker/src',
     ),
   ),
 );

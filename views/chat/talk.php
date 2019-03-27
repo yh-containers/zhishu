@@ -167,7 +167,7 @@ $this->params = [
                         html +='<div class="'+(item[2]===chat_uid?'right':'left')+'">\n' +
                             '            <div class="avatar"><img src="'+(user_info.hasOwnProperty('face')?user_info.face:'')+'">'+((user_info.hasOwnProperty('type')&&user_info.type==1)?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
                             '            <div class="text">\n' +
-                            '                <h2><i>ID：'+(user_info.hasOwnProperty('id')?user_info.id:'')+'</i><span>'+((user_info.hasOwnProperty('type')&&user_info.type==1)?user_info.level_name:user_info.type_name)+'</span></h2>\n' +
+                            '                <h2><i>ID：'+(user_info.hasOwnProperty('id')?user_info.id:'')+'</i><span>'+(user_info.type_name)+'</span></h2>\n' +
                             '                <div class="message">\n' +
                             '                    <div class="info">'+(item[3]==='1'?'<img src="'+item[4]+'">':'<p>'+showHtmlTag(item[4])+'</p>')+'</div>\n' +
                             '                </div>\n' +

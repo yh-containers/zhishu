@@ -44,7 +44,7 @@ $this->params = [
                             '<a href="'+detail+(url.indexOf('?')>-1?'&':'?')+'id='+item.uid+'">'+
                             '<div class="avatar"><img src="'+item['face']+'">'+(item.type?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
                             '<div class="text">\n' +
-                            '<h2>ID：'+item.uid+'<span>'+(item.type?item.level_name:item.type_name)+'</span></h2>\n' +
+                            '<h2>ID：'+item.uid+'<span>'+(item.type_name)+'</span></h2>\n' +
                             '<div class="info">\n' +
                             '<div class="num"><p>出售<?=\Yii::$app->params["money_name"]?>数量</p><span>'+item.money+'个</span></div>\n' +
                             '<div><p>单价</p><span>'+item.price+'元</span></div>\n' +

@@ -53,7 +53,7 @@ $this->params = [
                             '<a href="'+detail+(detail.indexOf('?')>-1?'&':'?')+'id='+item.id+'">\n' +
                             '<div class="avatar"><img src="'+item.face+'">'+(item.type?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
                             '<div class="text">\n' +
-                            '<h2>ID：'+item.id+'<span>'+(item.type?item.level_name:item.type_name)+'</span></h2>\n' +
+                            '<h2>ID：'+item.id+'<span>'+(item.type_name)+'</span></h2>\n' +
                             '<div class="status"><span>（'+(item.online?'在线':'离线')+'）</span>充值元宝：'+item.money+'</div>\n' +
                             '</div>\n' +
                             '</a>\n' +

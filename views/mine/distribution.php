@@ -20,11 +20,7 @@ $this->params = [
             </div>
             <div class="text">
                 <h2>ID：<?=$user_model['id']?>
-                    <?php if($user_model['type']>0){?>
-                        <span><?=$user_model->levelName?></span>
-                    <?php }else{?>
-                        <span><?=$user_model->typeName?></span>
-                    <?php }?>
+                    <span><?=$user_model->typeName?></span>
                 </h2>
                 <p><?=$user_model['email']?></p>
                 <p>推荐人：<?=$user_model['fuid1']?></p>

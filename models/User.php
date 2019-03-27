@@ -658,13 +658,13 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 // 和上一个相同，只是明确指定了需要对比的属性字段
                 ['password', 'compare', 'compareAttribute' => 're_password','message'=>'密码不一致','on'=>self::SCENARIO_REGISTER],
                 [['verify'], 'required','message'=>'验证码必须输入','on'=>self::SCENARIO_REGISTER],
-                [['verify'], function ($attribute, $params) {
-                    try{
-                        Mail::checkVerify($this->email,$this->verify,0);
-                    }catch (\Exception $e) {
-                        $this->addError($attribute, $e->getMessage());
-                    }
-                },'on'=>self::SCENARIO_REGISTER],
+//                [['verify'], function ($attribute, $params) {
+//                    try{
+//                        Mail::checkVerify($this->email,$this->verify,0);
+//                    }catch (\Exception $e) {
+//                        $this->addError($attribute, $e->getMessage());
+//                    }
+//                },'on'=>self::SCENARIO_REGISTER],
 
 
 

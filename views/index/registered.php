@@ -28,11 +28,11 @@ $this->title = '注册';
             </div>
             <div class="box">
                 <i class="icon iconfont icon-mima"></i>
-                <input type="text" name="password" placeholder="请设置密码">
+                <input type="password" name="password" placeholder="请设置密码">
             </div>
             <div class="box">
                 <i class="icon iconfont icon-mima"></i>
-                <input type="text" name="re_password" placeholder="请重新输入密码">
+                <input type="password" name="re_password" placeholder="请重新输入密码">
             </div>
             <div class="box">
                 <i class="icon iconfont icon-tuijianma"></i>

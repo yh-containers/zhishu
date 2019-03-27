@@ -30,8 +30,21 @@ class IndexController extends CommonController
             $model =new \app\models\User();
             $model->scenario = \app\models\User::SCENARIO_REGISTER;
 
-            $result = $model->actionSave($php_input);
-            return $this->asJson($result);
+            $model->attributes = $php_input;
+            try{
+                if(!$model->validate()){
+                    $error_msg = $model->getFirstErrors();
+                    return $this->asJson(['code'=>0,'msg'=>$error_msg[key($error_msg)]]);
+                }else{
+                    \app\models\Mail::checkVerify($php_input['email'],$php_input['verify'],0);
+                }
+            }catch (\Exception $e){
+                return $this->asJson(['code'=>0,'msg'=>$e->getMessage()]);
+            }
+
+
+            $state = $model->save();
+            return $this->asJson(['code'=>$state?1:0,'msg'=>$state?'操作成功':'操作失败']);
 
         }
         return $this->render('registered',[

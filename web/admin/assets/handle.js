@@ -27,7 +27,7 @@ $.common={
                     setTimeout(function(){window.location.reload()},1000)
                 }else{
                     if(result.code==1){
-                        window.history.back()
+                        setTimeout(function(){window.history.back()},1000)
                     }
                 }
 

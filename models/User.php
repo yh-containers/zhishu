@@ -555,7 +555,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     {
         $scenarios = parent::scenarios();
         $scenarios[self::SCENARIO_LOGIN] = ['username', 'password'];
-        $scenarios[self::SCENARIO_REGISTER] = ['code','username', 'email', 'password','re_password','verify'];
+        $scenarios[self::SCENARIO_REGISTER] = ['code','username', 'email', 'password','re_password','verify','face'];
         $scenarios[self::SCENARIO_FORGET] = ['verify', 'email', 'password','re_password'];
         $scenarios[self::SCENARIO_MOD_EMAIL] = ['verify', 'email'];
         $scenarios[self::SCENARIO_REST_PWD] = ['old_pwd', 'password','re_password'];

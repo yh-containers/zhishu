@@ -165,7 +165,7 @@ $this->params = [
                         record_id = item[0]
                         var user_info = item[2]===chat_uid?chat_info:chat_obj_info;
                         html +='<div class="'+(item[2]===chat_uid?'right':'left')+'">\n' +
-                            '            <div class="avatar"><img src="'+(user_info.hasOwnProperty('face')?user_info.face:'')+'">'+((user_info.hasOwnProperty('type')&&user_info.type==1)?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
+                            '            <div class="avatar"><img src="'+(user_info.hasOwnProperty('face')?user_info.face:'')+'">'+((user_info.hasOwnProperty('type')&&user_info.type>0)?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
                             '            <div class="text">\n' +
                             '                <h2><i>ID：'+(user_info.hasOwnProperty('id')?user_info.id:'')+'</i><span>'+(user_info.type_name)+'</span></h2>\n' +
                             '                <div class="message">\n' +

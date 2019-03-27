@@ -688,6 +688,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 //默认值
                 [['status'],'default', 'value' => 1],
                 [['face'],'default', 'value' => '/assets/images/avatar.png'],
+                [['money'],'default', 'value' => 0],
             ];
         }
 

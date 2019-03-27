@@ -46,6 +46,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             'username' => '用户名',
             'email' => '邮箱',
             'password' => '帐号密码',
+            're_password' => '确认密码',
             'pay_pwd' => '支付密码',
             'old_pwd' => '旧密码',
             'old_pay_pwd' => '旧支付密码',
@@ -440,11 +441,16 @@ class User extends BaseModel implements \yii\web\IdentityInterface
      * @title 转账
      * @param $to_uid int 用户id
      * @param $money float 转账余额
+     * @param $pay_pwd int 支付密码
      * @throws
      * */
-    public function transfer($to_uid,$money)
+    public function transfer($to_uid,$money,$pay_pwd)
     {
+        if(!$this->getAttribute('pay_pwd')) throw new \Exception('请先设置支付密码');
+        if(empty($pay_pwd)) throw new \Exception('支付密码不能为空');
+        $pay_pwd_encode = self::generatePwd($pay_pwd,$this->getAttribute('pay_salt'));
         if($money>$this->getAttribute('money')) throw new \Exception('用户余额不足,无法转账');
+        if($pay_pwd_encode!=$this->getAttribute('pay_pwd')) throw new \Exception('支付密码不正确');
         $rec_user_info = self::findOne($to_uid);
         if(empty($rec_user_info))  throw new \Exception('接收对象异常');
         try{
@@ -571,7 +577,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         if($scenario==self::SCENARIO_REST_PAY_PWD){
             $rule = [
                 [['old_pay_pwd'], 'required','when'=>function(){
-                    return !$this->getOldAttribute('pay_pwd');
+                    return $this->getOldAttribute('pay_pwd');
                 },'message'=>'{attribute}必须输入'],
                 [['pay_pwd'], 'required','message'=>'{attribute}必须输入'],
                 [['old_pay_pwd'], function($attribute,$params){

@@ -1,5 +1,5 @@
 <?php
-$this->title = $user_model['pay_pwd']?'修改支付密码':'设置支付密码';
+$this->title = '修改密码';
 $this->params = [
 ];
 ?>
@@ -16,19 +16,17 @@ $this->params = [
     <div class="registered wrap">
         <form action="" id="form">
             <input name="_csrf" type="hidden" id="_csrf" value="<?= Yii::$app->request->csrfToken ?>">
-            <?php if($user_model['pay_pwd']) {?>
-                <div class="box">
-                    <i class="icon iconfont icon-pay-key"></i>
-                    <input type="password" name="old_pay_pwd" placeholder="请输入旧支付密码">
-                </div>
-            <?php }?>
             <div class="box">
                 <i class="icon iconfont icon-pay-key"></i>
-                <input type="password" name="pay_pwd" placeholder="请设置支付密码">
+                <input type="password" name="old_pwd" placeholder="请输入旧密码">
             </div>
             <div class="box">
                 <i class="icon iconfont icon-pay-key"></i>
-                <input type="password" name="re_pay_pwd" placeholder="请再次输入支付密码">
+                <input type="password" name="password" placeholder="请设置密码">
+            </div>
+            <div class="box">
+                <i class="icon iconfont icon-pay-key"></i>
+                <input type="password" name="re_password" placeholder="请再次输入密码">
             </div>
             <div class="btn"><input type="button" id="submit" name="" value="保存"></div>
         </form>

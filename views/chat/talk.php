@@ -62,20 +62,22 @@ $this->params = [
 <?php $this->beginBlock('script')?>
 <script type="text/javascript" src="/assets/js/expression.js"></script>
 <script type="text/javascript">
+    var _csrf='<?=\Yii::$app->request->csrfToken?>'
+
+    //聊天用户信息
+    var user_info = <?=json_encode($user_info?$user_info:[])?>
+    //聊天对象
+    var chat_obj_uid = "<?=$f_uid?>";
+    var chat_obj_info = user_info.hasOwnProperty(chat_obj_uid)?user_info[chat_obj_uid]:{}
+    //当前操作者用户
+    var chat_uid = "<?=\Yii::$app->controller->user_id?>";
+    var chat_info = user_info.hasOwnProperty(chat_uid)?user_info[chat_uid]:{}
+
     layui.use(['upload','layer'], function(){
         var upload = layui.upload;
         var layer = layui.layer
         var record_id;  //当前记录的最后一条id
 
-        var _csrf='<?=\Yii::$app->request->csrfToken?>'
-        //聊天用户信息
-        var user_info = <?=json_encode($user_info?$user_info:[])?>
-        //聊天对象
-        var chat_obj_uid = "<?=$f_uid?>";
-        var chat_obj_info = user_info.hasOwnProperty(chat_obj_uid)?user_info[chat_obj_uid]:{}
-        //当前操作者用户
-        var chat_uid = "<?=\Yii::$app->controller->user_id?>";
-        var chat_info = user_info.hasOwnProperty(chat_uid)?user_info[chat_uid]:{}
 
 
 
@@ -124,29 +126,14 @@ $this->params = [
             $(".prompt_pop").hide();
         });
 
-        function friend(opt_index){
-            var tip = ['','是否添加好友?','是否移至陌生人?','是否移至黑名单?'];
-            var url = ['','<?=\yii\helpers\Url::to(['mine/add-friend'])?>','<?=\yii\helpers\Url::to(['mine/know-friend'])?>','<?=\yii\helpers\Url::to(['mine/black-friend'])?>'];
-            if(tip.hasOwnProperty(opt_index)){
-                var msg = tip[opt_index];
-                var obj = {};
-                obj._csrf=_csrf
-                obj.f_uid=chat_obj_uid;
-                layer.confirm(msg,function(){
-                    var index = layer.load();
-                    $.post(url[opt_index],obj,function(result){
-                        layer.msg(result.msg)
-                        layer.close(index)
-                    })
-                })
-            }
-        }
+
 
         function sendMsg(content,type) {
             var index=layer.load(0, {time: 3000});
             $.post('<?=\yii\helpers\Url::to(['chat/say'])?>',{_csrf:_csrf,content:content,type:type,rec_uid:chat_obj_uid},function(result){
                 layer.close(index)
                 console.log(result)
+                $("#div").html('')
                 loadData()
             })
         }
@@ -184,6 +171,24 @@ $this->params = [
         setInterval(loadData,20000)
     });
 
+
+    function friend(opt_index){
+        var tip = ['','是否添加好友?','是否移至陌生人?','是否移至黑名单?'];
+        var url = ['','<?=\yii\helpers\Url::to(['mine/add-friend'])?>','<?=\yii\helpers\Url::to(['mine/know-friend'])?>','<?=\yii\helpers\Url::to(['mine/black-friend'])?>'];
+        if(tip.hasOwnProperty(opt_index)){
+            var msg = tip[opt_index];
+            var obj = {};
+            obj._csrf=_csrf
+            obj.f_uid=chat_obj_uid;
+            layer.confirm(msg,function(){
+                var index = layer.load();
+                $.post(url[opt_index],obj,function(result){
+                    layer.msg(result.msg)
+                    layer.close(index)
+                })
+            })
+        }
+    }
 
 </script>
 <?php $this->endBlock()?>

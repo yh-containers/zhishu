@@ -103,7 +103,6 @@ class MineController extends CommonController
             return $this->asJson($result);
 
         }
-
         return $this->render('restPwd',[
             'user_model' => $this->user_model,
         ]);
@@ -114,7 +113,6 @@ class MineController extends CommonController
      * */
     public function actionRestPayPwd()
     {
-
         if($this->request->isAjax){
             $php_input = $this->request->post();
             $this->user_model->scenario=\app\models\User::SCENARIO_REST_PAY_PWD;
@@ -288,8 +286,9 @@ class MineController extends CommonController
         if($this->request->isAjax){
             $money = $this->request->post('money',0);
             $to_uid = $this->request->post('to_uid',0);
+            $pay_pwd = $this->request->post('pay_pwd');
             try{
-                $this->user_model->transfer($to_uid,$money);
+                $this->user_model->transfer($to_uid,$money,$pay_pwd);
                 return $this->asJson(['code'=>1,'msg'=>'转账成功']);
             }catch (\Exception $e){
                 return $this->asJson(['code'=>0,'msg'=>$e->getMessage()]);

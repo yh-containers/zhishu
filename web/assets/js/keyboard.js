@@ -1,6 +1,6 @@
 // 全局变量
 var Global_type, Global_show, Global_safe, Global_count = 0;
-
+var Global_handlePay;
 (function ($) {
     $.fn.KeyBoard = function (options) {
         // 默认配置
@@ -8,7 +8,8 @@ var Global_type, Global_show, Global_safe, Global_count = 0;
             random: true, // 随机键盘
             type: "money", // 密码 password or 金额 money
             show: "", // 展示区域
-            safe: false // 加密显示
+            safe: false, // 加密显示
+            handlePay:()=>{}
         }
         options = $.extend(defaults, options);
 
@@ -16,6 +17,7 @@ var Global_type, Global_show, Global_safe, Global_count = 0;
             Global_type = defaults.type;
             Global_show = defaults.show;
             Global_safe = defaults.safe;
+            Global_handlePay = defaults.handlePay;
 
             var keyboard = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
 
@@ -89,6 +91,7 @@ var Global_type, Global_show, Global_safe, Global_count = 0;
 
 // 输入
 function selectBtn(text) {
+    console.log(text)
     var _input = Global_show.find(".input_")
     var _value = _input.val();
     if (Global_type == "money") {
@@ -151,5 +154,6 @@ function hiddenKeyboard() {
 
 // 支付或确认
 function submitBtn() {
-    console.log(Global_show.find(".input_").val());
+    Global_handlePay(Global_show.find(".input_").val())
+
 };

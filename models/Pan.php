@@ -162,7 +162,7 @@ class Pan extends BaseModel
 
                             $item->save();
                             //获胜 获得 压注金额(扣手续费)+奖励金额
-                            $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜',['money_change_type'=>UserMoneyLogs::TYPE_CHOOSE_WIN],true,true);
+                            $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜',['money_change_type'=>UserMoneyLogs::TYPE_CHOOSE_WIN],true);
 
                         }
 
@@ -204,7 +204,7 @@ class Pan extends BaseModel
                     $money = isset($info['money'])?$info['money']:0;
                     $extra = isset($info['extra'])?$info['extra']:[];
                     $extra = array_merge($extra,['money_change_type'=>UserMoneyLogs::TYPE_COMMISSION,'money_change_form_uid'=>$form_uid]);
-                    $money && User::modMoney($rec_uid,$money,'佣金获取',$extra,true);
+                    $money && User::modMoney($rec_uid,$money,'佣金获取',$extra,true,true);
                 }
                 $transaction->commit();
             }catch (\Exception $e){

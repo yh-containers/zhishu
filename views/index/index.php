@@ -281,6 +281,10 @@ $this->params = [
                 o_data.hasOwnProperty(0) && $("#up-money").text(o_data[0])
                 //押跌
                 o_data.hasOwnProperty(1) && $("#down-money").text(o_data[1])
+                //押涨-用户
+                o_data.hasOwnProperty(2) && $("#press-up-money").text(o_data[2])
+                //押跌-用户
+                o_data.hasOwnProperty(3) && $("#press-down-money").text(o_data[3])
 
                 if(req_data.length>1){
                     var data_type = typeof req_data[0]
@@ -326,23 +330,6 @@ $this->params = [
                 }
             },1000)
         }
-        // //验证是否已开奖
-        // var check_award = function(){
-        //     var second=3
-        //
-        //     var second_int = setInterval(function(){
-        //         second--
-        //         layer.load();
-        //         //小于零重新请求数据
-        //         if(second<=0){
-        //             layer.closeAll()
-        //             //清空倒计时
-        //             clearInterval(second_int)
-        //             //加载数据
-        //             ajaxShowData()
-        //         }
-        //     },1000)
-        // }
 
 
 

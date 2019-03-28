@@ -38,14 +38,14 @@ $config = [
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
                 'host' => 'smtp.qq.com',  //每种邮箱的host配置不一样
-                'username' => '1104753531@qq.com',
-                'password' => 'fjmscolvubelgide',   //注意这里不是邮箱登录密码，而是QQ邮箱后台开启STMP服务后给的授权码
+                'username' => '1304389308@qq.com',
+                'password' => 'pmokvhtnxfcahaaj',   //注意这里不是邮箱登录密码，而是QQ邮箱后台开启STMP服务后给的授权码
                 'port' => '587',//将发送服务器的端口号修改成465或587；
                 'encryption' => 'tls',
             ],
             'messageConfig'=>[
                 'charset'=>'UTF-8',
-                'from'=>['1104753531@qq.com'=>'指数']
+                'from'=>['1304389308@qq.com'=>'指数']
             ],
         ],
         'log' => [

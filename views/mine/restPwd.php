@@ -43,6 +43,9 @@ $this->params = [
         $("#submit").click(function(){
             $.post($("#form").attr('action'),$("#form").serialize(),function(result){
                 layer.msg(result.msg);
+                if(result.code==1){
+                    setTimeout(function(){window.location.href='<?=\yii\helpers\Url::to(['mine/index'])?>'},1000)
+                }
             })
         })
     })

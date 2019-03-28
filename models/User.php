@@ -721,7 +721,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                     return ($model->isAttributeChanged($attribute) && !empty($model->$attribute))?true:false;
                 },'length'=>[6,6],'tooLong'=>'{attribute}不得超过{max}个字符','tooShort'=>'{attribute}不得超过{min}个字符'],
                 [['password'], 'string', 'when' => function ($model,$attribute) {
-                    return empty($model->$attribute);
+                    return !empty($model->$attribute);
                 },'length'=>[6,15],'tooLong'=>'{attribute}不得超过{max}个字符','tooShort'=>'{attribute}不得低于{min}个字符'],
                 [['password'],'required','when' => function ($model) {
                     return empty($model->id);

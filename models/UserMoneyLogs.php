@@ -4,6 +4,14 @@ namespace app\models;
 
 class UserMoneyLogs extends BaseModel
 {
+    const TYPE_DEFAULT = 0; //余额来源默认 0其它
+    const TYPE_CHARGE_OUT = 1; //余额来源 充值-发送给某用户
+    const TYPE_CHARGE_IN = 2; //余额来源 充值-发送方给接收用户
+    const TYPE_CHOOSE = 3; //余额来源 下注
+    const TYPE_CHOOSE_WIN = 4; //余额来源 下注
+    const TYPE_COMMISSION = 5; //余额来源 佣金
+    const TYPE_BACK = 6; //余额来源 返还
+
     protected $ignore_update_time=true;
 
     public static function tableName()

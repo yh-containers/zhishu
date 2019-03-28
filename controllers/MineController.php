@@ -57,6 +57,47 @@ class MineController extends CommonController
     public function actionDisList()
     {
         $state = (int)$this->request->get('state',0);
+
+        if($this->request->isAjax){
+            $query = \app\models\User::find()->where(['status'=>1]);
+            if($state==1){
+                $query->andWhere(['fuid1'=>$this->user_id]);
+            }elseif($state==2){
+                $query->andWhere(['fuid2'=>$this->user_id]);
+            }elseif ($state==3){
+                $query->andWhere(['fuid3'=>$this->user_id]);
+            }else{
+                $query->andWhere(['or',['fuid1'=>$this->user_id],['fuid2'=>$this->user_id],['fuid3'=>$this->user_id]]);
+            }
+
+            $count = $query->count();
+            $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount' => $count]));
+            $form_u_id = $this->user_id;
+            $list = $query->with(['baseComSum'=>function($query)use($form_u_id){
+                return $query->where(['type'=>\app\models\UserMoneyLogs::TYPE_COMMISSION,'form_uid'=>$form_u_id]);
+            }])->offset($pagination->offset)
+                ->limit($pagination->limit)
+                ->all();
+
+            $data = [];
+            foreach($list as $vo){
+                $data[] = [
+                    'id'         =>  $vo['id'],
+                    'face'       =>  $vo['face'],
+                    'money'      =>  $vo['money'],
+                    'form_money' =>  $vo->linkComSum,
+                    'type'       =>  $vo['type'],
+                    'online'     =>  $vo->getOnline(),//在线状态 0离线 1在线
+                    'type_name'  =>  \app\models\User::getUserType($vo['type'],'name'),
+                    'level'      =>  $vo['level'],
+                    'level_name' =>  \app\models\User::getUserLevel($vo['level'],'name'),
+                ];
+            }
+
+            return $this->asJson(['code'=>1,'msg'=>'获取成功','data'=>$data,'page'=>$pagination->pageCount]);
+        }
+
+
         return $this->render('disList',[
             'user_model' => $this->user_model,
             'state' => $state,

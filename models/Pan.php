@@ -122,14 +122,14 @@ class Pan extends BaseModel
 
                     if($compare==3){
                         //平
-                        User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id']],true);
+                        User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK],true);
 
                     }else{
                         $award_state = $compare==1 ? 1 : 2; //1涨 2跌
                         $is_win = $award_state==$item['is_up']?1:2;
                         if(empty($win_num) || empty($lose_num)){
                             if($is_win){ //获胜返回
-                                User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id']],true);
+                                User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK],true);
                             }
                         }else{
 
@@ -162,14 +162,11 @@ class Pan extends BaseModel
 
                             $item->save();
                             //获胜 获得 压注金额(扣手续费)+奖励金额
-                            $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜');
+                            $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜',['money_change_type'=>UserMoneyLogs::TYPE_CHOOSE_WIN],true,true);
 
                         }
 
                     }
-
-
-
                 }
 
                 //统计手续费问题
@@ -180,41 +177,34 @@ class Pan extends BaseModel
                     if($f_user_model['fuid1']){
                         $per = self::commissionMoney(0);
                         $money = $vo*$per;//获得比例
-                        if(array_key_exists($f_user_model['fuid1'],$commission_money)){
-                            $commission_money[$f_user_model['fuid1']]['money']+=$money;
-                            $commission_money[$f_user_model['fuid1']]['extra'][]=['uid'=>$key,'com'=>$vo,'per'=>$per];
-                        }else{
-                            $commission_money[$f_user_model['fuid1']] = ['money'=>$money,'extra'=>[['uid'=>$key,'com'=>$vo,'per'=>$per]]];
-                        }
+                        $u_l_f_key = $f_user_model['fuid1'].'_'.$key;
+                        $commission_money[$u_l_f_key] = ['money'=>$money,'extra'=>['com'=>$vo,'per'=>$per]];
+
 
                     }
                     if($f_user_model['fuid2']){
                         $per = self::commissionMoney(1);
                         $money = $vo*$per;//获得比例
-                        if(array_key_exists($f_user_model['fuid2'],$commission_money)){
-                            $commission_money[$f_user_model['fuid2']]['money']+=$money;
-                            $commission_money[$f_user_model['fuid2']]['extra'][]=['uid'=>$key,'com'=>$vo,'per'=>$per];
-                        }else{
-                            $commission_money[$f_user_model['fuid2']] = ['money'=>$money,'extra'=>[['uid'=>$key,'com'=>$vo,'per'=>$per]]];
-                        }
+                        $u_l_f_key = $f_user_model['fuid2'].'_'.$key;
+                        $commission_money[$u_l_f_key] = ['money'=>$money,'extra'=>['com'=>$vo,'per'=>$per]];
 
                     }
-                    if($f_user_model['fuid2']){
+                    if($f_user_model['fuid3']){
                         $per = self::commissionMoney(2);
                         $money = $vo*$per;//获得比例
-                        if(array_key_exists($f_user_model['fuid2'],$commission_money)){
-                            $commission_money[$f_user_model['fuid2']]['money']+=$money;
-                            $commission_money[$f_user_model['fuid2']]['extra'][]=['uid'=>$key,'com'=>$vo,'per'=>$per];
-                        }else{
-                            $commission_money[$f_user_model['fuid2']] = ['money'=>$money,'extra'=>[['uid'=>$key,'com'=>$vo,'per'=>$per]]];
-                        }
+                        $u_l_f_key = $f_user_model['fuid2'].'_'.$key;
+                        $commission_money[$u_l_f_key] = ['money'=>$money,'extra'=>['com'=>$vo,'per'=>$per]];
                     }
                 }
 
                 foreach ($commission_money as $uid=>$info){
+                    $arr = explode('_',$uid);
+                    $rec_uid  = isset($arr[0])?$arr[0]:0;  //接收则
+                    $form_uid = isset($arr[1])?$arr[1]:0;  //来源者
                     $money = isset($info['money'])?$info['money']:0;
                     $extra = isset($info['extra'])?$info['extra']:[];
-                    $money && User::modMoney($uid,$money,'佣金获取',$extra,true);
+                    $extra = array_merge($extra,['money_change_type'=>UserMoneyLogs::TYPE_COMMISSION,'money_change_form_uid'=>$form_uid]);
+                    $money && User::modMoney($rec_uid,$money,'佣金获取',$extra,true);
                 }
                 $transaction->commit();
             }catch (\Exception $e){

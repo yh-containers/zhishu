@@ -15,6 +15,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     const SCENARIO_REST_PWD = 'rest_pwd';
     const SCENARIO_REST_PAY_PWD = 'rest_pay_pwd';
 
+    private $_com_sum; //用户产生的佣金
+
     public $code;   //用户邀请码
     public $verify;
     public $re_password;
@@ -133,7 +135,18 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     public function changeMoney($event,$attr)
     {
         if(array_key_exists($attr,$event->changedAttributes) && !empty($event->changedAttributes[$attr])){
+
             $logs = new UserMoneyLogs();
+            //交易类型
+            if(isset($this->mod_money_extra['money_change_type'])){
+                $logs->type=$this->mod_money_extra['money_change_type'];
+                unset($this->mod_money_extra['money_change_type']);
+            }
+            //交易来源
+            if(isset($this->mod_money_extra['money_change_form_uid'])){
+                $logs->form_uid=$this->mod_money_extra['money_change_form_uid'];
+                unset($this->mod_money_extra['money_change_form_uid']);
+            }
             $logs->setAttributes([
                 'uid' => $this->getId(),
                 'origin_money' => $event->changedAttributes[$attr]?$event->changedAttributes[$attr]:0.00,
@@ -142,6 +155,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 'intro'        => $this->mod_money_intro,
                 'extra'        => json_encode($this->mod_money_extra),
             ],false);
+
             $logs->save();
 
         }
@@ -336,7 +350,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             //增加投票数量
             $this->updateCounters(['vote_times'=>1]);
             //投票动作
-            self::modMoney($this->getAttribute('id'),-$money,'下注扣除'.\Yii::$app->params['money_name']);
+            self::modMoney($this->getAttribute('id'),-$money,'下注扣除'.\Yii::$app->params['money_name'],['money_change_type'=>UserMoneyLogs::TYPE_CHOOSE]);
             //投票费率
             $per = Vote::getPer();
             //投票数据
@@ -457,8 +471,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             //开启事务
             $transaction = self::getDb()->beginTransaction();
             //用户支出
-            self::modMoney($this->id,-$money,'转出'.\Yii::$app->params['money_name'],['to_uid'=>$to_uid]);
-            self::modMoney($to_uid,$money,'获得转让'.\Yii::$app->params['money_name'],['send_uid'=>$this->id],true);
+            self::modMoney($this->id,-$money,'转出'.\Yii::$app->params['money_name'],['to_uid'=>$to_uid,'money_change_type'=>UserMoneyLogs::TYPE_CHARGE_OUT]);
+            self::modMoney($to_uid,$money,'获得转让'.\Yii::$app->params['money_name'],['send_uid'=>$this->id,'money_change_type'=>UserMoneyLogs::TYPE_CHARGE_IN,'money_change_form_uid'=>$this->id],true);
             $transaction->commit();
         }catch (\Exception $e){
             $transaction->rollBack();
@@ -508,7 +522,11 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     {
         return $this->authKey === $authKey;
     }
-
+    //佣金
+    public function setComSum($sum)
+    {
+        $this->_com_sum = $sum;
+    }
     /**
      * Validates password
      *
@@ -544,13 +562,14 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     }
 
     //money交易
-    public static function modMoney($user_id,$money,$intro='',$extra=[],$is_record_history_money=false)
+    public static function modMoney($user_id,$money,$intro='',$extra=[],$is_record_history_money=false,$is_record_com_money=false)
     {
         $user_model = self::findOne($user_id);
         if(empty($user_model)) throw new \Exception('用户信息异常');
         //更新用户余额
         $user_model->money	= $user_model->money + ($money);
         $is_record_history_money && $user_model->history_money= $user_model->history_money + ($money);
+        $is_record_com_money && $user_model->com_money = $user_model->com_money+$money;
         //附加数据
         $user_model->mod_money_intro=$intro;
         $user_model->mod_money_extra=$extra;
@@ -704,6 +723,32 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     public function getFriends()
     {
         return $this->hasMany(UserFriend::className(),['uid'=>'id']);
+    }
+
+    //下级用户余额变动
+    public function getLinkUserMoneyLogs()
+    {
+        return $this->hasMany(UserMoneyLogs::className(),['uid'=>'id']);
+    }
+    //下级给我提供的佣金--汇总
+    public function getLinkComSum()
+    {
+        if ($this->isNewRecord) {
+            return null; // 这样可以避免调用空主键进行查询
+        }
+
+        return empty($this->baseComSum) ? "0" : $this->baseComSum[0]['com_sum'];
+    }
+
+    /**
+     * 基于关联，声明一个用于查询聚合的新关联
+     */
+    public function getBaseComSum()
+    {
+        return $this->getLinkUserMoneyLogs()
+            ->select(['uid', 'com_sum' => 'sum(money)'])
+            ->groupBy('uid')
+            ->asArray(true);
     }
 
 }

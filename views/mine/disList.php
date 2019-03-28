@@ -35,55 +35,8 @@ $this->params = [
             </ul>
         </div>
         <div class="list">
-            <ul>
-                <li>
-                    <div class="avatar"><img src="/assets/images/avatar.png"><i class="icon iconfont icon-vip"></i></div>
-                    <div class="text">
-                        <h2>ID：759134<span>青铜会员</span></h2>
-                        <p>充值元宝：5000</p>
-                    </div>
-                    <div class="income">+2500</div>
-                </li>
-                <li>
-                    <div class="avatar"><img src="/assets/images/avatar.png"><i class="icon iconfont icon-vip"></i></div>
-                    <div class="text">
-                        <h2>ID：759134<span>青铜会员</span></h2>
-                        <p>充值元宝：5000</p>
-                    </div>
-                    <div class="income">+2500</div>
-                </li>
-                <li>
-                    <div class="avatar"><img src="/assets/images/avatar.png"><i class="icon iconfont icon-vip"></i></div>
-                    <div class="text">
-                        <h2>ID：759134<span>青铜会员</span></h2>
-                        <p>充值元宝：5000</p>
-                    </div>
-                    <div class="income">+2500</div>
-                </li>
-                <li>
-                    <div class="avatar"><img src="/assets/images/avatar.png"><i class="icon iconfont icon-vip"></i></div>
-                    <div class="text">
-                        <h2>ID：759134<span>青铜会员</span></h2>
-                        <p>充值元宝：5000</p>
-                    </div>
-                    <div class="income">+2500</div>
-                </li>
-                <li>
-                    <div class="avatar"><img src="/assets/images/avatar.png"><i class="icon iconfont icon-vip"></i></div>
-                    <div class="text">
-                        <h2>ID：759134<span>青铜会员</span></h2>
-                        <p>充值元宝：5000</p>
-                    </div>
-                    <div class="income">+2500</div>
-                </li>
-                <li>
-                    <div class="avatar"><img src="/assets/images/avatar.png"><i class="icon iconfont icon-vip"></i></div>
-                    <div class="text">
-                        <h2>ID：759134<span>青铜会员</span></h2>
-                        <p>充值元宝：5000</p>
-                    </div>
-                    <div class="income">+2500</div>
-                </li>
+            <ul id="demo">
+
             </ul>
         </div>
     </div>
@@ -91,12 +44,44 @@ $this->params = [
 
 <footer class="footer">
     <div class="income">
-        <p><i class="icon iconfont icon-wodeyuanbao"></i><strong>我的总收益：<?=$user_model['history_money']?></strong></p>
+        <p><i class="icon iconfont icon-wodeyuanbao"></i><strong>我的总收益：<?=$user_model['com_money']?></strong></p>
     </div>
 </footer>
 <?php $this->endBlock()?>
 
-
 <?php $this->beginBlock('script')?>
+    <script>
+        var url = '<?=\yii\helpers\Url::to(['','state'=>$state])?>';
+        var detail = '<?=\yii\helpers\Url::to(['chat/talk'])?>';
+        layui.use('flow', function(){
+            var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
+            var flow = layui.flow;
+            flow.load({
+                elem: '#demo' //指定列表容器
+                ,done: function(page, next){ //到达临界点（默认滚动触发），触发下一页
+                    var lis = [];
+                    //以jQuery的Ajax请求为例，请求下一页数据（注意：page是从2开始返回）
+                    $.get(url+(url.indexOf('?')>-1?'&':'?')+'page='+page, function(res){
+                        var data = res.hasOwnProperty('data')?res.data:[];
+                        //假设你的列表返回在data集合中
+                        layui.each(data, function(index, item){
+                            lis.push(' <li>\n' +
+                                '                    <div class="avatar"><img src="'+item.face+'">'+(item.type?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
+                                '                    <div class="text">\n' +
+                                '                        <h2>ID：'+item.id+'<span>'+(item.type_name)+'</span></h2>\n' +
+                                '                        <p><?=\Yii::$app->params['money_name']?>：'+item.money+'</p>\n' +
+                                '                    </div>\n' +
+                                '                    <div class="income">+'+item.form_money+'</div>\n' +
+                                '                </li>');
+                        });
 
+                        //执行下一页渲染，第二参数为：满足“加载更多”的条件，即后面仍有分页
+                        //pages为Ajax返回的总页数，只有当前页小于总页数的情况下，才会继续出现加载更多
+                        next(lis.join(''), page < res.page);
+                    });
+                }
+            });
+        });
+
+    </script>
 <?php $this->endBlock()?>

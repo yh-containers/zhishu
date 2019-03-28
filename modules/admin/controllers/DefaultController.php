@@ -11,7 +11,7 @@ class DefaultController extends Controller
 {
     public $user_id=0;
     public $user_name=0;
-    protected $ignore_action = 'admin/index/login;admin/index/captcha';
+    protected $ignore_action = ['admin/index/login','admin/index/captcha'];
     /**
      * @var \yii\web\Request
      * */
@@ -28,7 +28,8 @@ class DefaultController extends Controller
         //登录信息
         $admin_user_info = $session->get('admin_user_info');
         $current_route = \yii::$app->requestedRoute;
-        if(strpos($this->ignore_action,$current_route)===false && (!$session->isActive || empty($admin_user_info))){
+
+        if(!in_array($current_route,$this->ignore_action) && (empty($admin_user_info))){
             $this->redirect(\yii\helpers\Url::to(['index/login']));
         }
         $this->user_id = $admin_user_info['user_id'];

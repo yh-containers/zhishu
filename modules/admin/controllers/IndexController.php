@@ -23,8 +23,24 @@ class IndexController extends DefaultController
 
     public function actionIndex()
     {
-        return $this->render('index',[
+        //用户总数
+        $user_count = \app\models\User::find()->count();
+        //上证指数
+        $sz_count = \app\models\Pan::find()->where(['type'=>0,'date'=>date('Y-m-d')])->count();
+        $sz_open_time = \app\models\Pan::get_type(0,'con');
+        //德国
+        $gdaxi_count = \app\models\Pan::find()->where(['type'=>1,'date'=>date('Y-m-d')])->count();
+        $gdaxi_open_time = \app\models\Pan::get_type(0,'con');
+        //今日下注数量
+        $press_count = \app\models\Vote::find()->where(['>=','create_time',strtotime(date('Y-m-d'))])->count();
 
+        return $this->render('index',[
+            'user_count' => $user_count,
+            'sz_count' => $sz_count,
+            'gdaxi_count' => $gdaxi_count,
+            'press_count' => $press_count,
+            'sz_open_time' => $sz_open_time,
+            'gdaxi_open_time' => $gdaxi_open_time,
         ]);
     }
 

@@ -81,7 +81,7 @@ $config = [
     'modules' => [
         'admin' => [
             'class' => 'app\modules\admin\Admin',
-            'defaultRoute' => 'index/index',
+            'defaultRoute' => '/admin/index/index',
             'layout'=> 'main.php'
         ]
     ],

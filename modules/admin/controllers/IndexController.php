@@ -30,7 +30,7 @@ class IndexController extends DefaultController
         $sz_open_time = \app\models\Pan::get_type(0,'con');
         //德国
         $gdaxi_count = \app\models\Pan::find()->where(['type'=>1,'date'=>date('Y-m-d')])->count();
-        $gdaxi_open_time = \app\models\Pan::get_type(0,'con');
+        $gdaxi_open_time = \app\models\Pan::get_type(1,'con');
         //今日下注数量
         $press_count = \app\models\Vote::find()->where(['>=','create_time',strtotime(date('Y-m-d'))])->count();
 

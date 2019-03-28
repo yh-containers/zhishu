@@ -5,9 +5,10 @@ class TransactionController extends DefaultController
 {
     public function actionIndex()
     {
+        $date = $this->request->get('date');
+        $date = $date?$date:date('Y-m-d');
         $type = $this->request->get('type',0);
 
-        $date = date('Y-m-d');
         $query = \app\models\Pan::find()->where(['date'=>$date,'type'=>$type]);
         $count = $query->count();
         $pagination = new \yii\data\Pagination(['totalCount' => $count]);
@@ -29,6 +30,7 @@ class TransactionController extends DefaultController
         }
 
         return $this->render('index', [
+            'date' => $date,
             'list' => $list,
             'type' => $type,
             'pagination' => $pagination

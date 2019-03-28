@@ -47,6 +47,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         return [
             'username' => '用户名',
             'email' => '邮箱',
+            'verify' => '验证码',
             'password' => '帐号密码',
             're_password' => '确认密码',
             'pay_pwd' => '支付密码',
@@ -380,15 +381,22 @@ class User extends BaseModel implements \yii\web\IdentityInterface
      * */
     public function addFriend($f_uid)
     {
+        if($this->id ==$f_uid)  throw new \Exception('无法操作自己');
         $user_info=self::findOne($f_uid);
         if(empty($user_info)) throw new \Exception('用户信息异常');
-        $exist = UserFriend::find()->where(['uid'=>$this->id,'f_uid'=>$f_uid])->count();
-        if($exist>0) throw new \Exception('用户已是好友');
+        $model_friend = UserFriend::find()->where(['uid'=>$this->id,'f_uid'=>$f_uid])->one();
+//        if($exist>0) throw new \Exception('用户已是好友');
+        if(empty($model_friend)){
+            $model = new UserFriend();
+            $model->uid=$this->id;
+            $model->f_uid=$f_uid;
+            $model->save();
+        }else{
+            $model_friend->is_know=1;
+            $model_friend->is_black=0;
+            $model_friend->save();
+        }
 
-        $model = new UserFriend();
-        $model->uid=$this->id;
-        $model->f_uid=$f_uid;
-        $model->save();
     }
 
 
@@ -399,6 +407,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
      * */
     public function delFriend($f_uid)
     {
+        if($this->id ==$f_uid)  throw new \Exception('无法操作自己');
         $model = UserFriend::find()->where(['uid'=>$this->id,'f_uid'=>$f_uid])->one();
         $model && $model->delete();
     }
@@ -411,6 +420,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
      * */
     public function blackFriend($f_uid,$state)
     {
+        if($this->id ==$f_uid)  throw new \Exception('无法操作自己');
         $state=$state==1?1:0;
         $user_info=self::findOne($f_uid);
         if(empty($user_info)) throw new \Exception('用户信息异常');
@@ -422,6 +432,9 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             $model->is_black=$state;
             $model->save();
         }else{
+            $state=$model_friend->is_black  ?0:1;
+            //移入黑名单取消陌生人
+            $state && $model_friend->is_know=0;
             $model_friend->is_black=$state;
             $model_friend->save();
         }
@@ -435,7 +448,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
      * */
     public function knowFriend($f_uid,$state)
     {
-        $state=$state==1?1:0;
+        if($this->id ==$f_uid)  throw new \Exception('无法操作自己');
         $user_info=self::findOne($f_uid);
         if(empty($user_info)) throw new \Exception('用户信息异常');
         $model_friend = UserFriend::find()->where(['uid'=>$this->id,'f_uid'=>$f_uid])->one();
@@ -446,6 +459,9 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             $model->is_know=$state;
             $model->save();
         }else{
+            $state=$model_friend->is_know?0:1;
+            //移入陌生日取消黑名单
+            !$state && $model_friend->is_black = 0;
             $model_friend->is_know=$state;
             $model_friend->save();
         }
@@ -634,6 +650,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             return [
                 [['verify','email'], 'required','message'=>'{attribute}必须输入'],
                 [['email'], 'email','message'=>'请输入正确的{attribute}'],
+                [['email'], 'unique','message'=>'{attribute}已被注册'],
                 [['verify'], function ($attribute, $params) {
                     try{
                         Mail::checkVerify($this->email,$this->verify,2);
@@ -641,7 +658,6 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                         $this->addError($attribute, $e->getMessage());
                     }
                 }],
-                [['email'], 'unique','message'=>'{attribute}已被注册'],
             ];
 
         }elseif($scenario==self::SCENARIO_FORGET){
@@ -724,11 +740,16 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     {
         return $this->hasMany(UserFriend::className(),['uid'=>'id']);
     }
+    //关联朋友+-right
+    public function getRightFriends()
+    {
+        return $this->hasMany(UserFriend::className(),['f_uid'=>'id']);
+    }
 
     //下级用户余额变动
     public function getLinkUserMoneyLogs()
     {
-        return $this->hasMany(UserMoneyLogs::className(),['uid'=>'id']);
+        return $this->hasMany(UserMoneyLogs::className(),['form_uid'=>'id']);
     }
     //下级给我提供的佣金--汇总
     public function getLinkComSum()
@@ -746,8 +767,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     public function getBaseComSum()
     {
         return $this->getLinkUserMoneyLogs()
-            ->select(['uid', 'com_sum' => 'sum(money)'])
-            ->groupBy('uid')
+            ->select(['form_uid', 'com_sum' => 'sum(money)'])
+            ->groupBy('form_uid')
             ->asArray(true);
     }
 

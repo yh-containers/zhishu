@@ -33,7 +33,7 @@ $this->params = [
 <?php $this->beginBlock('script')?>
 <script>
     var _csrf= "<?=\Yii::$app->request->csrfToken?>";
-    var url = '<?=\yii\helpers\Url::to(['mine/withdraw-list'])?>';
+    var url = '<?=\yii\helpers\Url::to(['mine/withdraw-list','uid'=>$user_model->id])?>';
     layui.use('flow', function(){
         var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
         var flow = layui.flow;

@@ -65,15 +65,21 @@ class BaseModel extends ActiveRecord
         $model->attributes = $php_input;
 //        var_dump($this->getAttributes());
 //        var_dump($php_input);
-//        $model->setAttributes($php_input,$this->getScenario()?true:false);
+//        $model->setAttributes($php_input,false);
 //        var_dump($model->getAttributes());exit;
-        if(!$model->validate()){
+//        var_dump($model->getValidators());exit;
+//        if(!$model->validate()){
+//            $error_msg = $model->getFirstErrors();
+//            return ['code'=>0,'msg'=>$error_msg[key($error_msg)]];
+//        }
+//        var_dump($model->getAttributes());exit;
+        $state = $model->save();
+        if(!$model->hasErrors()){
+            return ['code'=>$state?1:0,'msg'=>$state?'操作成功':'操作失败'];
+        }else{
             $error_msg = $model->getFirstErrors();
             return ['code'=>0,'msg'=>$error_msg[key($error_msg)]];
         }
-//        var_dump($model->getAttributes());exit;
-        $state = $model->save();
-        return ['code'=>$state?1:0,'msg'=>$state?'操作成功':'操作失败'];
     }
 
     /*

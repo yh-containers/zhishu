@@ -84,6 +84,9 @@ $this->params = [
                 $.post($("#form").attr('action'),res_data,function(result){
                     layer.msg(result.msg)
                     layer.close(index)
+                    if(result.code==1){
+                        setTimeout(function(){window.history.back()},1000)
+                    }
                 })
             })
         }

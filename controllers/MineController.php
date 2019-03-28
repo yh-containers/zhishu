@@ -72,9 +72,9 @@ class MineController extends CommonController
 
             $count = $query->count();
             $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount' => $count]));
-            $form_u_id = $this->user_id;
-            $list = $query->with(['baseComSum'=>function($query)use($form_u_id){
-                return $query->where(['type'=>\app\models\UserMoneyLogs::TYPE_COMMISSION,'form_uid'=>$form_u_id]);
+            $uid = $this->user_id;
+            $list = $query->with(['baseComSum'=>function($query)use($uid){
+                return $query->where(['type'=>\app\models\UserMoneyLogs::TYPE_COMMISSION,'uid'=>$uid]);
             }])->offset($pagination->offset)
                 ->limit($pagination->limit)
                 ->all();
@@ -193,7 +193,7 @@ class MineController extends CommonController
         $type = $this->request->get('type',0);
         if($type){
             //我的好友
-            $query = \app\models\User::find()->joinWith(['friends'],true,' right join ')->where(['status'=>1]);
+            $query = \app\models\User::find()->joinWith(['rightFriends'],true,' right join ')->where(['uid'=>$this->user_id,'status'=>1]);
             if($type==3){//黑名单
                 $query->andWhere(['is_black'=>1]);
 
@@ -300,9 +300,9 @@ class MineController extends CommonController
                     $date = $cr_date;
                     $map =['like','create_time',$date.'%',false];
                     //支出
-                    $out = \app\models\UserMoneyLogs::find()->andWhere($map)->andWhere(['<','money',0])->sum('money');
+                    $out = \app\models\UserMoneyLogs::find()->where(['uid'=>$this->user_id])->andWhere($map)->andWhere(['<','money',0])->sum('money');
                     //收入
-                    $in = \app\models\UserMoneyLogs::find()->andWhere($map)->andWhere(['>','money',0])->sum('money');
+                    $in = \app\models\UserMoneyLogs::find()->where(['uid'=>$this->user_id])->andWhere($map)->andWhere(['>','money',0])->sum('money');
                     $data[]=[0,$date,$out?abs($out):0.00,$in?$in:0.00];
                     $data[]=[1,$vo['money'],$vo['create_time'],$vo['intro'] ];
                 }
@@ -310,9 +310,9 @@ class MineController extends CommonController
             return $this->asJson(['code'=>1,'msg'=>'获取成功','data'=>$data,'page'=>$pagination->pageCount]);
         }
         //总收入
-        $in_total =\app\models\UserMoneyLogs::find()->andWhere(['>','money',0])->sum('money');
+        $in_total =\app\models\UserMoneyLogs::find()->where(['uid'=>$this->user_id])->andWhere(['>','money',0])->sum('money');
         //总支出
-        $out_total =\app\models\UserMoneyLogs::find()->andWhere(['<','money',0])->sum('money');
+        $out_total =\app\models\UserMoneyLogs::find()->where(['uid'=>$this->user_id])->andWhere(['<','money',0])->sum('money');
         return $this->render('moneyLogs',[
             'in_total' => $in_total?$in_total:0.00,
             'out_total' => $out_total?abs($out_total):0.00,
@@ -375,7 +375,7 @@ class MineController extends CommonController
     public function actionWithdraw()
     {
         return $this->render('withdraw',[
-
+            'user_model' => $this->user_model,
         ]);
     }
 

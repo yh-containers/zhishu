@@ -94,7 +94,9 @@ $this->params = [
         $("#submit").click(function(){
             $.post($("#form").attr('action'),$("#form").serialize(),function(result){
                 layer.msg(result.msg)
-
+                if(result.code==1){
+                    setTimeout(function(){window.location.reload()},1000)
+                }
             })
         })
     })

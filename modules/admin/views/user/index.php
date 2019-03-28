@@ -33,7 +33,7 @@
                     <tr>
                         <td><?=$key+1?></td>
                         <td><?=$vo['username']?></td>
-                        <td><?=$vo->typeName.($vo['level']?'('.$vo->levelName.')':'')?></td>
+                        <td><?=$vo->typeName?></td>
                         <td><?=$vo['email']?> </td>
                         <td><?=$vo->getCode()?> </td>
                         <td><?=$vo['money']?> </td>

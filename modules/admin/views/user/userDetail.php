@@ -34,23 +34,23 @@
                             <td>邮箱</td>
                             <td><?=$model['email']?></td>
                             <td>状态</td>
-                            <td><?=$model['status']?></td>
+                            <td><?=$model?$model->statusName:''?></td>
                         </tr>
                         <tr>
                             <td>用户类型</td>
-                            <td><?=$model && $model->typeName?></td>
-                            <td>会员等级</td>
-                            <td><?=$model && $model->levelName?></td>
+                            <td><?=$model ? \app\models\User::getUserType($model['type'],'name'):''?></td>
+                            <td></td>
+                            <td></td>
                             <td><?=\Yii::$app->params['money_name']?></td>
                             <td><?= $model && $model['money']?></td>
                         </tr>
                         <tr>
                             <td>注册时间</td>
-                            <td><?=$model && $model->createTime?></td>
+                            <td><?= $model['create_time']?date('Y-m-d H:i:s',$model['create_time']):''?></td>
                             <td></td>
                             <td></td>
                             <td>邀请者</td>
-                            <td></td>
+                            <td><a href="<?=\yii\helpers\Url::to(['user-detail','id'=>$model['fuid1']])?>"><?=$model['fuid1']?></a></td>
                         </tr>
 
                         </tbody>
@@ -82,7 +82,7 @@
                                        <tr>
                                            <td><?= $vo['username']?></td>
                                            <td><?= $vo['email']?></td>
-                                           <td><?= $vo && $vo->createTime?></td>
+                                           <td><?= $vo['create_time']?date('Y-m-d H:i:s',$vo['create_time']):''?></td>
                                        </tr>
                                    <?php }?>
 
@@ -115,7 +115,7 @@
                                        <tr>
                                            <td><?= $vo['username']?></td>
                                            <td><?= $vo['email']?></td>
-                                           <td><?= $vo && $vo->createTime?></td>
+                                           <td><?= $vo['create_time']?date('Y-m-d H:i:s',$vo['create_time']):''?></td>
                                        </tr>
                                    <?php }?>
                                    </tbody>
@@ -147,7 +147,7 @@
                                        <tr>
                                            <td><?= $vo['username']?></td>
                                            <td><?= $vo['email']?></td>
-                                           <td><?= $vo && $vo->createTime?></td>
+                                           <td><?= $vo['create_time']?date('Y-m-d H:i:s',$vo['create_time']):''?></td>
                                        </tr>
                                    <?php }?>
 

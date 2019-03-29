@@ -121,16 +121,20 @@ class Pan extends BaseModel
                 $user_vote_info = [];
                 foreach ($model->each() as $item){
                     $get_money = 0;
-                    $item->award_state==4;
+
                     if($compare==3){
                         //平
                         User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK],true);
-
+                        $item->award_state==4; //默认 4返还
                     }else{
                         $award_state = $compare==1 ? 1 : 2; //1涨 2跌
                         $is_win = $award_state==$item['is_up']?1:2;
+                        $item->is_win = $is_win;
+                        //开奖
+                        $item->award_state = $award_state;  //1涨 2跌
                         if(empty($win_num) || empty($lose_num)){
                             if($is_win){ //获胜返回
+                                $item->award_state = 4;  //默认 4返还
                                 User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK],true);
                             }
                         }else{
@@ -142,9 +146,6 @@ class Pan extends BaseModel
                                 $user_vote_info[$item['uid']] = $charge;
                             }
 
-                            //开奖
-                            $item->award_state = $award_state;  //1涨 2跌
-                            $item->is_win = $is_win;
 
 
                             if($item->is_up==1){

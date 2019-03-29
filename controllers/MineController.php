@@ -457,4 +457,21 @@ class MineController extends CommonController
     {
         return $this->render('recharge');
     }
+
+    /*
+     * 修改用户信息
+     * */
+    public function actionModInfo()
+    {
+        $php_input = $this->request->post();
+        if(isset($php_input['_csrf']))unset($php_input['_csrf']);
+        $limit_key = ['face'];
+        foreach($php_input as $key=>$vo){
+            if(in_array($key,$limit_key)){
+                $this->user_model->$key = $vo;
+            }
+        }
+        $this->user_model->save();
+        return $this->asJson(['code'=>1,'msg'=>'操作成功']);
+    }
 }

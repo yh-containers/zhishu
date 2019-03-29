@@ -714,6 +714,10 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 ['password', 'compare', 'compareAttribute' => 're_password','message'=>'密码不一致'],
             ];
 
+        }elseif($scenario==self::SCENARIO_DEFAULT){
+            //默认
+            return [];
+
         }else{
             //其它验证
             return [

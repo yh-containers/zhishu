@@ -145,6 +145,8 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 .chatroom .chatroom_nav ul li.cur span{border-color:#c50000;}
 .chatroom .chatroom_nav ul li a{display: block;}
 .chatroom .withdraw ul li .status{font-size:1.4rem;overflow: hidden;text-overflow: ellipsis;white-space: nowrap;}
+.chatroom .red_dot{position: absolute;right:10%;top:0;background:#ff0000;border-radius: 50%;-webkit-border-radius: 50%;width:20px;height:20px;line-height:20px;text-align: center;color:#fff;font-size: 1.4rem;font-weight:bold;}
+
 
 
 /*聊天窗口*/
@@ -315,12 +317,20 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 
 
 /*会员中心*/
+#clipArea {display: none;position: fixed;left: 0px;top: 0px;width: 100%;height: 100%;z-index: 99;}
+.clipwrap {position: absolute;left: 0px;bottom:0px;width: 100%;height: 40px;z-index: 10;}
+.clipwrap button {color: #fff;font-size:0.8rem;width: 80px;line-height: 40px;text-align: center;font-size: 1.6rem;}
+#clipBtn {float: right;}
+.photo-clip-mask-top, .photo-clip-mask-right, .photo-clip-mask-bottom, .photo-clip-mask-left {background-color: rgba(0, 0, 0, 0.75) !important;}
+.loading_pop {display: none;position: fixed;left: 0px;top: 0px;right: 0px;bottom: 0px;margin: auto;width: 70px;height: 70px;background-color: rgba(0, 0, 0, 0.9);border-radius: 5px;}
+#file {position: absolute;width:100%;height:90px;opacity: 0;left: 0;top: 0;}
+
 .member{margin-bottom:40px;}
 .member .top{background-color:#c50000;background-image: url(../images/bg02.png);background-repeat: no-repeat;background-position:center 95px ;background-size:100%;padding-bottom: 20px;border-bottom: 1px #f0f0f0 solid;}
 .member .top .drop_out{font-size: 1.6rem;text-align: right;line-height: 50px;}
 .member .top .drop_out a{display: block;color:#fff;}
 .member .top .avatar{margin-bottom: 10px;position: relative;}
-.member .top .avatar img{width:90px;height:90px;}
+.member .top .avatar img{width:90px;height:90px;border-radius: 50%;-webkit-border-radius: 50%;}
 .member .top .avatar i{position: absolute;bottom: 0;left: 50%;background:#fff;width:30px;height:30px;line-height: 30px;border-radius:100%;text-align: center;color:#b36900;font-size: 2rem;margin-left:25px;}
 .member .top .text{position: relative;left: 50%;margin-left:-86px;margin-bottom: 20px;display: inline-block;}
 .member .top .text h2{font-size: 1.8rem;line-height:30px;}
@@ -455,6 +465,8 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 .footer_nav a.cur,.footer_nav a.cur i{color: #c50000;}
 .footer_nav a span {display: block; font-size: 1.4rem;text-align: center;}
 .footer_nav a em{position:absolute;top:0;right:25%;background-color:#fb3d3d;color:#fff;border-radius: 50%;width:16px;height:16px;line-height: 16px;text-align: center;}
+.footer_nav a span.red_dot{position: absolute;right:30%;top: 0;background:#ff0000;width:16px;height:16px;line-height: 16px;border-radius: 50%;-webkit-border-radius: 50%;color:#fff;font-size: 1.2rem;text-align: center;font-weight:bold;}
+
 
 .footer .income{position: fixed; left: 0; bottom: 0; width: 100%; background: #fff;z-index: 59;box-sizing:border-box;height:60px;line-height: 60px;box-shadow:0 -4px 20px rgba(116,116,116,0.2);-webkit-box-shadow:0 -4px 20px rgba(116,116,116,0.2);font-size: 1.6rem;}
 .footer .income p{padding:0 3%;color:#c50000;}

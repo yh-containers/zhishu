@@ -65,6 +65,7 @@ class ChatController extends CommonController
         $model->uid1    =   $users[0];
         $model->uid2    =   $users[1];
         $model->suid    =   $this->user_id;
+        $model->rec_uid =   $rec_uid;
         $model->type    =   $type;
         $model->content =   strip_tags(htmlspecialchars_decode($content)); //过滤有所html标签
         $model->save();

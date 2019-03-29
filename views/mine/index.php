@@ -11,10 +11,11 @@ $this->params = [
     <div class="member">
         <div class="top wrap">
             <div class="drop_out"><a href="<?=\yii\helpers\Url::to(['index/logout'])?>">退出登录</a></div>
-            <div class="avatar"><img src="<?=$user_model['face']?>">
+            <div class="avatar"><img id="preview" src="<?=$user_model['face']?>"/>
                 <?php if($user_model['type']>0){?>
                     <i class="icon iconfont icon-vip"></i>
                 <?php }?>
+                <input id="file" type="file" name="file" accept=""/>
             </div>
             <div class="text">
                 <h2>ID：<?=$user_model['id']?>
@@ -44,9 +45,49 @@ $this->params = [
     </div>
 </main>
 
+<div id="clipArea">
+    <div class="clipwrap">
+        <button id="clipBtn">完成</button>
+        <button id="clipClose">取消</button>
+    </div>
+</div>
 <?php $this->endBlock()?>
 
 
 <?php $this->beginBlock('script')?>
-
+<!-- 头像裁剪 -->
+<script src="/assets/js/hammer.min.js"></script>
+<script src="/assets/js/lrz.all.bundle.js"></script>
+<script src="/assets/js/iscroll-zoom-min.js"></script>
+<script src="/assets/js/PhotoClip.js"></script>
+<script>
+    var _csrf="<?=\Yii::$app->request->csrfToken?>"
+    document.addEventListener('touchmove', function (e) {
+        e.preventDefault();
+    }, false);
+    var clipArea = new PhotoClip("#clipArea", {
+        size: [280, 280],
+        outputSize: [640, 640],
+        file: "#file",
+        view: "#view",
+        ok: "#clipBtn",
+        loadComplete: function () {
+            $("#clipArea").css("display", "block");
+        },
+        done: function (dataURL,other) {
+            $("#preview").attr("src", dataURL);
+            $(".image").val(dataURL);
+            $("#clipArea").css("display", "none");
+            $.post("<?=\yii\helpers\Url::to(['mine/mod-info'])?>",{face:dataURL,_csrf:_csrf},function(result){
+                console.log(result.msg)
+            })
+        }
+    });
+    $("#clipClose").click(function () {
+        $("#clipArea").css("display", "none");
+    })
+    $("#changeImage").click(function () {
+        $("#file").click();
+    });
+</script>
 <?php $this->endBlock()?>

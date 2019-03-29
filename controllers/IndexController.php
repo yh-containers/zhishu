@@ -259,9 +259,9 @@ class IndexController extends CommonController
                 $current_model->up_time=$next_model['time'];
                 $current_model->up_price=$next_model['current_price'];//当前价格
                 $current_model->compare=$current_model['current_price']>$current_model['up_price']?2:($current_model['current_price']<$current_model['up_price']?1:3);//价格比较1涨 2跌 3平
-                $state=$current_model->save();
-                var_dump($state);
-                var_dump($current_model->getAttributes());
+                $current_model->save();
+//                var_dump($state);
+//                var_dump($current_model->getAttributes());
             }
         }
     }
@@ -285,9 +285,9 @@ class IndexController extends CommonController
                 $current_model->up_time=$next_model['time'];
                 $current_model->up_price=$next_model['current_price'];//当前价格
                 $current_model->compare=$current_model['current_price']>$current_model['up_price']?2:($current_model['current_price']<$current_model['up_price']?1:3);//价格比较1涨 2跌 3平
-                $state=$current_model->save();
-                var_dump($state);
-                var_dump($current_model->getAttributes());
+                $current_model->save();
+//                var_dump($state);
+//                var_dump($current_model->getAttributes());
             }
 
         }

@@ -81,8 +81,8 @@ class Pan extends BaseModel
     {
         //是否开奖
         if($this->getAttribute('up_date')){
-            var_dump($this->getAttributes());
-            //当前开奖id    
+//            var_dump($this->getAttributes());
+            //当前开奖id
             $id = $this->getAttribute('id');
             //开奖结果 1涨 2跌
             $compare = $this->getAttribute('compare');

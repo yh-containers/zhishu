@@ -35,7 +35,7 @@
 <script src="/assets/js/handle.js"></script>
 <?php if(\Yii::$app->controller->user_id){?>
     <!--链接websocket-->
-    <script src="/assets/js/Websocket.js"></script>
+    <script src="/assets/js/websocket.js"></script>
 <?php }?>
 <script src="/assets/layui-v2.4.5/layui.js"></script>
 <script>

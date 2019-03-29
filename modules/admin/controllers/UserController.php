@@ -29,8 +29,8 @@ class UserController extends DefaultController
         $model = new \app\models\User();
         if($request->isAjax){
             $php_input = $request->post();
-            if(empty($php_input['password']))  unset($php_input['password']);
-            if(empty($php_input['pay_pwd']))  unset($php_input['pay_pwd']);
+//            if(empty($php_input['password']))  unset($php_input['password']);
+//            if(empty($php_input['pay_pwd']))  unset($php_input['pay_pwd']);
 //            var_dump($php_input);exit;
             $result = $model->actionSave($php_input);
             return $this->asJson($result);

@@ -42,14 +42,15 @@ $this->params = [
 
                     //假设你的列表返回在data集合中
                     layui.each(data, function(index, item){
-                        if(item[0]===0 && current_month!=item[3]){
-                            current_month=item[3]
-                            // lis.push(getHtmlUp(item))
-                            lis.push(' <li>\n' +
-                                '<div class="month">\n' +
-                                '<div class="total"><span>'+item[1]+'</span><span>支出：'+item[2]+'</span><span>收入：'+item[3]+'</span></div>\n' +
-                                '</li>');
-
+                        if(item[0]===0 ){
+                            if(current_month!==item[1]){
+                                current_month=item[1]
+                                // lis.push(getHtmlUp(item))
+                                lis.push(' <li>\n' +
+                                    '<div class="month">\n' +
+                                    '<div class="total"><span>'+item[1]+'</span><span>支出：'+item[2]+'</span><span>收入：'+item[3]+'</span></div>\n' +
+                                    '</li>');
+                            }
                         }else{
                             lis.push(' <li>\n' +
                                 '<div class="left fl">\n' +

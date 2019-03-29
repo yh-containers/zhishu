@@ -341,7 +341,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             //德国指数
             $con_temp = array_values($con);
             $last_con = array_pop($con_temp);
-            if(strtotime($last_con)-time()<=60){
+
+            if($date<$last_con && strtotime($last_con)-time()<=60){
                 throw new \Exception('最后一期无法进行投票');
             }
         }else{

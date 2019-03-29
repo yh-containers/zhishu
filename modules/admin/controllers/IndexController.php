@@ -69,10 +69,12 @@ class IndexController extends DefaultController
             $session = \yii::$app->session;
             // 开启session
             $session->open();
+            $session->setTimeout(86400);
             $session['admin_user_info'] =[
                 'user_id' => $manage->id,
                 'name' => $manage->name,
             ];
+
             return $this->asJson(['code'=>1,'msg'=>'登录成功','url'=>\yii\helpers\Url::to(['index/index'])]);
         }
 

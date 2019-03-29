@@ -69,6 +69,7 @@ class IndexController extends CommonController
 
             //登录成功
             $session = \Yii::$app->session;
+            $session->setTimeout(86400);
             $session->set('user_info',[
                 'user_id'   =>  $user_info['id'],
             ]);

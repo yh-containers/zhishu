@@ -9,7 +9,7 @@ $this->params = [
 <?php $this->beginBlock('content')?>
 <header class="header index_header">
     <div class="content">
-        <div class="left"><i class="icon iconfont icon-yuanbao-copy"></i>元宝数：<span id="user-money"><?=$user_info['money']?></span></div>
+        <div class="left"><i class="icon iconfont icon-yuanbao-copy"></i><span id="user-money"><?=$user_info['money']?></span></div>
         <div class="center"><a href="<?=\yii\helpers\Url::to(['mine/recharge'])?>"><i class="icon iconfont icon-chongzhi1"></i><span>充值</span></a></div>
         <div class="right"><a href="<?=\yii\helpers\Url::to(['mine/withdraw'])?>"><i class="icon iconfont icon-tixian1"></i><span>提现</span></a></div>
     </div>

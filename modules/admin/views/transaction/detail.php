@@ -82,6 +82,7 @@ $this->params = [
                                     <th>输赢状态</th>
                                     <th>处理状态</th>
                                     <th>开奖时间</th>
+                                    <th>操作</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -96,7 +97,13 @@ $this->params = [
                                         <td><?= \app\models\Vote::getAwardState($vo['award_state'])?></td>
                                         <td><?= \app\models\Vote::getIsWin($vo['is_win'])?></td>
                                         <td><?= \app\models\Vote::getStatus($vo['status'])?></td>
-                                        <td><?= $vo['open_time']?date('Y-m-d H:i:s',$vo['open_time']):'--'?></td>
+                                        <td><?= $vo['open_time']?></td>
+                                        <td>
+                                            <?php if($vo['status']==1){?>
+                                                <a  href="javascript:;" onclick="$.common.confirm('<?= \yii\helpers\Url::to(['open','id'=>$vo['id']])?>',{id:<?=$vo['id']?>,_csrf:'<?=\Yii::$app->request->csrfToken?>'},'是否进行开奖?')" class="ml-5">  开奖</a>
+                                                <a  href="javascript:;" onclick="$.common.confirm('<?= \yii\helpers\Url::to(['back','id'=>$vo['id']])?>',{id:<?=$vo['id']?>,_csrf:'<?=\Yii::$app->request->csrfToken?>'},'是否原额返还?')" class="ml-5">  原额返还</a>
+                                            <?php }?>
+                                        </td>
                                     </tr>
                                 <?php }?>
 

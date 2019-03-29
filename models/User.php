@@ -330,9 +330,30 @@ class User extends BaseModel implements \yii\web\IdentityInterface
      * */
     public function vote($id,$money,$is_up=1,$type=0)
     {
+        $date = date('H:i:s');
         //验证是否闭盘
         $is_close = Pan::getTypeState($type);
         if($is_close) throw new \Exception('已停盘,无法下注');
+        //判断是否为停盘前一分钟
+
+        $con = Pan::get_type($type,'con');
+        if($type){
+            //德国指数
+            $con_temp = array_values($con);
+            $last_con = array_pop($con_temp);
+            if(strtotime($last_con)-time()<=60){
+                throw new \Exception('最后一期无法进行投票');
+            }
+        }else{
+            //上证指数
+            foreach ($con as $vo) {
+                if(strtotime($vo)-time()<=60){
+                    throw new \Exception('最后一期无法进行投票');
+                }
+            }
+
+        }
+
         //只能压涨和跌
         $push_info = Vote::getPushType($is_up);
         if($is_up<1 || $push_info===false)  throw new \Exception('压注类型异常');

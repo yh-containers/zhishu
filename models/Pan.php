@@ -124,8 +124,9 @@ class Pan extends BaseModel
 
                     if($compare==3){
                         //平
-                        User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK],true);
+                        $get_money = $item['money'];
                         $item->award_state==4; //默认 4返还
+                        User::modMoney($item['uid'],$get_money,'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK]);
                     }else{
                         $award_state = $compare==1 ? 1 : 2; //1涨 2跌
                         $is_win = $award_state==$item['is_up']?1:2;
@@ -134,8 +135,9 @@ class Pan extends BaseModel
                         $item->award_state = $award_state;  //1涨 2跌
                         if(empty($win_num) || empty($lose_num)){
                             if($is_win){ //获胜返回
+                                $get_money = $item['money'];
                                 $item->award_state = 4;  //默认 4返还
-                                User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK],true);
+                                User::modMoney($item['uid'],$get_money,'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK]);
                             }
                         }else{
 

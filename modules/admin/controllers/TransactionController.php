@@ -46,4 +46,32 @@ class TransactionController extends DefaultController
             'model' => $model,
         ]);
     }
+
+    //原额返回
+    public function actionBack()
+    {
+        $id = $this->request->get('id',0);
+        $model = \app\models\Vote::findOne($id);
+        if(empty($model)){$this->asJson(['code'=>0,'msg'=>'操作对象异常']);}
+        try{
+            $model && $model->back();
+            $this->asJson(['code'=>1,'msg'=>'操作成功']);
+        }catch (\Exception $e){
+            $this->asJson(['code'=>0,'msg'=>'异常:'.$e->getMessage()]);
+        }
+    }
+
+    //原额返回
+    public function actionOpen()
+    {
+        $id = $this->request->get('id',0);//投票id
+        $model = \app\models\Vote::findOne($id);
+        if(empty($model)){$this->asJson(['code'=>0,'msg'=>'操作对象异常']);}
+        try{
+            $model && $model->open();
+            $this->asJson(['code'=>1,'msg'=>'操作成功']);
+        }catch (\Exception $e){
+            $this->asJson(['code'=>0,'msg'=>'异常:'.$e->getMessage()]);
+        }
+    }
 }

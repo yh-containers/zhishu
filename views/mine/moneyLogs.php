@@ -12,8 +12,8 @@ $this->params = [
 </header>
 
 <main class="main mgtop">
-    <div class="recording" id="demo">
-
+    <div class="recording">
+        <ul  id="demo"></ul>
     </div>
 </main>
 
@@ -49,7 +49,7 @@ $this->params = [
                                 '<div class="month">\n' +
                                 '<div class="total"><span>'+item[1]+'</span><span>支出：'+item[2]+'</span><span>收入：'+item[3]+'</span></div>\n' +
                                 '</li>');
-                            
+
                         }else{
                             lis.push(' <li>\n' +
                                 '<div class="left fl">\n' +

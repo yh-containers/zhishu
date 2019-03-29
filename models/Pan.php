@@ -81,7 +81,7 @@ class Pan extends BaseModel
     {
         //是否开奖
         if($this->getAttribute('up_date')){
-            var_dump($this->getAttributes());
+//            var_dump($this->getAttributes());
             //当前开奖id
             $id = $this->getAttribute('id');
             //开奖结果 1涨 2跌
@@ -411,10 +411,10 @@ class Pan extends BaseModel
 
     }
 
-    public function rules()
-    {
-        return [[['type','today_price','yesterday_price','current_price','top_price','down_price','tran_num','tran_money','date','time','content','compare'],'safe']];
-    }
+//    public function rules()
+//    {
+//        return [[['type','today_price','yesterday_price','current_price','top_price','down_price','tran_num','tran_money','date','time','content','compare'],'safe']];
+//    }
 
     public static function handleNeedData($need_fields,$arr)
     {

@@ -8,7 +8,7 @@ $this->params = [
 
 <header class="header">
     <a href="javascript:window.history.back()" class="header_left"><i class="icon iconfont icon-jiantou"></i><span>返回</span></a>
-    <div class="header_title"><?=$user_model['pay_pwd']?'修改支付密码':'设置支付密码'?></div>
+    <div class="header_title">修改密码</div>
 </header>
 
 <main class="main mgtop">

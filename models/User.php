@@ -14,6 +14,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     const SCENARIO_MOD_EMAIL = 'mod_email';
     const SCENARIO_REST_PWD = 'rest_pwd';
     const SCENARIO_REST_PAY_PWD = 'rest_pay_pwd';
+    const SCENARIO_MOD_MONEY = 'mod_MONEY';
 
     private $_com_sum; //用户产生的佣金
 
@@ -479,6 +480,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
      * */
     public function transfer($to_uid,$money,$pay_pwd)
     {
+        if(empty($money)) throw new \Exception('请输入转账额度');
         if(!$this->getAttribute('pay_pwd')) throw new \Exception('请先设置支付密码');
         if(empty($pay_pwd)) throw new \Exception('支付密码不能为空');
         $pay_pwd_encode = self::generatePwd($pay_pwd,$this->getAttribute('pay_salt'));
@@ -486,6 +488,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         if($pay_pwd_encode!=$this->getAttribute('pay_pwd')) throw new \Exception('支付密码不正确');
         $rec_user_info = self::findOne($to_uid);
         if(empty($rec_user_info))  throw new \Exception('接收对象异常');
+
         try{
             //开启事务
             $transaction = self::getDb()->beginTransaction();
@@ -584,7 +587,10 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     public static function modMoney($user_id,$money,$intro='',$extra=[],$is_record_history_money=false,$is_record_com_money=false)
     {
         $user_model = self::findOne($user_id);
+
         if(empty($user_model)) throw new \Exception('用户信息异常');
+        $user_model->scenario =self::SCENARIO_MOD_MONEY;//定义场景
+//        var_dump($user_model->getAttributes());
         //更新用户余额
         $user_model->money	= $user_model->money + ($money);
         $is_record_history_money && $user_model->history_money= $user_model->history_money + ($money);
@@ -592,6 +598,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         //附加数据
         $user_model->mod_money_intro=$intro;
         $user_model->mod_money_extra=$extra;
+//        $user_model->save();
+//        var_dump($user_model->getAttributes());exit;
         return $user_model->save();
     }
 
@@ -604,6 +612,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         $scenarios[self::SCENARIO_MOD_EMAIL] = ['verify', 'email'];
         $scenarios[self::SCENARIO_REST_PWD] = ['old_pwd', 'password','re_password'];
         $scenarios[self::SCENARIO_REST_PAY_PWD] = ['old_pay_pwd', 'pay_pwd','re_pay_pwd'];
+        $scenarios[self::SCENARIO_MOD_MONEY] = ['money', 'history_money','com_money'];
+
         return $scenarios;
     }
 
@@ -612,6 +622,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     {
         //获取当前场景
         $scenario = $this->getScenario();
+
         if($scenario==self::SCENARIO_REST_PAY_PWD){
             $rule = [
                 [['old_pay_pwd'], 'required','when'=>function(){

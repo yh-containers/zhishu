@@ -346,8 +346,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         $wait_pan=Pan::findOne($id);
         if(empty($wait_pan)) throw new \Exception('下注对象异常');
         if($wait_pan['up_price']>0) throw new \Exception('该期已开奖无法下注');
-        $times = Vote::find()->where(['id'=>$id])->count();
-        if(!empty($times)) throw new \Exception('无法再次操作');
+//        $times = Vote::find()->where(['id'=>$id])->count();
+//        if($times>0) throw new \Exception('无法再次操作');
 
         try{
             //开启事务

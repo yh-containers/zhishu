@@ -28,6 +28,7 @@ $this->params = [
 <?php $this->beginBlock('script')?>
 <script>
     var url = '<?=\yii\helpers\Url::to(['mine/money-logs'])?>';
+    var current_month;
     layui.use('flow', function(){
         var $ = layui.jquery; //不用额外加载jQuery，flow模块本身是有依赖jQuery的，直接用即可。
         var flow = layui.flow;
@@ -41,8 +42,14 @@ $this->params = [
 
                     //假设你的列表返回在data集合中
                     layui.each(data, function(index, item){
-                        if(item[0]===0){
-                            lis.push(getHtmlUp(item))
+                        if(item[0]===0 && current_month!=item[3]){
+                            current_month=item[3]
+                            // lis.push(getHtmlUp(item))
+                            lis.push(' <li>\n' +
+                                '<div class="month">\n' +
+                                '<div class="total"><span>'+item[1]+'</span><span>支出：'+item[2]+'</span><span>收入：'+item[3]+'</span></div>\n' +
+                                '</li>');
+                            }
                         }else{
                             lis.push(' <li>\n' +
                                 '<div class="left fl">\n' +
@@ -64,25 +71,24 @@ $this->params = [
                 });
             }
         });
-        var is_up=false;
-        var current_month;
+
         //块顶部
-        function getHtmlUp(data){
-            if(current_month!=data[1]){
-                is_up=true;
-                current_month=data[1]
-                return (is_up?getHtmldown(data):'')+'<div class="month">\n' +
-                    '            <div class="total"><span>'+data[1]+'</span><span>支出：'+data[2]+'</span><span>收入：'+data[3]+'</span></div>\n' +
-                    '            <ul>'
-            }
-
-
-        }
+        // function getHtmlUp(data){
+        //     if(current_month!=data[1]){
+        //         is_up=true;
+        //         current_month=data[1]
+        //         return (is_up?getHtmldown(data):'')+'<div class="month">\n' +
+        //             '            <div class="total"><span>'+data[1]+'</span><span>支出：'+data[2]+'</span><span>收入：'+data[3]+'</span></div>\n' +
+        //             '            <ul>'
+        //     }
+        //
+        //
+        // }
         //闭合块
-        function getHtmldown(data){
-            return '</ul>\n' +
-                '        </div>'
-        }
+        // function getHtmldown(data){
+        //     return '</ul>\n' +
+        //         '        </div>'
+        // }
     });
 
 </script>

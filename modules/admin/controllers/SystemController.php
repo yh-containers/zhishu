@@ -143,4 +143,17 @@ class SystemController extends DefaultController
         return $this->asJson($result);
     }
 
+    //用户投诉
+    public function actionComplaint()
+    {
+        $query = \app\models\UserComplaint::find();
+        $count = $query->count();
+        $pagination = new \yii\data\Pagination(['totalCount'=>$count]);
+        $list = $query->with(['linkUser','linkCoverUser'])->offset($pagination->offset)->orderBy('id desc')->limit($pagination->limit)->all();
+
+        return $this->render('complaint',[
+            'list'  => $list,
+            'pagination' => $pagination
+        ]);
+    }
 }

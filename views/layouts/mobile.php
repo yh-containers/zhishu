@@ -16,6 +16,10 @@
     <?php if(isset($this->blocks['style'])){?>
         <?=$this->blocks['style']?>
     <?php }?>
+    <script>
+        //当前登录者用户id
+        var global_user_id = <?=\Yii::$app->controller->user_id?>;
+    </script>
 </head>
 <body <?= isset($this->params['body_style'])?$this->params['body_style']:'' ?>>
 
@@ -29,6 +33,10 @@
 </body>
 </html>
 <script src="/assets/js/handle.js"></script>
+<?php if(\Yii::$app->controller->user_id){?>
+    <!--链接websocket-->
+    <script src="/assets/js/Websocket.js"></script>
+<?php }?>
 <script src="/assets/layui-v2.4.5/layui.js"></script>
 <script>
     var layer;

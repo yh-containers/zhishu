@@ -527,7 +527,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     //获取用户是否在线
     public function getOnline()
     {
-        return 0;
+        return $this->swoole_fd>0?1:0;
     }
     //用户类型--名称
     public function getTypeName()

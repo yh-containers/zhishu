@@ -172,6 +172,7 @@ class IndexController extends CommonController
         $user_press_up_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id,'uid'=>$this->user_id])->sum('money');
         //跌--用户
         $user_press_down_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id,'uid'=>$this->user_id])->sum('money');
+        $model_user = \app\models\User::findOne($this->user_id);
         //获取当前开盘价跟收盘加
         $result = [
             //待开奖id
@@ -185,6 +186,7 @@ class IndexController extends CommonController
             //收盘价
             'close_data' => $close_data,
             'data' => $data,
+            'user_money' => $model_user['money']?$model_user['money']:0.00,
             'o_data' => [
                 $up_money?$up_money:0,
                 $down_money?$down_money:0,
@@ -200,6 +202,7 @@ class IndexController extends CommonController
     {
         $id = $this->request->get('id',0); //多少期
         $type = $this->request->get('type',0);
+        $model_user = \app\models\User::findOne($this->user_id);
         $where=['uid'=>$this->user_id];
         //涨
         $up_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id])->andWhere($where)->sum('money');
@@ -208,7 +211,7 @@ class IndexController extends CommonController
         //查询这一期结果
         $up_money_total = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id])->sum('money');
         $down_money_total = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id])->sum('money');
-        return $this->asJson([$up_money?$up_money:0,$down_money?$down_money:0,$up_money_total?$up_money_total:0,$down_money_total?$down_money_total:0]);
+        return $this->asJson([$up_money?$up_money:0,$down_money?$down_money:0,$up_money_total?$up_money_total:0,$down_money_total?$down_money_total:0,$model_user['money']?$model_user['money']:0.00]);
     }
 
     //检测是否可以开奖

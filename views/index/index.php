@@ -9,7 +9,7 @@ $this->params = [
 <?php $this->beginBlock('content')?>
 <header class="header index_header">
     <div class="content">
-        <div class="left"><i class="icon iconfont icon-yuanbao-copy"></i><span>元宝数：<?=$user_info['money']?></span></div>
+        <div class="left"><i class="icon iconfont icon-yuanbao-copy"></i>元宝数：<span id="user-money"><?=$user_info['money']?></span></div>
         <div class="center"><a href="<?=\yii\helpers\Url::to(['mine/recharge'])?>"><i class="icon iconfont icon-chongzhi1"></i><span>充值</span></a></div>
         <div class="right"><a href="<?=\yii\helpers\Url::to(['mine/withdraw'])?>"><i class="icon iconfont icon-tixian1"></i><span>提现</span></a></div>
     </div>
@@ -286,6 +286,8 @@ $this->params = [
                 //押跌-用户
                 o_data.hasOwnProperty(3) && $("#press-down-money").text(o_data[3])
 
+                //用户余额
+                result.hasOwnProperty('user_money') && $("#user-money").text(result.user_money);
                 if(req_data.length>1){
                     var data_type = typeof req_data[0]
                     if( data_type !== 'string'){
@@ -351,6 +353,8 @@ $this->params = [
                  result.hasOwnProperty(2) && $("#up-money").text(result[2])
                  //押跌
                  result.hasOwnProperty(3) && $("#down-money").text(result[3])
+                 //用户余额
+                 result.hasOwnProperty(4) && $("#user-money").text(result[4]);
              })
         }
 

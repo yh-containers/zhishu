@@ -152,6 +152,7 @@ class IndexController extends CommonController
         //获取今天最后一场
         $model = \app\models\Pan::find()->where(['type'=>$type,'date'=>date('Y-m-d')])->orderBy('id desc')->limit(1)->one();
         $model || $model= new \app\models\Pan();
+        $id = $id?$id:$model->getAttribute('id');
         $data = $model->getPanData($type,$is_init);
         //最近一次开奖时间
 //        $time = $model->getAttribute('time');

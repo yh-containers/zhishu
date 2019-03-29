@@ -120,7 +120,8 @@ class Pan extends BaseModel
 
                 $user_vote_info = [];
                 foreach ($model->each() as $item){
-
+                    $get_money = 0;
+                    $item->award_state==4;
                     if($compare==3){
                         //平
                         User::modMoney($item['uid'],$item['money'],'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK],true);
@@ -141,12 +142,10 @@ class Pan extends BaseModel
                                 $user_vote_info[$item['uid']] = $charge;
                             }
 
-                            $get_money = 0;
                             //开奖
                             $item->award_state = $award_state;  //1涨 2跌
                             $item->is_win = $is_win;
-                            $item->status = 2;//已开奖状态
-                            $item->open_time = date('Y-m-d H:i:s');
+
 
                             if($item->is_up==1){
                                 //涨赢了
@@ -159,15 +158,15 @@ class Pan extends BaseModel
                                     $get_money = intval(($item->result_money/$lose_result_money*$award_money)*100)/100;
                                 }
                             }
-                            $item->get_money = $get_money;//奖金
-
-                            $item->save();
-                            //获胜 获得 压注金额(扣手续费)+奖励金额
-                            $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜',['money_change_type'=>UserMoneyLogs::TYPE_CHOOSE_WIN],true);
-
                         }
-
                     }
+                    $item->get_money = $get_money;//奖金
+                    $item->status = 2;//已开奖状态
+                    $item->open_time = date('Y-m-d H:i:s');
+                    $item->save();
+                    //获胜 获得 压注金额(扣手续费)+奖励金额
+                    $get_money > 0 && User::modMoney($item->uid,($item->result_money+$get_money),'下注获胜',['money_change_type'=>UserMoneyLogs::TYPE_CHOOSE_WIN],true);
+
                 }
 
                 //统计手续费问题

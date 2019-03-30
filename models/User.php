@@ -654,8 +654,9 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                     return $this->getOldAttribute('pay_pwd');
                 },'message'=>'{attribute}必须输入'],
                 [['pay_pwd'], 'required','message'=>'{attribute}必须输入'],
+                [['pay_pwd'], 'match','pattern'=>'/^\d+$/','message'=>'{attribute}只能为数字'],
                 [['old_pay_pwd'], function($attribute,$params){
-                    if(!$this->old_pay_pwd){
+                    if($this->old_pay_pwd){
                         //存在值就验证
                         $old_pay_pwd_sign = self::generatePwd($this->old_pay_pwd,$this->getAttribute('pay_salt'));
                         if($old_pay_pwd_sign!=$this->getOldAttribute('pay_pwd')){

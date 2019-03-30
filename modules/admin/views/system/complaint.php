@@ -1,7 +1,7 @@
 <?php
     $this->title = '投诉';
     $this->params = [
-            'current_active' => ['system','system/help-center'],
+            'current_active' => ['system','system/complaint'],
             'crumb'          => ['系统管理','投诉'],
     ];
 ?>
@@ -33,7 +33,10 @@
                         <td><a href="<?=\yii\helpers\Url::to(['user/user-detail','id'=>$vo['c_uid']])?>"><?=$vo['linkCoverUser']['username']?></a></td>
                         <td><?=$vo['content']?> </td>
                         <td>
-                        <?php $img = explode(',',$vo['img']);foreach ($img as $st){?>
+                        <?php
+                            $img = $vo['img']?explode(',',$vo['img']):[];
+                            foreach ($img as $st){
+                        ?>
                             <img src="<?=$st?>" width="40px" height="40px"/>
                         <?php }?>
                         </td>

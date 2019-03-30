@@ -17,7 +17,7 @@ $this->params = [
                     <?php }?>
                 </div>
                 <form>
-
+                <input type="hidden" name="type" value="<?=$type?>"/>
                 <div class="col-sm-3 input-group input-group-sm"  style="margin-left: 10px">
                     <input type="text" class="form-control" name="date" value="<?=$date?>" id="test1" >
                     <span class="input-group-btn">

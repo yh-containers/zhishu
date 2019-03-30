@@ -35,8 +35,8 @@ $this->params = [
                 <a href="javascript:;"><i class="icon iconfont icon-add"></i></a>
                 <dl>
                     <dd onclick="friend(1)">移至我的好友</dd>
-                    <dd onclick="friend(2)">移至陌生人</dd>
-                    <dd onclick="friend(3)">移至黑名单</dd>
+                    <dd onclick="friend(2)" id="is_know"><?=!empty($friend_info)?($friend_info['is_know']?'移至陌生人':'移出陌生人'):'移至陌生人'?></dd>
+                    <dd onclick="friend(3)" id="is_black"><?=!empty($friend_info)?($friend_info['is_black']?'移出黑名单':'移入黑名单'):'移入黑名单'?></dd>
                 </dl>
             </li>
             <li>
@@ -171,20 +171,40 @@ $this->params = [
         setInterval(loadData,20000)
     });
 
-
+    var is_know = <?=$friend_info['is_know']?$friend_info['is_know']:1?> ;
+    var is_black = <?=$friend_info['is_black']?$friend_info['is_black']:0?> ;
     function friend(opt_index){
-        var tip = ['','是否添加好友?','是否移至陌生人?','是否移至黑名单?'];
+        console.log(is_know)
+        var tip = ['','是否添加好友?',['是否移出陌生人','是否移至陌生人?'],['是否移至黑名单?','是否移出黑名单?']];
         var url = ['','<?=\yii\helpers\Url::to(['mine/add-friend'])?>','<?=\yii\helpers\Url::to(['mine/know-friend'])?>','<?=\yii\helpers\Url::to(['mine/black-friend'])?>'];
         if(tip.hasOwnProperty(opt_index)){
             var msg = tip[opt_index];
             var obj = {};
             obj._csrf=_csrf
             obj.f_uid=chat_obj_uid;
+
+            if(opt_index==2){
+                msg = msg[is_know]
+            }else if(opt_index==3){
+                msg = msg[is_black]
+            }
+
             layer.confirm(msg,function(){
                 var index = layer.load();
                 $.post(url[opt_index],obj,function(result){
                     layer.msg(result.msg)
                     layer.close(index)
+                    if(result.code==1){
+                        if(opt_index==2){
+                            is_know = is_know?0:1
+                            $("#is_know").text(is_know?'移出陌生人':'移至陌生人');
+                        }else if(opt_index==3){
+                            is_black = is_black?0:1
+                            $("#is_black").text(is_black?'移出黑名单':'移至黑名单');
+                        }
+                    }
+
+
                 })
             })
         }

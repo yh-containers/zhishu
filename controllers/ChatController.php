@@ -21,6 +21,8 @@ class ChatController extends CommonController
     {
         $f_uid = $this->request->get('id');
         $users = [$f_uid,$this->user_id];
+        //好友状态
+        $friend_info = \app\models\UserFriend::find()->where(['uid'=>$this->user_id,'f_uid'=>$f_uid])->one();
         //我要聊天对象的信息
         $users_all = \app\models\User::find()->where(['in','id',$users])->all();
         $user_info = [];
@@ -38,10 +40,21 @@ class ChatController extends CommonController
         }
         return $this->render('talk',[
             'f_uid'=>$f_uid,
+            'friend_info' => $friend_info,
             'user_info' => $user_info,
             'chart_obj_info' => isset($user_info[$f_uid])?$user_info[$f_uid]:'',
         ]);
     }
+
+    //获取好友状态
+    public function actionFriendInfo()
+    {
+        $f_uid = $this->request->get('id');
+        //好友状态
+        $friend_info = \app\models\UserFriend::find()->where(['uid'=>$this->user_id,'f_uid'=>$f_uid])->one();
+        return $this->asJson(['is_know']);
+    }
+
 
     //发送聊天
     public function actionSay()

@@ -12,16 +12,14 @@ class TransactionController extends DefaultController
         $query = \app\models\Pan::find()->where(['date'=>$date,'type'=>$type]);
         $count = $query->count();
         $pagination = new \yii\data\Pagination(['totalCount' => $count]);
-        $list = $query->offset($pagination->offset)->limit($pagination->limit)->orderBy('id desc')->all();
+        $list = $query->asArray()->offset($pagination->offset)->limit($pagination->limit)->orderBy('id desc')->all();
         $ids = array_column($list,'id');
-//        var_dump($ids);exit;
         $vote = \app\models\Vote::find()
             ->asArray()
             ->select(['wid','y_count'=>'count(*)','up_money_total'=>'sum(if(is_up=1,money,0))','down_money_total'=>'sum(if(is_up=2,money,0))'])
             ->where(['in','wid',$ids])
             ->groupBy('wid')
-            ->one();
-
+            ->all();
         !empty($vote) && $vote = array_column($vote,null,'wid');
         foreach ($list as &$vo) {
             $vo['y_count']  = isset($vote[$vo['id']])?$vote[$vo['id']]['y_count']:0;

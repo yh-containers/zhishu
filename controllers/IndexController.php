@@ -225,23 +225,28 @@ class IndexController extends CommonController
     //test入口
     public function actionTest()
     {
-        $week = date("w");
-        var_dump($week);
-        $date_time='00:30:00';
-        if(($date_time>'16:00:00' && $date_time<'23:59:59') || ($date_time>'00:00:00' && $date_time<'00:30:00')){
-            echo '123';
-        }
-        echo 321321;exit;
-        //测试
-//        $model = \app\models\Pan::findOne(180);
-//        $model->current_price = rand(3080,3099);
-//        $model->save();
-//        var_dump(\app\models\Pan::getLastOpenSecond(0));
-        //获取数据
-        $content = file_get_contents("http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?id=GDAXI_UI&TYPE=r&rtntype=5");
-        $content = substr($content,1,-1);
-        $content = json_decode($content,true);
-        var_dump($content);exit;
+        $id = $this->request->get('id',10);
+        $model = \app\models\User::findOne($id);
+        $model->vote_times=$model->vote_times+1;
+        $model->save();
+        exit;
+//        $week = date("w");
+//        var_dump($week);
+//        $date_time='00:30:00';
+//        if(($date_time>'16:00:00' && $date_time<'23:59:59') || ($date_time>'00:00:00' && $date_time<'00:30:00')){
+//            echo '123';
+//        }
+//        echo 321321;exit;
+//        //测试
+////        $model = \app\models\Pan::findOne(180);
+////        $model->current_price = rand(3080,3099);
+////        $model->save();
+////        var_dump(\app\models\Pan::getLastOpenSecond(0));
+//        //获取数据
+//        $content = file_get_contents("http://pdfm.eastmoney.com/EM_UBG_PDTI_Fast/api/js?id=GDAXI_UI&TYPE=r&rtntype=5");
+//        $content = substr($content,1,-1);
+//        $content = json_decode($content,true);
+//        var_dump($content);exit;
 
     }
 

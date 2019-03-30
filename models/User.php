@@ -194,43 +194,45 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     //投票数量
     public function reqUserVoteTimes($event,$attr)
     {
-        $fuid1 = $this->getAttribute('fuid1');//直接用户
-        $vote_times = $this->getAttribute('vote_times');
-        $user_type  = $this->getAttribute('type');
-        $type_info = self::getUserType($user_type+1);
-
-        //用户等级--满足投票次数-晋升活跃玩家
-        if(empty($user_type) && $vote_times){
-            //验证是否满足投票次数
-            if(array_key_exists('vote',$type_info) && $vote_times>=$type_info['vote']){
-                $this->type=$user_type+1;
-                $this->save(true,['type']);
-            }
-        }
-
-        //父级等级提升问题
-        if($fuid1){
-            //已邀请满足的用户
-            $count_user = self::find()->where(['>','type',0])->andWhere(['fuid1'=>$fuid1])->count();
-            $user_type_info = self::getUserType();
-            $level = 0;//会员等级信息
-            foreach ($user_type_info as $key=>$vo) {
-                if(array_key_exists('vote_user',$vo)){
-                    $vote_user = $vo['vote_user'];
-                    $min = isset($vote_user[0])?$vote_user[0]:0;
-                    $max = isset($vote_user[1])?$vote_user[1]:0;
-                    if(($min && $max && $count_user>=$min && $count_user<$max) || (empty($max) && $count_user>=$min)){
-                        $level=$key;
-                    }
+        if(!empty($event) && in_array($attr,$event->changedAttributes)){
+            $fuid1 = $this->getAttribute('fuid1');//直接用户
+            $vote_times = $this->getAttribute('vote_times');
+            $user_type  = $this->getAttribute('type');
+            $type_info = self::getUserType($user_type+1);
+            //用户等级--满足投票次数-晋升活跃玩家
+            if(empty($user_type) && $vote_times){
+                //验证是否满足投票次数
+                if(array_key_exists('vote',$type_info) && $vote_times>=$type_info['vote']){
+                    $this->type=$user_type+1;
+                    $this->save(true,['type']);
                 }
             }
-            $model_fuid1 = self::findOne($fuid1);
-            //满足条件升级等级
-            if(!empty($model_fuid1) && $level>1 && $level!=$model_fuid1['type']) {
-                $model_fuid1->type = $level;
-                $model_fuid1->save();
+
+            //父级等级提升问题
+            if($fuid1){
+                //已邀请满足的用户
+                $count_user = self::find()->where(['>','type',0])->andWhere(['fuid1'=>$fuid1])->count();
+                $user_type_info = self::getUserType();
+                $level = 0;//会员等级信息
+                foreach ($user_type_info as $key=>$vo) {
+                    if(array_key_exists('vote_user',$vo)){
+                        $vote_user = $vo['vote_user'];
+                        $min = isset($vote_user[0])?$vote_user[0]:0;
+                        $max = isset($vote_user[1])?$vote_user[1]:0;
+                        if(($min && $max && $count_user>=$min && $count_user<$max) || (empty($max) && $count_user>=$min)){
+                            $level=$key;
+                        }
+                    }
+                }
+                $model_fuid1 = self::findOne($fuid1);
+                //满足条件升级等级
+                if(!empty($model_fuid1) && $level>1 && $level!=$model_fuid1['type']) {
+                    $model_fuid1->type = $level;
+                    $model_fuid1->save();
+                }
             }
         }
+
 
     }
 
@@ -375,7 +377,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             //开启事务
             $transaction = self::getDb()->beginTransaction();
             //增加投票数量
-            $this->updateCounters(['vote_times'=>1]);
+            $this->vote_times=$this->vote_times+1;
+            $this->save();
             //投票动作
             self::modMoney($this->getAttribute('id'),-$money,'下注扣除'.\Yii::$app->params['money_name'],['money_change_type'=>UserMoneyLogs::TYPE_CHOOSE]);
             //投票费率
@@ -460,7 +463,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         }else{
             $state=$model_friend->is_black  ?0:1;
             //移入黑名单取消陌生人
-            $state && $model_friend->is_know=0;
+            $state && $model_friend->is_know=1;
             $model_friend->is_black=$state;
             $model_friend->save();
         }
@@ -487,7 +490,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         }else{
             $state=$model_friend->is_know?0:1;
             //移入陌生日取消黑名单
-            !$state && $model_friend->is_black = 0;
+            $state && $model_friend->is_black = 0;
             $model_friend->is_know=$state;
             $model_friend->save();
         }

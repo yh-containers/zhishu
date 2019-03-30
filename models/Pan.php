@@ -251,15 +251,24 @@ class Pan extends BaseModel
      * */
     public static function getTypeState($type=0)
     {
+        //当前周几
+        $week = date('w');
         $is_close = 1; //1bi 0open
         $current_date_time = date('H:i:s');
         $con = self::get_type($type,'con');
+        $stop_week = self::get_type($type,'stop_week');
         foreach ($con as $key=>$vo) {
             if($current_date_time<$vo && $current_date_time>$key) {
                 $is_close=0;
                 break;
             }
         }
+        
+        if(in_array($week,$stop_week)){
+            $is_close=1;
+        }
+
+
         return $is_close;
 
     }
@@ -270,8 +279,8 @@ class Pan extends BaseModel
     public static function get_type($type=null,$fields='')
     {
         $data = [
-            ['name'=>'上证指数','url'=>'http://hq.sinajs.cn/list=sh000001','con'=>['09:00:00'=>'11:30:00','14:00:00'=>'15:00:00']],
-            ['name'=>'德国','url'=>'','con'=>['16:00:00'=>'23:59:59','00:00:00'=>'00:30:00']],
+            ['name'=>'上证指数','url'=>'http://hq.sinajs.cn/list=sh000001','con'=>['09:00:00'=>'11:30:00','14:00:00'=>'15:00:00'],'stop_week'=>['0','6']],
+            ['name'=>'德国','url'=>'','con'=>['16:00:00'=>'23:59:59','00:00:00'=>'00:30:00'],'stop_week'=>['0','6']],
         ];
         if(is_null($type)){
             return $data;

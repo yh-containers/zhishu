@@ -205,7 +205,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 //验证是否满足投票次数
                 if(array_key_exists('vote',$type_info) && $vote_times>=$type_info['vote']){
                     $this->type=$user_type+1;
-                    $this->save(true,['type']);
+                    $this->save(false,['type']);
                 }
             }
 
@@ -229,7 +229,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 //满足条件升级等级
                 if(!empty($model_fuid1) && $level>1 && $level!=$model_fuid1['type']) {
                     $model_fuid1->type = $level;
-                    $model_fuid1->save();
+                    $model_fuid1->save(false);
                 }
             }
         }
@@ -639,8 +639,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         $scenarios[self::SCENARIO_REST_PWD] = ['old_pwd', 'password','re_password'];
         $scenarios[self::SCENARIO_REST_PAY_PWD] = ['old_pay_pwd', 'pay_pwd','re_pay_pwd'];
         $scenarios[self::SCENARIO_MOD_MONEY] = ['money', 'history_money','com_money'];
-//        $scenarios[self::SCENARIO_DEFAULT] = ;
-
+        
         return $scenarios;
     }
 
@@ -772,9 +771,6 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 [['status'],'default', 'value' => 1],
                 [['face'],'default', 'value' => '/assets/images/avatar.png'],
                 [['money'],'default', 'value' => 0],
-                [['type','level','username','face','email','password','salt','money','history_money','com_money',
-                    'pay_pwd','pay_salt','auth_key','access_token','status','fuid1','fuid2','fuid3','is_show_protocol',
-                    'swoole_fd','online_time','offline_time','vote_times'],'safe']
             ];
         }
 

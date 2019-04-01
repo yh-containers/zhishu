@@ -17,7 +17,7 @@ class IndexController extends CommonController
         if(!empty($user_info) && empty($user_info['is_show_protocol'])){
             $is_show_protocol=1;
             $user_info->is_show_protocol=$is_show_protocol;
-            $user_info->save();
+            $user_info->save(false);
         }
         return $this->render('index',[
             'user_info' => $user_info,

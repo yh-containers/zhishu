@@ -719,14 +719,6 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 ['password', 'compare', 'compareAttribute' => 're_password','message'=>'密码不一致'],
             ];
 
-        }elseif($scenario==self::SCENARIO_DEFAULT){
-            //默认
-            return [
-                [['type','level','username','face','email','password','salt','money','history_money','com_money',
-                    'pay_pwd','pay_salt','auth_key','access_token','status','fuid1','fuid2','fuid3','is_show_protocol',
-                    'swoole_fd','online_time','offline_time','vote_times'],'safe']
-                ];
-
         }else{
             //其它验证
             return [
@@ -779,6 +771,9 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 [['status'],'default', 'value' => 1],
                 [['face'],'default', 'value' => '/assets/images/avatar.png'],
                 [['money'],'default', 'value' => 0],
+                [['type','level','username','face','email','password','salt','money','history_money','com_money',
+                    'pay_pwd','pay_salt','auth_key','access_token','status','fuid1','fuid2','fuid3','is_show_protocol',
+                    'swoole_fd','online_time','offline_time','vote_times'],'safe']
             ];
         }
 

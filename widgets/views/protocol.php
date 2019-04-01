@@ -34,15 +34,7 @@
         }
         s.innerHTML = s.innerHTML * 1 - 1;
     }, 1000);
-
-    $(".registered .agree input").on("click",function(){
-        $(this).toggleClass( "on_checkbox" );
-    });
-
-    $(".registered .agree a").click(function(){
-        $(".protocol_pop").show();
-    });
-    $(".close").click(function(){
-        $(".protocol_pop").hide();
+    $(".explanation_pop .close").click(function(){
+        $(".explanation_pop").hide();
     });
 </script>

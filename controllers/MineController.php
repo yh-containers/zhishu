@@ -192,29 +192,37 @@ class MineController extends CommonController
     public function actionShowList()
     {
         $type = $this->request->get('type',0);
+        $query = \app\models\User::find()->joinWith(['linkChat'=>function($query){
+            return $query
+                ->onCondition(['{{%user_chat}}.is_read' =>0]);
+        }]);
         if($type){
             //我的好友
-            $query = \app\models\User::find()->joinWith(['rightFriends'],true,' right join ')->where(['uid'=>$this->user_id,'status'=>1]);
+            $query
+                ->joinWith(['rightFriends'],true,' right join ')
+                ->where(['{{%user_friend}}.uid'=>$this->user_id,'{{%user}}.status'=>1]);
             if($type==3){//黑名单
-                $query->andWhere(['is_black'=>1]);
+                $query->andWhere(['{{%user_friend}}.is_black'=>1]);
 
             }elseif ($type==2){//陌生人
-                $query->andWhere(['is_know'=>0]);
+                $query->andWhere(['{{%user_friend}}.is_know'=>0]);
 
             }else{
-                $query->andWhere(['is_black'=>0,'is_know'=>1]);
+                $query->andWhere(['{{%user_friend}}.is_black'=>0,'{{%user_friend}}.is_know'=>1]);
             }
         }else{
-            $query = \app\models\User::find()->where(['status'=>1])->andWhere(['!=','id',$this->user_id]);
+            $query->where(['{{%user}}.status'=>1])->andWhere(['!=','{{%user}}.id',$this->user_id]);
 
         }
 
-        $count = $query->count();
+        $count = $query->groupBy('{{%user}}.id')->count();
         $pagination = \Yii::createObject(array_merge(\Yii::$app->components['pagination'],['totalCount' => $count]));
-        $list = $query->offset($pagination->offset)
+        $list = $query
+            ->select(['{{%user}}.*','chat_count'=>'count({{%user_chat}}.id)'])
+            ->groupBy('{{%user}}.id')
+            ->offset($pagination->offset)
             ->limit($pagination->limit)
             ->all();
-
         $data = [];
         foreach($list as $vo){
             $data[] = [
@@ -222,6 +230,7 @@ class MineController extends CommonController
                 'face'       =>  $vo['face'],
                 'money'      =>  $vo['money'],
                 'type'       =>  $vo['type'],
+                'chat_count' =>  $vo['chat_count'],
                 'online'     =>  $vo->getOnline(),//在线状态 0离线 1在线
                 'type_name'  =>  \app\models\User::getUserType($vo['type'],'name'),
                 'level'      =>  $vo['level'],
@@ -410,7 +419,11 @@ class MineController extends CommonController
         $uid = $this->request->get('uid',0);
         $where=[];
         //按用户查询
-        $uid && $where['uid'] = $uid;
+        if($uid){
+            $where['uid'] = $uid;
+        } else{
+            $where = ['!=','uid',$this->user_id];
+        }
 
         $query = \app\models\UserWithdraw::find()
             ->joinWith(['userInfo'])->where($where);

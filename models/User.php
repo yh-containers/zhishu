@@ -18,6 +18,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
 
     private $_com_sum; //用户产生的佣金
 
+    public $chat_count=0;
     public $code;   //用户邀请码
     public $verify;
     public $re_password;
@@ -718,10 +719,6 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 ['password', 'compare', 'compareAttribute' => 're_password','message'=>'密码不一致'],
             ];
 
-        }elseif($scenario==self::SCENARIO_DEFAULT){
-            //默认
-            return [];
-
         }else{
             //其它验证
             return [
@@ -774,6 +771,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 [['status'],'default', 'value' => 1],
                 [['face'],'default', 'value' => '/assets/images/avatar.png'],
                 [['money'],'default', 'value' => 0],
+                [['type'],'default', 'value' => 0],
             ];
         }
 
@@ -788,6 +786,14 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     public function getRightFriends()
     {
         return $this->hasMany(UserFriend::className(),['f_uid'=>'id']);
+    }
+    /**
+     * 我没有接受的聊天数量
+     *
+     * */
+    public function getLinkChat()
+    {
+        return $this->hasOne(UserChat::className(),['suid'=>'id']);
     }
 
     //下级用户余额变动

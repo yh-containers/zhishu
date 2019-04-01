@@ -41,7 +41,7 @@ $this->params = [
             <div class="position">
                 <div class="bullish">
                     <div class="num"><i class="icon iconfont icon-yuanbao-copy"></i><span id="up-money">500000</span></div>
-                    <div class="red cylinder high"><p></p></div>
+                    <div class="red cylinder"><p></p></div>
                     <div class="name">看涨元宝</div>
                 </div>
             </div>
@@ -117,13 +117,13 @@ $this->params = [
         <div class="title">我的收益</div>
         <div class="content">
             <i><img src="/assets/images/ingots.png"></i>
-            <p>+1800</p>
+            <p id="up_get_money">+1800</p>
             <a href="javascript:;" class="close">确认</a>
         </div>
     </div>
 </div>
 
-<?php \app\widgets\Protocol::widget()?>
+<?= \app\widgets\Protocol::widget(['is_show'=>$is_show_protocol])?>
 <?php $this->endBlock()?>
 
 
@@ -258,6 +258,8 @@ $this->params = [
                 var is_close = result.hasOwnProperty('is_close')?result.is_close:0;
                 //以往开盘数据
                 var req_data = result.hasOwnProperty('data')?result.data:[];
+                //上一次开盘数据
+                var up_data = result.hasOwnProperty('up_data')?result.up_data:[];
                 //以往开盘数据
                 var open_data = result.hasOwnProperty('open_data')?result.open_data:[];
                 var close_data = result.hasOwnProperty('close_data')?result.close_data:[];
@@ -286,6 +288,21 @@ $this->params = [
                 //押跌-用户
                 o_data.hasOwnProperty(3) && $("#press-down-money").text(o_data[3])
 
+                //判断幅度
+                if(o_data.hasOwnProperty(0) && o_data.hasOwnProperty(1)){
+                    //先删除高度
+                    $(".look .high").removeClass('high')
+                    o_data[0]!==o_data[1]?(o_data[0]>o_data[1] ?$(".look .red").addClass('high'):$(".look .green").addClass('high')):''
+                }
+                //是否中奖
+                if(up_data.hasOwnProperty(1)){
+                    if(parseFloat(up_data[1])>0){
+                        //中奖效果
+                        $(".income_pop #up_get_money").text('+'+up_data[1]);
+                        $(".income_pop").show();
+                    }
+                }
+
                 //用户余额
                 result.hasOwnProperty('user_money') && $("#user-money").text(result.user_money);
                 if(req_data.length>1){
@@ -294,13 +311,17 @@ $this->params = [
                         option.xAxis.data=req_data.map(showxAxisData);
                         option.series.data=req_data.map(showData);
                     }else{
+                        var current_show_length = option.series.data.length;
+                        //更改开奖属性
+                        console.log(option.series.data[(current_show_length-1)])
+                        option.series.data[(current_show_length-1)][4] = up_data.hasOwnProperty(0)?up_data[0]:0
+                        console.log(option.series.data[(current_show_length-1)])
                         //x坐标
-                        option.xAxis.data.length>=15 && option.xAxis.data.shift();
+                        current_show_length>=15 && option.xAxis.data.shift();
                         option.xAxis.data.push(showxAxisData(req_data));
                         //数据
-                        option.series.data.length>=15 && option.series.data.shift();
+                        current_show_length>=15 && option.series.data.shift();
                         option.series.data.push(showData(req_data));
-
                     }
                     is_new_obj && myChart.setOption(option);
 
@@ -355,6 +376,15 @@ $this->params = [
                  result.hasOwnProperty(3) && $("#down-money").text(result[3])
                  //用户余额
                  result.hasOwnProperty(4) && $("#user-money").text(result[4]);
+
+
+                 //判断幅度
+                 if(result.hasOwnProperty(2) && result.hasOwnProperty(3)){
+                     //先删除高度
+                     $(".look .high").removeClass('high')
+
+                     result[2]!==result[3]?(result[2]>result[3] ?$(".look .red").addClass('high'):$(".look .green").addClass('high')):''
+                 }
              })
         }
 
@@ -400,10 +430,6 @@ $this->params = [
             $(".income_pop .close").click(function(){
                 $(".income_pop").hide();
             });
-
-
-
-
 
         });
     })

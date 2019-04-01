@@ -14,9 +14,15 @@ class IndexController extends CommonController
         $type = (int)$this->request->get('type',0);
         //获取用户信息
         $user_info = \app\models\User::findOne($this->user_id);
+        if(empty($user_info['is_show_protocol'])){
+            $is_show_protocol=1;
+            $user_info->is_show_protocol=$is_show_protocol;
+            $user_info->save();
+        }
         return $this->render('index',[
             'user_info' => $user_info,
             'type' => $type,
+            'is_show_protocol' => isset($is_show_protocol)?$is_show_protocol:0,
         ]);
     }
 
@@ -150,10 +156,17 @@ class IndexController extends CommonController
         $type = $this->request->get('type',0);
         $is_init = $this->request->get('is_init',0);
         $id = $this->request->get('id',0); //等待开奖
+
         //获取今天最后一场
         $model = \app\models\Pan::find()->where(['type'=>$type,'date'=>date('Y-m-d')])->orderBy('id desc')->limit(1)->one();
         $model || $model= new \app\models\Pan();
         $id = $id?$id:$model->getAttribute('id');
+
+        //上一盘开奖数据
+        $model_up = \app\models\Pan::find()->where(['<','id',$id])->orderBy('id desc')->one();
+        //是否中奖
+        $award_info = \app\models\Vote::find()->where(['uid'=>$this->user_id,'wid'=>$model_up['id']])->one();
+        $award_money = $award_info['is_win']=1?$award_info['get_money']:"0";
         $data = $model->getPanData($type,$is_init);
         //最近一次开奖时间
 //        $time = $model->getAttribute('time');
@@ -183,6 +196,8 @@ class IndexController extends CommonController
             'ons'       => (int)$open_next_second,
             //开盘价
             'open_data' => $open_data,
+            //上一次开盘结果
+            'up_data' => [!empty($model_up['compare'])?$model_up['compare']:0,$award_money],
             //收盘价
             'close_data' => $close_data,
             'data' => $data,

@@ -109,9 +109,11 @@ class ChatController extends CommonController
             $data[]=[
                 (string)$item['id'],date('Y-m-d H:i:s',$item['create_time']),(string)$item['suid'],(string)$item['type'],(string)$item['content']
             ];
-            $item->is_read = 1;
-            $item->read_time = date('Y-m-d H:i:s');
-            $item->save();
+            if($this->user_id==$item['rec_uid']){
+                $item->is_read = 1;
+                $item->read_time = date('Y-m-d H:i:s');
+                $item->save();
+            }
         }
         return $this->asJson($data);
     }

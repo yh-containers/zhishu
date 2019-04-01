@@ -42,14 +42,14 @@
                             <td></td>
                             <td></td>
                             <td><?=\Yii::$app->params['money_name']?></td>
-                            <td><?= $model && $model['money']?></td>
+                            <td><?= $model['money']?></td>
                         </tr>
                         <tr>
                             <td>注册时间</td>
                             <td><?= $model['create_time']?date('Y-m-d H:i:s',$model['create_time']):''?></td>
                             <td></td>
                             <td></td>
-                            <td>邀请者</td>
+                            <td>邀请者id</td>
                             <td><a href="<?=\yii\helpers\Url::to(['user-detail','id'=>$model['fuid1']])?>"><?=$model['fuid1']?></a></td>
                         </tr>
 

@@ -1,5 +1,5 @@
 <?php
-$this->title = '忘记密码';
+$this->title = '找回密码';
 $this->params = [
 ];
 ?>
@@ -46,6 +46,9 @@ $this->params = [
         $("#submit").click(function(){
             $.post($("#form").attr('action'),$("#form").serialize(),function(result){
                 layer.msg(result.msg);
+                if(result.code==1){
+                    window.location.href="<?=\yii\helpers\Url::to(['index/login'])?>"
+                }
             })
         })
     })

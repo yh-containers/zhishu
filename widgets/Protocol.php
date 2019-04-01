@@ -24,7 +24,7 @@ use Yii;
  */
 class Protocol extends \yii\bootstrap\Widget
 {
-
+    public $is_show = 0;
     public function init()
     {
         parent::init();
@@ -36,9 +36,12 @@ class Protocol extends \yii\bootstrap\Widget
      */
     public function run()
     {
-        $content = \app\models\Setting::getContent('protocol');
-        return $this->render('protocol',[
-            'content'=>$content,
-        ]);
+        if($this->is_show){
+            $content = \app\models\Setting::getContent('protocol');
+            return $this->render('protocol',[
+                'content'=>$content,
+            ]);
+
+        }
     }
 }

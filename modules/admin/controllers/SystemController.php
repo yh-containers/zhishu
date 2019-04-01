@@ -100,6 +100,15 @@ class SystemController extends DefaultController
         ]);
     }
 
+    //协议
+    public function actionProtocolReg()
+    {
+        $content = \app\models\Setting::getContent('protocol_reg');
+        return $this->render('protocolReg',[
+            'content'  => $content
+        ]);
+    }
+
     //帮助中心
     public function actionHelpCenter()
     {

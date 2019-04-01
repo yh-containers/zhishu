@@ -44,7 +44,7 @@ $this->title = '注册';
     </div>
 </main>
 
-<?= \app\widgets\Protocol::widget()?>
+<?= \app\widgets\ProtocolReg::widget()?>
 
 <?php $this->endBlock(); ?>
 

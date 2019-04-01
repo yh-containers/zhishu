@@ -350,14 +350,15 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             }
         }else{
             //上证指数
-            foreach ($con as $vo) {
-                if(strtotime($vo)-time()<=60){
-                    throw new \Exception('最后一期无法进行投票');
+            foreach ($con as $key=>$vo) {
+                if($date>=$key && $date<=$vo){
+                    if(strtotime($vo)-time()<=60){
+                        throw new \Exception('最后一期无法进行投票');
+                    }
                 }
             }
 
         }
-
         //只能压涨和跌
         $push_info = Vote::getPushType($is_up);
         if($is_up<1 || $push_info===false)  throw new \Exception('压注类型异常');
@@ -639,7 +640,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         $scenarios[self::SCENARIO_REST_PWD] = ['old_pwd', 'password','re_password'];
         $scenarios[self::SCENARIO_REST_PAY_PWD] = ['old_pay_pwd', 'pay_pwd','re_pay_pwd'];
         $scenarios[self::SCENARIO_MOD_MONEY] = ['money', 'history_money','com_money'];
-        
+
         return $scenarios;
     }
 

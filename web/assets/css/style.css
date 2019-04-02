@@ -90,7 +90,7 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 .exponent .title i{float: left;font-size:4rem;color:#c50000;line-height:40px;margin-right:5px;height:40px;width: 40px;}
 .exponent .title p{float: left;font-size: 1.6rem;line-height: 20px;width:40px;}
 .exponent ul{width:calc(100% - 85px);float: left;}
-.exponent ul li{margin-left: 4%;width:46%;float: left;background:#999;height:40px;line-height: 40px;text-align: center;font-size:1.5rem;color:#fff;border-radius:6px;-webkit-border-radius:6px;overflow: hidden;text-overflow:ellipsis;white-space:nowrap;}
+.exponent ul li{margin-left:4%;width:46%;float: left;background:#999;height:40px;line-height: 40px;text-align: center;font-size:1.4rem;color:#fff;border-radius:6px;-webkit-border-radius:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .exponent ul li.cur{background:#c50000;}
 
 .betting{padding:0 3% 20px;overflow: hidden;*zoom:1;text-align: center;}
@@ -150,10 +150,10 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 
 
 /*聊天窗口*/
-.chatbox{padding:20px 3%;}
+.chatbox{padding:20px 3%;overflow-y: auto;height: calc(100vh - 184px);}
 .chatbox .time{text-align: center;line-height: 30px;font-size: 1.2rem;padding-bottom: 10px;}
 .chatbox .avatar{position: relative;width:50px;}
-.chatbox .avatar img{width:50px;height:50px;margin:0;}
+.chatbox .avatar img{width:50px;height:50px;margin:0;border-radius:50%;-webkit-border-radius:50%;}
 .chatbox .avatar i{position: absolute;bottom: 0;background:#fff;width:20px;height:20px;line-height:20px;border-radius:100%;text-align: center;color:#b36900;font-size:1.6rem;}
 .chatbox .text{width:calc(100% - 110px);float: left;}
 .chatbox .text h2{font-size: 1.6rem;line-height:30px;padding-bottom:6px;}
@@ -215,6 +215,7 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 .complaint{background:#fff;padding:15px 15px 40px;border-radius: 6px;-webkit-border-radius: 6px;margin:20px 3%;}
 .complaint .top{overflow: hidden;*zoom:1;margin-bottom: 20px;}
 .complaint .top .avatar{float: left;margin-right:5px;padding-right: 10px;position: relative;width:60px;}
+.complaint .top .avatar img{width:60px;height:60px;border-radius: 50%;-webkit-border-radius: 50%;}
 .complaint .top .avatar i{position: absolute;bottom: 0;background:#fff;width:20px;height:20px;line-height:20px;border-radius:100%;text-align: center;color:#b36900;font-size:1.6rem;left: 40px;}
 .complaint .top .text{float: left;width:calc(100% - 75px);margin-top:8px;}
 .complaint .top .text p{font-size:1.2rem;background:#b36900;border-radius:15px;display:block;width:66px;line-height: 20px;color:#fff;text-align: center;}
@@ -358,7 +359,7 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 .distribution{background:#fff;}
 .distribution .top{background:#c50000;padding:20px 3% 30px;overflow: hidden;*zoom:1;}
 .distribution .top .avatar{margin-right: 10px;position: relative;width:100px;float: left;}
-.distribution .top .avatar img{width:90px;height:90px;margin:0;}
+.distribution .top .avatar img{width:90px;height:90px;margin:0;border-radius:50%;-webkit-border-radius:50%;}
 .distribution .top .avatar i{position: absolute;bottom: 0;left:70px;background:#fff;width:25px;height:25px;line-height:25px;border-radius:100%;text-align: center;color:#b36900;font-size: 2rem;}
 .distribution .top .text{color:#fff;width:calc(100% - 110px);float: left;}
 .distribution .top .text h2,.distribution .list ul li .text h2,.withdraw ul li .text h2{font-size: 1.8rem;line-height:30px;}
@@ -380,7 +381,7 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 .distribution .list{margin-bottom: 20px;}
 .distribution .list ul li{overflow: hidden;*zoom:1;border-bottom: 1px #d9d9d9 solid;padding:15px 3%;}
 .distribution .list ul li .avatar,.withdraw ul li .avatar{position: relative;width:70px;float: left;}
-.distribution .list ul li .avatar img,.withdraw ul li .avatar img{width:60px;height:60px;margin:0;}
+.distribution .list ul li .avatar img,.withdraw ul li .avatar img{width:60px;height:60px;margin:0;border-radius:50%;-webkit-border-radius:50%;}
 .distribution .list ul li .avatar i,.withdraw ul li .avatar i{position: absolute;bottom: 0;left:45px;background:#fff;width:20px;height:20px;line-height:20px;border-radius:100%;text-align: center;color:#b36900;}
 .distribution .list ul li .text{float: left;width:calc(100% - 150px);padding:5px 0;}
 .distribution .list ul li .text p{font-size: 1.4rem;line-height: 20px;}

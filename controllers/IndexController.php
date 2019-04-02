@@ -163,11 +163,18 @@ class IndexController extends CommonController
         $id = $id?$id:$model->getAttribute('id');
 
         //上一盘开奖数据
-        $model_up = \app\models\Pan::find()->where(['<','id',$id])->orderBy('id desc')->one();
-        //是否中奖
-        $award_info = \app\models\Vote::find()->where(['uid'=>$this->user_id,'wid'=>$model_up['id']])->one();
-        $award_money = $award_info['is_win']==1?$award_info['get_money']:"0";
+        $up_compare = 0;//上一次开盘奖励情况
+        $award_money = "0";
+        if(!$is_init){
+            $model_up = \app\models\Pan::find()->where(['<','id',$id])->orderBy('id desc')->one();
+            $up_compare = !empty($model_up['compare'])?$model_up['compare']:0;
+            //是否中奖--非初始化数据
+            $award_info = \app\models\Vote::find()->where(['uid'=>$this->user_id,'wid'=>$model_up['id']])->one();
+            $award_money = $award_info['is_win']==1?$award_info['get_money']:"0";
+        }
+
         $data = $model->getPanData($type,$is_init);
+
         //最近一次开奖时间
 //        $time = $model->getAttribute('time');
         $time = date('H:i:s');
@@ -197,7 +204,7 @@ class IndexController extends CommonController
             //开盘价
             'open_data' => $open_data,
             //上一次开盘结果
-            'up_data' => [!empty($model_up['compare'])?$model_up['compare']:0,$award_money],
+            'up_data' => [$up_compare,$award_money],
             //收盘价
             'close_data' => $close_data,
             'data' => $data,

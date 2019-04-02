@@ -222,6 +222,7 @@ class MineController extends CommonController
             ->groupBy('{{%user}}.id')
             ->offset($pagination->offset)
             ->limit($pagination->limit)
+            ->orderBy('count({{%user_chat}}.id) desc')
             ->all();
         $data = [];
         foreach($list as $vo){

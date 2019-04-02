@@ -193,9 +193,9 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         return $req_user_id;
     }
     //投票数量
-    public function reqUserVoteTimes($event,$attr)
+    public function reqUserVoteTimes($event=null,$attr=null)
     {
-        if(!empty($event) && in_array($attr,$event->changedAttributes)){
+        if(( empty($event) && empty($attr) ) || (!empty($event) && array_key_exists($attr,$event->changedAttributes))  ){
             $fuid1 = $this->getAttribute('fuid1');//直接用户
             $vote_times = $this->getAttribute('vote_times');
             $user_type  = $this->getAttribute('type');
@@ -380,7 +380,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             $transaction = self::getDb()->beginTransaction();
             //增加投票数量
             $this->vote_times=$this->vote_times+1;
-            $this->save();
+            $this->save(false);
             //投票动作
             self::modMoney($this->getAttribute('id'),-$money,'下注扣除'.\Yii::$app->params['money_name'],['money_change_type'=>UserMoneyLogs::TYPE_CHOOSE]);
             //投票费率

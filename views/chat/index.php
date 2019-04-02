@@ -52,7 +52,7 @@ $this->params = [
                         lis.push('<li>\n' +
                             '<a href="'+detail+(detail.indexOf('?')>-1?'&':'?')+'id='+item.id+'">\n' +
                             '<div class="avatar">' +
-                            (item.chat_count>0?'<span class="red_dot">3</span>':'')+
+                            (item.chat_count>0?'<span class="red_dot">'+item.chat_count+'</span>':'')+
                             '<img src="'+item.face+'">'+(item.type?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
                             '<div class="text">\n' +
                             '<h2>ID：'+item.id+'<span>'+(item.type_name)+'</span></h2>\n' +

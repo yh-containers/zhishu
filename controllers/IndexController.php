@@ -165,7 +165,7 @@ class IndexController extends CommonController
         //上一盘开奖数据
         $up_compare = 0;//上一次开盘奖励情况
         $award_money = "0";
-        if(!$is_init){
+        if($is_init){
             $model_up = \app\models\Pan::find()->where(['<','id',$id])->orderBy('id desc')->one();
             $up_compare = !empty($model_up['compare'])?$model_up['compare']:0;
             //是否中奖--非初始化数据

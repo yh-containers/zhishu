@@ -15,9 +15,6 @@ $this->params = [
     <div class="chatroom">
         <div class="chatroom_nav">
             <ul class="clearfix">
-                <?php /*?>
-                <li <?=$type?'':'class="cur"'?>><a href="<?=\yii\helpers\Url::to(['chat/index'])?>"><span>全部会员</span></a></li>
-                <?php */?>
                 <li <?=$type==1?'class="cur"':''?>><a href="<?=\yii\helpers\Url::to(['chat/index','type'=>1])?>"><span>我的好友</span></a></li>
                 <li <?=$type==2?'class="cur"':''?>><a href="<?=\yii\helpers\Url::to(['chat/index','type'=>2])?>"><span>陌生人</span></a></li>
                 <li <?=$type==3?'class="cur"':''?>><a href="<?=\yii\helpers\Url::to(['chat/index','type'=>3])?>"><span>黑名单</span></a></li>

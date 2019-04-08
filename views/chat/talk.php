@@ -161,7 +161,8 @@ $this->params = [
                             '            </div>\n' +
                             '        </div>'
                     })
-                    $("#chat-box").append(html)
+                    $("#chat-box").append(html);
+                    $('.chatbox')[0].scrollTop =$('.chatbox')[0].scrollHeight;
                 }
                 layer.close(index)
 
@@ -211,4 +212,5 @@ $this->params = [
     }
 
 </script>
+
 <?php $this->endBlock()?>

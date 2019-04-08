@@ -11,6 +11,8 @@ class UserMoneyLogs extends BaseModel
     const TYPE_CHOOSE_WIN = 4; //余额来源 下注
     const TYPE_COMMISSION = 5; //余额来源 佣金
     const TYPE_BACK = 6; //余额来源 返还
+    const TYPE_WITHDRAW_UP = 7; //上架
+    const TYPE_WITHDRAW_DOWN = 8; //下架
 
     protected $ignore_update_time=true;
 

@@ -135,7 +135,7 @@ class Pan extends BaseModel
                         $item->award_state = $award_state;  //1涨 2跌
                         if(empty($win_num) || empty($lose_num)){
                             if($is_win==1){ //获胜返回
-                                $get_money = $item['money'];
+                                $get_money = $item['result_money'];
                                 $item->award_state = 4;  //默认 4返还
                                 User::modMoney($item['uid'],$get_money,'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK]);
                             }

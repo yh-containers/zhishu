@@ -541,6 +541,55 @@ class User extends BaseModel implements \yii\web\IdentityInterface
 
     }
 
+    /*
+     * 上架提现金额
+     * */
+    public function upWithdraw($data)
+    {
+        $data['uid']  = $this->id;//
+        $data['my_money']  = $this->money;//我的余额
+        $model = new UserWithdraw();
+        $model->scenario = UserWithdraw::SCENARIO_UP;
+        //开启事务
+        $transaction = self::getDb()->beginTransaction();
+        try{
+            $result = $model->actionSave($data);
+            if(!$result['code']) throw new \Exception($result['msg']);
+
+            //上架冻结月
+            self::modMoney($this->id,-$data['money'],'上架冻结:'.$data['money'].\Yii::$app->params['money_name'],['money_change_type'=>UserMoneyLogs::TYPE_WITHDRAW_UP]);
+
+            $transaction->commit();
+        }catch (\Exception $e){
+            $transaction->rollBack();
+            throw new \Exception('转账异常:'.$e->getMessage());
+        }
+    }
+
+    /*
+     * 上架提现金额
+     * */
+    public function downWithdraw($id)
+    {
+        //开启事务
+        $transaction = self::getDb()->beginTransaction();
+        try{
+            $model = \app\models\UserWithdraw::find()->where(['uid'=>$this->id,'id'=>$id])->one();
+            if(empty($model))  throw new \Exception('删除对象异常');
+            //上架解冻余额
+            self::modMoney($this->id,$model['money'],'解冻:'.$model['money'].\Yii::$app->params['money_name'],['money_change_type'=>UserMoneyLogs::TYPE_WITHDRAW_DOWN]);
+
+            //执行删除
+            $model->delete();
+
+            $transaction->commit();
+        }catch (\Exception $e){
+            $transaction->rollBack();
+            throw new \Exception('转账异常:'.$e->getMessage());
+        }
+
+    }
+
     //获取用户是否在线
     public function getOnline()
     {

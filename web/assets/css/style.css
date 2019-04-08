@@ -41,51 +41,56 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 .header.red{background:#c50000;color:#fff;}
 .header.red .header_left{color:#fff;}
 
-.header.index_header{background:#161616;border-bottom:1px #b0b0b0 solid;}
+.header.index_header{background:#21202d;border-bottom:1px #666 solid;line-height: 40px;height:40px;}
 .index_header .content{padding:0 3%;display: flex;}
 .index_header .content .left{float: left;flex:1;}
 .index_header .content .center{margin-right:20px;}
-.index_header .content i{color:#ffc400;float: left;margin-right: 10px;font-size: 1.7rem;}
-.index_header .content i.icon-yuanbao-copy{font-size: 2.4rem;}
-.index_header .content i.icon-tixian1{font-size: 2rem;}
-.index_header .content span{float: left;font-size: 1.6rem;color:#ffc400;}
+.index_header .content .right a{float: left;margin-left:10px;}
+.index_header .content i{color:#ffc400;float: left;margin-right:5px;font-size: 1.4rem;}
+.index_header .content i.icon-jiaoyijilu-{font-size: 1.6rem;}
+.index_header .content i.icon-yuanbao-copy{font-size:2rem;}
+.index_header .content i.icon-tixian1{font-size:1.6rem;}
+.index_header .content span{float: left;font-size: 1.4rem;color:#ffc400;}
 
 
 /*交易*/
-.compared{background:#161616;}
-.compared .vs{padding:20px 3% 30px;overflow:hidden;*zoom:1;}
-.compared .vs .plate{width:40%;height:80px;background:#c50000;border-radius:100%;float:left;text-align: center;position: relative;}
-.compared .vs .plate .num{padding:22px 0 10px;}
-.compared .vs .plate .num h2{font-size:2.2rem;color:#ffc600;}
-.compared .vs .plate .num p{font-size:1.6rem;color:#fff;}
-.compared .vs .plate .time{position:absolute;bottom:-18px;color:#fff;font-size:1.5rem;}
+.compared{background:#21202d;margin-top: 40px;}
+.compared .vs{padding:10px 3%;overflow:hidden;*zoom:1;}
+.compared .vs .plate{width:30%;height:50px;background:#c50000;border-radius:100%;float:left;text-align: center;position: relative;}
+.compared .vs .plate .num{line-height: 20px;padding:5px 0;}
+.compared .vs .plate .num h2{font-size:1.6rem;color:#ffc600;}
+.compared .vs .plate .num p{font-size:1.3rem;color:#fff;}
+.compared .vs .plate .time{position:absolute;bottom:-18px;color:#fff;font-size:1.4rem;}
 .compared .vs .left .time{right:-10px;}
 .compared .vs .right .time{left:-10px;}
-.compared .vs .center{float: left;width:20%;text-align: center;font-size: 4rem;font-weight: bold;font-style:italic;color:#ffc600;line-height: 80px;}
+.compared .vs .center{float: left;width:40%;text-align: center;}
+.compared .vs .center h2{font-size:3.2rem;font-weight: bold;font-style:italic;color:#ffc600;line-height:34px;}
+.compared .vs .center p{line-height: 16px;color:#fff;font-size: 1.2rem;}
+.compared .zhishu{height:calc(100vh - 446px);}
 .compared .zhishu img{width:100%;}
 
-.compared .look{padding:20px 3%;overflow: hidden;*zoom:1;text-align: center;}
-.compared .look .position{position: relative;height:188px;width:30%;float: left;}
+.compared .look{padding:0px 3%;overflow: hidden;*zoom:1;text-align: center;}
+.compared .look .position{position: relative;height:126px;width:35%;float: left;}
 .compared .look .bullish,.compared .look .bearish{position: relative;bottom: 0;position: absolute;bottom: 0;width:100%;}
 .compared .look .bullish{left: 0;}
 .compared .look .bearish{right:0;}
 .compared .look .num{font-size:1.6rem;color:#ffc600;}
 .compared .look .num i{font-size:2.4rem;display: inline-block;vertical-align: top;margin-right:5px;}
-.compared .look .name{font-size:1.6rem;color:#fff;}
-.compared .look .cylinder{padding:15px 0;margin:10px 0;}
-.compared .look .cylinder p{height:80px;width:40px;margin:auto;}
-.compared .look .cylinder.high p{height:90px;}
+.compared .look .name{font-size:1.4rem;color:#fff;line-height: 30px;}
+.compared .look .cylinder{padding:6px 0;}
+.compared .look .cylinder p{height:50px;width:24px;margin:auto;}
+.compared .look .cylinder.high p{height:60px;}
 .compared .look .red,.compared .look .green{position: relative;}
-.compared .look .cylinder:after,.compared .look .cylinder:before{content:"";width:40px;height:30px;position: absolute;left:50%;margin-left:-20px;border-radius:100%;-webkit-border-radius:100%;}
+.compared .look .cylinder:after,.compared .look .cylinder:before{content:"";width:24px;height:12px;position: absolute;left:50%;margin-left:-12px;border-radius:100%;-webkit-border-radius:100%;}
 .compared .look .red:before{background:#f34040;top: 0;}
 .compared .look .red:after{background:#980202;bottom: 0;}
 .compared .look .green:before{background:#4dd94d;top: 0;}
 .compared .look .green:after{background:#009800;bottom: 0;}
 .compared .look .red p{background:#c50000;}
 .compared .look .green p{background:#00c500;}
-.compared .look .img{width:40%;float: left;margin-top: 70px;}
+.compared .look .img{width:30%;float: left;margin-top:30px;}
 
-.exponent{padding:20px 3%;overflow:hidden;*zoom:1;}
+.exponent{padding:10px 3%;overflow:hidden;*zoom:1;}
 .exponent .title{float: left;}
 .exponent .title i{float: left;font-size:4rem;color:#c50000;line-height:40px;margin-right:5px;height:40px;width: 40px;}
 .exponent .title p{float: left;font-size: 1.6rem;line-height: 20px;width:40px;}
@@ -93,14 +98,14 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 .exponent ul li{margin-left:4%;width:46%;float: left;background:#999;height:40px;line-height: 40px;text-align: center;font-size:1.4rem;color:#fff;border-radius:6px;-webkit-border-radius:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .exponent ul li.cur{background:#c50000;}
 
-.betting{padding:0 3% 20px;overflow: hidden;*zoom:1;text-align: center;}
+.betting{padding:0 3%;overflow: hidden;*zoom:1;text-align: center;}
 .betting .rise,.betting .fall{width:35%;float:left;}
 .betting .rise .button{background:#c50000;}
 .betting .fall .button{background:#00c500;}
-.betting .button{width:100%;height:48px;color:#fff;padding:6px 0;border-radius:6px;-webkit-border-radius:6px;}
+.betting .button{width:100%;height:40px;color:#fff;padding:5px 0;border-radius:6px;-webkit-border-radius:6px;line-height: 20px;}
 .betting .button h2{font-size:1.8rem;font-weight: bold;}
-.betting .button p{font-size: 1.4rem;font-weight: bold;}
-.betting .price{font-size: 2rem;font-weight: bold;line-height: 40px;}
+.betting .button p{font-size: 1.2rem;font-weight: bold;}
+.betting .price{font-size: 2rem;font-weight: bold;line-height:40px;}
 .betting .rise .price{color:#c50000;}
 .betting .fall .price{color:#00c500;}
 .betting .time{width:30%;float:left;}
@@ -140,7 +145,7 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 /*聊天大厅*/
 .chatroom {background:#fff;margin-bottom: 20px;}
 .chatroom .chatroom_nav{border-bottom: 1px #f0f0f0 solid;padding:0 3%;}
-.chatroom .chatroom_nav ul li{width:25%;float: left;line-height:50px;font-size: 1.5rem;text-align: center;}
+.chatroom .chatroom_nav ul li{width:33.3333%;float: left;line-height:50px;font-size: 1.5rem;text-align: center;}
 .chatroom .chatroom_nav ul li span{border-bottom: 2px #fff solid;display: inline-block;vertical-align: top;}
 .chatroom .chatroom_nav ul li.cur span{border-color:#c50000;}
 .chatroom .chatroom_nav ul li a{display: block;}
@@ -419,7 +424,7 @@ input, button, textarea, select {border:none;outline: none;background: none;font
 .withdraw ul li .text .info > div.num{width:78px;}
 .withdraw ul li .text .info p{overflow: hidden;text-overflow:ellipsis;white-space: nowrap;}
 .withdraw ul li .text .info span{display: block;color:#c50000;}
-.withdraw ul li .text .info span img{height:16px;margin-top: 2px;}
+.withdraw ul li .text .info span img{height:16px;max-width:29.3333%;margin:4px auto 0;display:inline-block;vertical-align: top;padding:0 2%;}
 .withdraw ul li .text h2 i{font-size: 1.3rem;display: inline-block;vertical-align: top;}
 
 .obtained_pop{position: fixed;top: 0;left: 0;background:rgba(0,0,0,0.5);width:100%;height:100%;z-index:300;display: none;}

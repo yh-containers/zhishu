@@ -10,11 +10,14 @@ $this->params = [
 <header class="header index_header">
     <div class="content">
         <div class="left"><i class="icon iconfont icon-yuanbao-copy"></i><span id="user-money"><?=$user_info['money']?></span></div>
-        <div class="center"><a href="<?=\yii\helpers\Url::to(['mine/recharge'])?>"><i class="icon iconfont icon-chongzhi1"></i><span>充值</span></a></div>
-        <div class="right"><a href="<?=\yii\helpers\Url::to(['mine/withdraw'])?>"><i class="icon iconfont icon-tixian1"></i><span>提现</span></a></div>
+        <div class="right">
+            <a href="<?=\yii\helpers\Url::to(['mine/money-logs'])?>"><i class="icon iconfont icon-jiaoyijilu-"></i><span>账单</span></a>
+            <a href="<?=\yii\helpers\Url::to(['mine/recharge'])?>"><i class="icon iconfont icon-chongzhi1"></i><span>充值</span></a>
+            <a href="<?=\yii\helpers\Url::to(['mine/withdraw'])?>"><i class="icon iconfont icon-tixian1"></i><span>提现</span></a>
+        </div>
     </div>
 </header>
-<main class="main mgtop">
+<main class="main">
     <div class="compared">
         <div class="vs">
             <div class="plate left" id="open-pan">
@@ -22,19 +25,17 @@ $this->params = [
                     <h2>00.00</h2>
                     <p>开盘价</p>
                 </div>
-                <div class="time">00:00</div>
             </div>
-            <div class="center">VS</div>
+            <div class="center"><h2>VS</h2><p><?=$type?'德国指数':'上证指数'?>：<span id="then-open-time">10：58</p></div>
             <div class="plate right" id="close-pan">
                 <div class="num">
                     <h2>00.00</h2>
                     <p>收盘价</p>
                 </div>
-                <div class="time">00:00</div>
             </div>
         </div>
         <div class="zhishu">
-            <div id="main" style="height:300px;"></div>
+            <div id="main" style="height:calc(100vh - 446px);width:100%;"></div>
         </div>
 
         <div class="look">
@@ -214,7 +215,9 @@ $this->params = [
                 axisLine: {show:false, lineStyle: { color: '#8392A5' } }
             },
             grid: {
-                bottom: 80
+                bottom: 30,
+                top:10,
+                right:60,
             },
 
             animation: false,
@@ -222,7 +225,7 @@ $this->params = [
                 {
                 type: 'candlestick',
                 // 定义了每个维度的名称。这个名称会被显示到默认的 tooltip 中。
-                name: legend_title,
+                //name: legend_title,
                 data: data,
                 itemStyle: {
                     normal: {
@@ -279,6 +282,8 @@ $this->params = [
                 close_data.hasOwnProperty(1) && $("#close-pan h2").text(close_data[1])
                 //收盘时间
                 close_data.hasOwnProperty(0) && $("#close-pan .time").text(close_data[0])
+                //收盘时间
+                close_data.hasOwnProperty(0) && $("#then-open-time").text(close_data[0])
                 //押涨
                 o_data.hasOwnProperty(0) && $("#up-money").text(o_data[0])
                 //押跌

@@ -19,11 +19,11 @@ $this->params = [
                 <?php }?>
             </div>
             <div class="text">
-                <h2>ID：<?=$user_model['id']?>
+                <h2>ID：<?=$user_model['username']?>
                     <span><?=$user_model->typeName?></span>
                 </h2>
                 <p><?=$user_model['email']?></p>
-                <p>推荐人：<?=$user_model['fuid1']?></p>
+                <p>推荐人：<?=!empty($up_user_info)?$up_user_info['username']:''?></p>
             </div>
         </div>
         <div class="column wrap">
@@ -68,7 +68,7 @@ $this->params = [
                             lis.push(' <li>\n' +
                                 '                    <div class="avatar"><img src="'+item.face+'">'+(item.type?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
                                 '                    <div class="text">\n' +
-                                '                        <h2>ID：'+item.id+'<span>'+(item.type_name)+'</span></h2>\n' +
+                                '                        <h2>ID：'+item.username+'<span>'+(item.type_name)+'</span></h2>\n' +
                                 '                        <p><?=\Yii::$app->params['money_name']?>：'+item.money+'</p>\n' +
                                 '                    </div>\n' +
                                 '                    <div class="income">+'+item.form_money+'</div>\n' +

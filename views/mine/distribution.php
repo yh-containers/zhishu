@@ -19,11 +19,11 @@ $this->params = [
                 <?php }?>
             </div>
             <div class="text">
-                <h2>ID：<?=$user_model['id']?>
+                <h2>ID：<?=$user_model['username']?>
                     <span><?=$user_model->typeName?></span>
                 </h2>
                 <p><?=$user_model['email']?></p>
-                <p>推荐人：<?=$user_model['fuid1']?></p>
+                <p>推荐人：<?=!empty($up_user_info)?$up_user_info['username']:''?></p>
             </div>
         </div>
         <div class="level">

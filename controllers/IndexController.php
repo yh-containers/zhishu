@@ -171,7 +171,8 @@ class IndexController extends CommonController
         //获取今天最后一场
         $model = \app\models\Pan::find()->where(['type'=>$type,'date'=>date('Y-m-d')])->orderBy('id desc')->limit(1)->one();
         $model || $model= new \app\models\Pan();
-        $id = $id?$id:$model->getAttribute('id');
+//        $id = $id?$id:$model->getAttribute('id');
+        $id = $model->getAttribute('id');
 
         //上一盘开奖数据
         $up_compare = 0;//上一次开盘奖励情况
@@ -210,8 +211,8 @@ class IndexController extends CommonController
         //获取涨跌数据
         $per_money = $per_up_money+$per_down_money;
         //看涨方数据
-        $up_per = $up_money?sprintf('%.2f',($down_money-$per_money)/$up_money):0.00;
-        $down_per = $down_money?sprintf('%.2f',($up_money-$per_money)/$down_money):0.00;
+        $up_per = $up_money?sprintf('%.2f',($down_money-$per_money)/$up_money*100):0.00;
+        $down_per = $down_money?sprintf('%.2f',($up_money-$per_money)/$down_money*100):0.00;
 
 
         //获取当前开盘价跟收盘加
@@ -263,8 +264,8 @@ class IndexController extends CommonController
         //获取涨跌数据
         $per_money = $per_up_money+$per_down_money;
         //看涨方数据
-        $up_per = $up_money_total?sprintf('%.2f',($down_money_total-$per_money)/$up_money_total):0.00;
-        $down_per = $down_money_total?sprintf('%.2f',($up_money_total-$per_money)/$down_money_total):0.00;
+        $up_per = $up_money_total?sprintf('%.2f',($down_money_total-$per_money)/$up_money_total*100):0.00;
+        $down_per = $down_money_total?sprintf('%.2f',($up_money_total-$per_money)/$down_money_total*100):0.00;
 
 
         return $this->asJson([

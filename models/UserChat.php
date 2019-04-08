@@ -17,7 +17,10 @@ class UserChat extends BaseModel
         if(empty($exist_chat_obj)){
             //添加--陌生人
             $user_info = User::findOne($suid);
-            !empty($user_info) && $user_info->blackFriend($rec_uid,1);
+            !empty($user_info) && $user_info->knowFriend($rec_uid,0);
+            //我添加为它的--陌生人
+            $rec_user_info = User::findOne($rec_uid);
+            !empty($rec_user_info) && $rec_user_info->knowFriend($suid,0);
         }
 
         $model = new self();

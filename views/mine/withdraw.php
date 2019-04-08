@@ -56,7 +56,7 @@ $this->params = [
                             '<div class="num"><p>出售<?=\Yii::$app->params["money_name"]?>数量</p><span>'+item.money+'个</span></div>\n' +
                             '<div><p>单价</p><span>'+item.price+'元</span></div>\n' +
                             '<div><p>总价</p><span>'+item.price*item.money+'元</span></div>\n' +
-                            '<div><p>收款方式</p><span><img src="/assets/images/pay0'+item.label+'.png"></span></div>\n' +
+                            '<div><p>收款方式</p><span>'+showPayWayImg(item.label)+'</span></div>\n' +
                             '</div>\n' +
                             '</div>\n' +
                             '</li>');
@@ -91,6 +91,18 @@ $this->params = [
             $this.parents(".obtained_pop").hide();
         })
     });
+
+    //显示图片
+    function showPayWayImg(label) {
+        label=label?label:[];
+        html ='';
+        label.map(function(item,index){
+            html +='<img src="/assets/images/pay0'+item+'.png">';
+        })
+        return html;
+
+    }
+
 </script>
 
 

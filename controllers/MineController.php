@@ -441,7 +441,7 @@ class MineController extends CommonController
                 'uid'           => $vo['uid'],
                 'money'         => $vo['money'],
                 'price'         => $vo['price'],
-                'label'         => $vo['label'],
+                'label'         => $vo['label']?explode(',',$vo['label']):[],
                 'update_time'   => $vo['update_time'],
                 'face'          => $vo['userInfo']['face'],
                 'type'          => $vo['userInfo']['type'],

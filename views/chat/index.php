@@ -55,7 +55,7 @@ $this->params = [
                             '<img src="'+item.face+'">'+(item.type?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
                             '<div class="text">\n' +
                             '<h2>ID：'+item.username+'<span>'+(item.type_name)+'</span></h2>\n' +
-                            '<div class="status"><span>（'+(item.online?'在线':'离线')+'）</span>充值元宝：'+item.money+'</div>\n' +
+                            '<div class="status"><span>（'+(item.online?'在线':'离线')+'）</span>充值<?=\Yii::$app->params['money_name']?>：'+item.money+'</div>\n' +
                             '</div>\n' +
                             '</a>\n' +
                             '</li>');

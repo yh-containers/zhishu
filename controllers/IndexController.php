@@ -198,7 +198,9 @@ class IndexController extends CommonController
         list($open_data,$close_data) =\app\models\Pan::getCachePanData($type);
         //查询这一期结果
         $up_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id])->sum('money');
+        $per_up_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id])->sum('per_money');
         $down_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id])->sum('money');
+        $per_down_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id])->sum('per_money');
         //涨--用户
         $user_press_up_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id,'uid'=>$this->user_id])->sum('money');
         //跌--用户
@@ -206,6 +208,10 @@ class IndexController extends CommonController
         $model_user = \app\models\User::findOne($this->user_id);
 
         //获取涨跌数据
+        $per_money = $per_up_money+$per_down_money;
+        //看涨方数据
+        $up_per = $up_money?sprintf('%.2f',($down_money-$per_money)/$up_money):0.00;
+        $down_per = $down_money?sprintf('%.2f',($up_money-$per_money)/$down_money):0.00;
 
 
         //获取当前开盘价跟收盘加
@@ -228,7 +234,9 @@ class IndexController extends CommonController
                 $up_money?$up_money:0,
                 $down_money?$down_money:0,
                 $user_press_up_money?$user_press_up_money:0,
-                $user_press_down_money?$user_press_down_money:0
+                $user_press_down_money?$user_press_down_money:0,
+                $up_per,
+                $down_per
             ],
         ];
         return $this->asJson($result);
@@ -247,8 +255,27 @@ class IndexController extends CommonController
         $down_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id])->andWhere($where)->sum('money');
         //查询这一期结果
         $up_money_total = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id])->sum('money');
+        $per_up_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>1,'wid'=>$id])->sum('per_money');
         $down_money_total = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id])->sum('money');
-        return $this->asJson([$up_money?$up_money:0,$down_money?$down_money:0,$up_money_total?$up_money_total:0,$down_money_total?$down_money_total:0,$model_user['money']?$model_user['money']:0.00]);
+        $per_down_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id])->sum('per_money');
+
+
+        //获取涨跌数据
+        $per_money = $per_up_money+$per_down_money;
+        //看涨方数据
+        $up_per = $up_money_total?sprintf('%.2f',($down_money_total-$per_money)/$up_money_total):0.00;
+        $down_per = $down_money_total?sprintf('%.2f',($up_money_total-$per_money)/$down_money_total):0.00;
+
+
+        return $this->asJson([
+            $up_money?$up_money:0,
+            $down_money?$down_money:0,
+            $up_money_total?$up_money_total:0,
+            $down_money_total?$down_money_total:0,
+            $model_user['money']?$model_user['money']:0.00,
+            $up_per,
+            $down_per
+        ]);
     }
 
     //检测是否可以开奖

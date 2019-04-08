@@ -66,7 +66,7 @@ $this->params = [
         <div class="rise">
             <div class="button" data-is_up="1">
                 <h2>看涨</h2>
-                <p></p>
+                <p>预收益率<span id="up_per">85.48</span>%</p>
             </div>
             <div class="price" id="press-up-money">0</div>
         </div>
@@ -86,7 +86,7 @@ $this->params = [
         <div class="fall">
             <div class="button" data-is_up="2">
                 <h2>看跌</h2>
-                <p></p>
+                <p>预收益率<span id="down_per">85.48</span>%</p>
             </div>
             <div class="price"  id="press-down-money">0</div>
         </div>
@@ -287,6 +287,10 @@ $this->params = [
                 o_data.hasOwnProperty(2) && $("#press-up-money").text(o_data[2])
                 //押跌-用户
                 o_data.hasOwnProperty(3) && $("#press-down-money").text(o_data[3])
+                //涨百分比
+                o_data.hasOwnProperty(4) && $("#up_per").text(o_data[4])
+                //跌百分比
+                o_data.hasOwnProperty(5) && $("#down_per").text(o_data[5])
 
                 //判断幅度
                 if(o_data.hasOwnProperty(0) && o_data.hasOwnProperty(1)){
@@ -376,7 +380,10 @@ $this->params = [
                  result.hasOwnProperty(3) && $("#down-money").text(result[3])
                  //用户余额
                  result.hasOwnProperty(4) && $("#user-money").text(result[4]);
-
+                //涨百分比
+                 result.hasOwnProperty(5) && $("#up_per").text(result[5])
+                 //跌百分比
+                 result.hasOwnProperty(6) && $("#down_per").text(result[6])
 
                  //判断幅度
                  if(result.hasOwnProperty(2) && result.hasOwnProperty(3)){

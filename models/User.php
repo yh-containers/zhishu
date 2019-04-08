@@ -395,6 +395,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             $model_vote->type        = $type;
             $model_vote->money       = $money;
             $model_vote->per         = $per;
+            $model_vote->per_money   = $money*$per;
             $model_vote->result_money= $per?$money*(1-$per):$money;
             $model_vote->is_up       = $is_up;
             $model_vote->status      = 1;

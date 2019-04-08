@@ -18,6 +18,15 @@ $this->params = [
             <input name="_csrf" type="hidden" id="_csrf" value="<?= Yii::$app->request->csrfToken ?>">
             <div class="box">
                 <i class="icon iconfont icon-youxiang"></i>
+                <input type="text" name="old_email" value="<?=$user_model['email']?>" id="old-email" placeholder="请输入旧邮箱">
+            </div>
+            <div class="box">
+                <i class="icon iconfont icon-yanzhengma"></i>
+                <input type="text" name="old_verify" class="code" placeholder="旧邮箱接收的验证码">
+                <button type="button" id="get-verify"  onclick="$.common.sendVerify(this,$('#old-email'))"  data-type="3" class="code">获取验证码</button>
+            </div>
+            <div class="box">
+                <i class="icon iconfont icon-youxiang"></i>
                 <input type="text" name="email" id="email" placeholder="请输入新邮箱">
             </div>
             <div class="box">

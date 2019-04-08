@@ -25,6 +25,8 @@ class IndexController extends DefaultController
     {
         //用户总数
         $user_count = \app\models\User::find()->count();
+        //总元宝数量
+        $sum_money = \app\models\User::find()->sum('money');
         //上证指数
         $sz_count = \app\models\Pan::find()->where(['type'=>0,'date'=>date('Y-m-d')])->count();
         $sz_open_time = \app\models\Pan::get_type(0,'con');
@@ -36,6 +38,7 @@ class IndexController extends DefaultController
 
         return $this->render('index',[
             'user_count' => $user_count,
+            'sum_money' => $sum_money,
             'sz_count' => $sz_count,
             'gdaxi_count' => $gdaxi_count,
             'press_count' => $press_count,

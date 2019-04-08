@@ -15,7 +15,7 @@ class UserController extends DefaultController
         $list = $query->offset($pagination->offset)->limit($pagination->limit)->all();
         return $this->render('index', [
             'list' => $list,
-            'pagination' => $pagination
+            'pagination' => $pagination,
         ]);
     }
 
@@ -38,7 +38,9 @@ class UserController extends DefaultController
 
         $model = $model::findOne($id);
         return $this->render('userAdd',[
-            'model' => $model
+            'model' => $model,
+            'user_type' => \app\models\User::getUserType(),
+
         ]);
     }
 

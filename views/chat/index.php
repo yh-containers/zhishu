@@ -15,7 +15,9 @@ $this->params = [
     <div class="chatroom">
         <div class="chatroom_nav">
             <ul class="clearfix">
+                <?php /*?>
                 <li <?=$type?'':'class="cur"'?>><a href="<?=\yii\helpers\Url::to(['chat/index'])?>"><span>全部会员</span></a></li>
+                <?php */?>
                 <li <?=$type==1?'class="cur"':''?>><a href="<?=\yii\helpers\Url::to(['chat/index','type'=>1])?>"><span>我的好友</span></a></li>
                 <li <?=$type==2?'class="cur"':''?>><a href="<?=\yii\helpers\Url::to(['chat/index','type'=>2])?>"><span>陌生人</span></a></li>
                 <li <?=$type==3?'class="cur"':''?>><a href="<?=\yii\helpers\Url::to(['chat/index','type'=>3])?>"><span>黑名单</span></a></li>
@@ -55,7 +57,7 @@ $this->params = [
                             (item.chat_count>0?'<span class="red_dot">'+item.chat_count+'</span>':'')+
                             '<img src="'+item.face+'">'+(item.type?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
                             '<div class="text">\n' +
-                            '<h2>ID：'+item.id+'<span>'+(item.type_name)+'</span></h2>\n' +
+                            '<h2>ID：'+item.username+'<span>'+(item.type_name)+'</span></h2>\n' +
                             '<div class="status"><span>（'+(item.online?'在线':'离线')+'）</span>充值元宝：'+item.money+'</div>\n' +
                             '</div>\n' +
                             '</a>\n' +

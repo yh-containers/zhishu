@@ -20,6 +20,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
 
     public $chat_count=0;
     public $code;   //用户邀请码
+    public $old_email;   //旧邮箱
+    public $old_verify;   //旧验证码
     public $verify;
     public $re_password;
     public $old_pwd;
@@ -49,6 +51,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         return [
             'username' => '用户名',
             'email' => '邮箱',
+            'old_email' => '旧邮箱',
+            'old_verify' => '验证码',
             'verify' => '验证码',
             'password' => '帐号密码',
             're_password' => '确认密码',
@@ -182,13 +186,12 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     {
         $req_user_id=0;
         if(!empty($this->code)){
-            $req_user_id=self::getDeCode($this->code);
-            if($req_user_id){
-                $req_user_info = self::findOne($req_user_id);
+            $req_user_info = self::find()->where(['username'=>$this->code])->one();
+            if(!empty($req_user_info)){
+                $req_user_id = $req_user_info['id'];
                 $req_user_info['fuid1'] && $this->setAttribute('fuid2',$req_user_info['fuid1']);
                 $req_user_info['fuid2'] && $this->setAttribute('fuid3',$req_user_info['fuid2']);
             }
-
         }
         return $req_user_id;
     }
@@ -519,9 +522,16 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         try{
             //开启事务
             $transaction = self::getDb()->beginTransaction();
+
             //用户支出
-            self::modMoney($this->id,-$money,'转出'.\Yii::$app->params['money_name'],['to_uid'=>$to_uid,'money_change_type'=>UserMoneyLogs::TYPE_CHARGE_OUT]);
-            self::modMoney($to_uid,$money,'获得转让'.\Yii::$app->params['money_name'],['send_uid'=>$this->id,'money_change_type'=>UserMoneyLogs::TYPE_CHARGE_IN,'money_change_form_uid'=>$this->id],true);
+            self::modMoney($this->id,-$money,'你转给用户'.$rec_user_info['username'].':'.$money.\Yii::$app->params['money_name'],['to_uid'=>$to_uid,'money_change_type'=>UserMoneyLogs::TYPE_CHARGE_OUT]);
+            //发送--消息
+            \app\models\UserChat::say($this->id,$to_uid,'转出'.$money.\Yii::$app->params['money_name']);
+            self::modMoney($to_uid,$money,'用户'.$this->getAttribute('username').'转给我'.$money.\Yii::$app->params['money_name'],['send_uid'=>$this->id,'money_change_type'=>UserMoneyLogs::TYPE_CHARGE_IN,'money_change_form_uid'=>$this->id],true);
+            //接收者--接收消息
+            \app\models\UserChat::say($to_uid,$this->id,'获得转让'.$money.\Yii::$app->params['money_name']);
+
+
             $transaction->commit();
         }catch (\Exception $e){
             $transaction->rollBack();
@@ -529,6 +539,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         }
 
     }
+
     //获取用户是否在线
     public function getOnline()
     {
@@ -636,7 +647,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         $scenarios[self::SCENARIO_LOGIN] = ['username', 'password'];
         $scenarios[self::SCENARIO_REGISTER] = ['code','username', 'email', 'password','re_password','verify','face'];
         $scenarios[self::SCENARIO_FORGET] = ['verify', 'email', 'password','re_password'];
-        $scenarios[self::SCENARIO_MOD_EMAIL] = ['verify', 'email'];
+        $scenarios[self::SCENARIO_MOD_EMAIL] = ['old_email','old_verify','verify', 'email'];
         $scenarios[self::SCENARIO_REST_PWD] = ['old_pwd', 'password','re_password'];
         $scenarios[self::SCENARIO_REST_PAY_PWD] = ['old_pay_pwd', 'pay_pwd','re_pay_pwd'];
         $scenarios[self::SCENARIO_MOD_MONEY] = ['money', 'history_money','com_money'];
@@ -691,6 +702,22 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             //修改邮箱
             return [
                 [['verify','email'], 'required','message'=>'{attribute}必须输入'],
+                [['old_email'],function($attribute, $params){
+                    if($this->getOldAttribute('email')!=$this->old_email){
+                        $this->addError($attribute,'原始邮箱不正确');
+                    }
+                },'when' => function ($model,$attribute) {
+                    return !empty($model->$attribute)?true:false;
+                },'message'=>''],
+                [['old_verify'], function ($attribute, $params) {
+                    try{
+                        Mail::checkVerify($this->old_email,$this->old_verify,3);
+                    }catch (\Exception $e) {
+                        $this->addError($attribute, $e->getMessage());
+                    }
+                },'when' => function ($model,$attribute) {
+                    return !empty($model->$attribute)?true:false;
+                },'message'=>'{attribute}必须输入'],
                 [['email'], 'email','message'=>'请输入正确的{attribute}'],
                 [['email'], 'unique','message'=>'{attribute}已被注册'],
                 [['verify'], function ($attribute, $params) {
@@ -726,16 +753,10 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 //注册
                 [['code'], 'required','message'=>'邀请码必须输入','on'=>self::SCENARIO_REGISTER],
                 [['code'], function($attribute,$params){
-                    $user_req_id = self::getDeCode($this->code);
-                    if($user_req_id){
-                        $user_req_info = self::findOne($user_req_id);
-                        if(empty($user_req_info)){
-                            $this->addError($attribute, '邀请码异常');
-                        }
-                    }else{
+                    $user_req_info = self::find()->where(['username'=>$this->code])->one();
+                    if(empty($user_req_info)){
                         $this->addError($attribute, '邀请码异常');
                     }
-
                 },'on'=>self::SCENARIO_REGISTER],
                 //最后验证验证码
                 // 和上一个相同，只是明确指定了需要对比的属性字段
@@ -772,6 +793,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 [['status'],'default', 'value' => 1],
                 [['face'],'default', 'value' => '/assets/images/avatar.png'],
                 [['money'],'default', 'value' => 0],
+                [['type'],'default', 'value' => 0],
             ];
         }
 

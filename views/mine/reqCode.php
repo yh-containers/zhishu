@@ -17,7 +17,7 @@ $this->params = [
     <div class="recommend">
         <div class="top">你的邀请码</div>
         <div class="center">
-            <h2><?=$user_model->getCode()?></h2>
+            <h2><?=$user_model['username']?></h2>
             <p><!--https://www.xxxxxxxxx.cn--></p>
         </div>
         <div class="bottom"><a href="javascript:;">复制</a></div>

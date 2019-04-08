@@ -12,6 +12,17 @@ class IndexController extends CommonController
     public function actionIndex()
     {
         $type = (int)$this->request->get('type',0);
+        $is_lock = (int)$this->request->get('is_lock',0);
+        if(!$is_lock){
+
+            //是否锁定主页--德国时间
+            $gdaxi_con = \app\models\Pan::get_type(1,'con');
+            foreach ($gdaxi_con as $key=>$vo){
+                if(date('H:i:m')>$key){
+                    $this->redirect(\yii\helpers\Url::to(['','is_lock'=>1,'type'=>1]));
+                }
+            }
+        }
         //获取用户信息
         $user_info = \app\models\User::findOne($this->user_id);
         if(!empty($user_info) && empty($user_info['is_show_protocol'])){
@@ -193,6 +204,10 @@ class IndexController extends CommonController
         //跌--用户
         $user_press_down_money = \app\models\Vote::find()->where(['type'=>$type,'is_up'=>2,'wid'=>$id,'uid'=>$this->user_id])->sum('money');
         $model_user = \app\models\User::findOne($this->user_id);
+
+        //获取涨跌数据
+
+
         //获取当前开盘价跟收盘加
         $result = [
             //待开奖id

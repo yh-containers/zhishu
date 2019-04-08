@@ -58,8 +58,8 @@ $this->params = [
     <div class="exponent">
         <div class="title"><i class="icon iconfont icon-xiadan"></i><p>下单<br />合约</p></div>
         <ul>
-            <li <?=$type?'':'class="cur"'?> onclick="window.location.href='<?=\yii\helpers\Url::to([''])?>'">上证指数一分钟线</li>
-            <li <?=$type==1?'class="cur"':''?> onclick="window.location.href='<?=\yii\helpers\Url::to(['','type'=>1])?>'">德国指数一分钟线</li>
+            <li <?=$type?'':'class="cur"'?> onclick="window.location.href='<?=\yii\helpers\Url::to(['','is_lock'=>1])?>'">上证指数一分钟线</li>
+            <li <?=$type==1?'class="cur"':''?> onclick="window.location.href='<?=\yii\helpers\Url::to(['','is_lock'=>1,'type'=>1])?>'">德国指数一分钟线</li>
         </ul>
     </div>
     <div class="betting">

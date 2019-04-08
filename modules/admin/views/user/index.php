@@ -18,10 +18,9 @@
                 <thead>
                 <tr>
                     <th>#</th>
-                    <th>用户名</th>
+                    <th>用户名（ID）</th>
                     <th>用户类型</th>
                     <th>邮箱</th>
-                    <th>邀请码</th>
                     <th><?=\Yii::$app->params['money_name']?></th>
                     <th>状态</th>
                     <th>更新时间</th>
@@ -35,7 +34,6 @@
                         <td><?=$vo['username']?></td>
                         <td><?=$vo->typeName?></td>
                         <td><?=$vo['email']?> </td>
-                        <td><?=$vo->getCode()?> </td>
                         <td><?=$vo['money']?> </td>
                         <td><?=$vo->statusName?></td>
                         <td><?=$vo->createTime?></td>

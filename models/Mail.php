@@ -48,7 +48,8 @@ class Mail extends BaseModel
         $info = [
             ['title'=>'用户注册','content'=>'此次注册验证码为:{__VERIFY__}'],
             ['title'=>'忘记密码','content'=>'此次找回密码验证码为:{__VERIFY__}'],
-            ['title'=>'修改邮箱','content'=>'此次修改邮箱验证码为:{__VERIFY__}'],
+            ['title'=>'修改邮箱','content'=>'此次修改新邮箱验证码为:{__VERIFY__}'],
+            ['title'=>'验证旧邮箱','content'=>'此次旧邮箱验证码为:{__VERIFY__}'],
         ];
         if(is_null($type)){
             return $info;

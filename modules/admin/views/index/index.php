@@ -8,6 +8,8 @@
                 <div class="info-box-content">
                     <span class="info-box-text">用户总数</span>
                     <span class="info-box-number"><?=$user_count?></span>
+                    <span class="info-box-text">总<?=\Yii::$app->params['money_name']?>数量:<?= $sum_money?></span>
+                    <span class="info-box-text">人均<?=\Yii::$app->params['money_name']?>数量:<?= $user_count>0?sprintf('%0.2f',$sum_money/$user_count):0?></span>
                 </div>
                 <!-- /.info-box-content -->
             </div>

@@ -124,7 +124,7 @@ class Pan extends BaseModel
 
                     if($compare==3){
                         //平
-                        $get_money = $item['money'];
+                        $get_money = $item['result_money'];
                         $item->award_state==4; //默认 4返还
                         User::modMoney($item['uid'],$get_money,'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK]);
                     }else{
@@ -280,7 +280,7 @@ class Pan extends BaseModel
     {
         $data = [
             ['name'=>'上证指数','url'=>'http://hq.sinajs.cn/list=sh000001','con'=>['09:00:00'=>'11:30:00','14:00:00'=>'15:00:00'],'stop_week'=>['0','6']],
-            ['name'=>'德国','url'=>'','con'=>['16:00:00'=>'23:59:59','00:00:00'=>'00:30:00'],'stop_week'=>['0','6']],
+            ['name'=>'德国','url'=>'','con'=>['16:00:00'=>'23:30:00'],'stop_week'=>['0','6']],
         ];
         if(is_null($type)){
             return $data;

@@ -18,7 +18,7 @@ $this->params = [
                 <input id="file" type="file" name="file" accept=""/>
             </div>
             <div class="text">
-                <h2>ID：<?=$user_model['id']?>
+                <h2>ID：<?=$user_model['username']?>
                     <span><?=$user_model->typeName?></span>
                 </h2>
                 <p><?=$user_model['email']?></p>

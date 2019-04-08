@@ -228,6 +228,7 @@ class MineController extends CommonController
         foreach($list as $vo){
             $data[] = [
                 'id'         =>  $vo['id'],
+                'username'   =>  $vo['username'],
                 'face'       =>  $vo['face'],
                 'money'      =>  $vo['money'],
                 'type'       =>  $vo['type'],
@@ -482,10 +483,10 @@ class MineController extends CommonController
         $limit_key = ['face'];
         foreach($php_input as $key=>$vo){
             if(in_array($key,$limit_key)){
-                $this->user_model->$key = $vo;
+                $this->user_model->setAttribute($key,$vo);
             }
         }
-        $this->user_model->save();
+        $this->user_model->save(false);
         return $this->asJson(['code'=>1,'msg'=>'操作成功']);
     }
 }

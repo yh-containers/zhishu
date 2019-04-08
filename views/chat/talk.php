@@ -14,7 +14,7 @@ $this->params = [
 <?php $this->beginBlock('content')?>
 <header class="header red">
     <a href="javascript:window.history.back()" class="header_left"><i class="icon iconfont icon-jiantou"></i><span>返回</span></a>
-    <div class="header_title"><p>ID<?=!empty($chart_obj_info)?$chart_obj_info['id']:''?><br /><span>（<?=!empty($chart_obj_info)?($chart_obj_info['online']?'在线':'离线'):'离线'?>）</span></p></div>
+    <div class="header_title"><p>ID<?=!empty($chart_obj_info)?$chart_obj_info['username']:''?><br /><span>（<?=!empty($chart_obj_info)?($chart_obj_info['online']?'在线':'离线'):'离线'?>）</span></p></div>
     <div class="header_right"><a href="<?=\yii\helpers\Url::to(['mine/complaint','uid'=>$f_uid])?>" class="shangjia">投诉</a></div>
 </header>
 
@@ -154,7 +154,7 @@ $this->params = [
                         html +='<div class="'+(item[2]===chat_uid?'right':'left')+'">\n' +
                             '            <div class="avatar"><img src="'+(user_info.hasOwnProperty('face')?user_info.face:'')+'">'+((user_info.hasOwnProperty('type')&&user_info.type>0)?'<i class="icon iconfont icon-vip"></i>':'')+'</div>\n' +
                             '            <div class="text">\n' +
-                            '                <h2><i>ID：'+(user_info.hasOwnProperty('id')?user_info.id:'')+'</i><span>'+(user_info.type_name)+'</span></h2>\n' +
+                            '                <h2><i>ID：'+(user_info.hasOwnProperty('username')?user_info.username:'')+'</i><span>'+(user_info.type_name)+'</span></h2>\n' +
                             '                <div class="message">\n' +
                             '                    <div class="info">'+(item[3]==='1'?'<img src="'+item[4]+'">':'<p>'+showHtmlTag(item[4])+'</p>')+'</div>\n' +
                             '                </div>\n' +

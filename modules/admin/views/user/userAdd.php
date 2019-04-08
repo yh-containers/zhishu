@@ -59,6 +59,17 @@
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">等级</label>
+
+                        <div class="col-sm-10">
+                            <select name="type" id="" class="form-control">
+                                <?php foreach($user_type as $key=>$vo){?>
+                                <option value="<?=$key?>" <?=$model['type']==$key?'selected':''?> ><?=$vo['name']?></option>
+                                <?php }?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label">帐号密码</label>
 
                         <div class="col-sm-10">

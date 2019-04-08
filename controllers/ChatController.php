@@ -9,7 +9,7 @@ class ChatController extends CommonController
 {
     public function actionIndex()
     {
-        $type = $this->request->get('type',0);
+        $type = $this->request->get('type',1);
         return $this->render('index',[
             'type' =>$type
         ]);
@@ -29,6 +29,7 @@ class ChatController extends CommonController
         foreach ($users_all as $vo){
             $user_info[$vo['id']] = [
                 'id'         =>  $vo['id'],
+                'username'   =>  $vo['username'],
                 'face'       =>  $vo['face'],
                 'money'      =>  $vo['money'],
                 'type'       =>  $vo['type'],
@@ -38,6 +39,7 @@ class ChatController extends CommonController
                 'level_name' =>  \app\models\User::getUserLevel($vo['level'],'name'),
             ];
         }
+
         return $this->render('talk',[
             'f_uid'=>$f_uid,
             'friend_info' => $friend_info,
@@ -71,17 +73,7 @@ class ChatController extends CommonController
         }
 
         //处理用户聊天顺序
-        $users = [$rec_uid,$this->user_id];
-        sort($users);
-
-        $model = new \app\models\UserChat();
-        $model->uid1    =   $users[0];
-        $model->uid2    =   $users[1];
-        $model->suid    =   $this->user_id;
-        $model->rec_uid =   $rec_uid;
-        $model->type    =   $type;
-        $model->content =   strip_tags(htmlspecialchars_decode($content)); //过滤有所html标签
-        $model->save();
+        \app\models\UserChat::say($this->user_id,$rec_uid,$content,$type);
 
         return $this->asJson(['code'=>0,'msg'=>'发送成功']);
 

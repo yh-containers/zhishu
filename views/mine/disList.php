@@ -44,7 +44,7 @@ $this->params = [
 
 <footer class="footer">
     <div class="income">
-        <p><i class="icon iconfont icon-wodeyuanbao"></i><strong>我的总收益：<?=$user_model['com_money']?></strong></p>
+        <p><i class="icon iconfont icon-wodeyuanbao"></i><strong>我的分销总收益：<?=$user_model['com_money']?></strong></p>
     </div>
 </footer>
 <?php $this->endBlock()?>

@@ -1,11 +1,11 @@
 <?php
 $this->title = '首页';
 $this->params = [
-    'body_style'    => 'style="background: #fff;"',
-    'current_active'=> 'index/index',
-    'init_type'     => isset($type) ? $type : 0,
-    'is_test'     => 1,
-    'is_open'     => $is_open,
+        'body_style'    => 'style="background: #fff;"',
+        'current_active'=> 'index/index',
+        'init_type'     => isset($type) ? $type : 0,
+        'is_test'     => 1,
+        'is_open'     => $is_open,
 ];
 ?>
 <?php $this->beginBlock('style')?>
@@ -52,7 +52,7 @@ $this->params = [
         <div class="look">
             <div class="position">
                 <div class="bullish">
-                    <div class="num"><i class="icon iconfont icon-yuanbao-copy"></i><span id="up-money"><?=($press_info['money'] && $press_info['type']==0)?$press_info['money']:0?></span></div>
+                    <div class="num"><i class="icon iconfont icon-yuanbao-copy"></i><span id="up-money">500000</span></div>
                     <div class="red cylinder"><p></p></div>
                     <div class="name">看涨元宝</div>
                 </div>
@@ -60,7 +60,7 @@ $this->params = [
             <div class="img"><img src="/assets/images/yuanbao.png"></div>
             <div class="position">
                 <div class="bearish">
-                    <div class="num"><i class="icon iconfont icon-yuanbao-copy"></i><span id="down-money"><?=($press_info['money'] && $press_info['type']==1)?$press_info['money']:0?></span></div>
+                    <div class="num"><i class="icon iconfont icon-yuanbao-copy"></i><span id="down-money">400000</span></div>
                     <div class="green cylinder"><p></p></div>
                     <div class="name">看跌元宝</div>
                 </div>
@@ -78,7 +78,7 @@ $this->params = [
         <div class="rise">
             <div class="button" data-is_up="1">
                 <h2>看涨</h2>
-                <p>预收益率<span id="up_per">0.00</span>%</p>
+                <p>预收益率<span id="up_per">85.48</span>%</p>
             </div>
             <div class="price" id="press-up-money">0</div>
         </div>
@@ -98,7 +98,7 @@ $this->params = [
         <div class="fall">
             <div class="button" data-is_up="2">
                 <h2>看跌</h2>
-                <p>预收益率<span id="down_per">0.00</span>%</p>
+                <p>预收益率<span id="down_per">85.48</span>%</p>
             </div>
             <div class="price"  id="press-down-money">0</div>
         </div>

@@ -50,6 +50,7 @@ class Mail extends BaseModel
             ['title'=>'忘记密码','content'=>'此次找回密码验证码为:{__VERIFY__}'],
             ['title'=>'修改邮箱','content'=>'此次修改新邮箱验证码为:{__VERIFY__}'],
             ['title'=>'验证旧邮箱','content'=>'此次旧邮箱验证码为:{__VERIFY__}'],
+            ['title'=>'找回支付密码','content'=>'此次找回支付密码验证码为:{__VERIFY__}'],
         ];
         if(is_null($type)){
             return $info;

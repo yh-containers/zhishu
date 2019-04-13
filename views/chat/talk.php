@@ -2,6 +2,7 @@
 $this->title = '聊天大厅';
 $this->params = [
         'body_style' => 'style="background: #eee;"',
+        'hide_ajax_chat'   => 1,
 ];
 ?>
 

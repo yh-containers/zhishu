@@ -109,4 +109,18 @@ class ChatController extends CommonController
         }
         return $this->asJson($data);
     }
+
+    //获取聊天未读数量
+    public function actionNread()
+    {
+        //未读消息总数
+        $msg_list = \app\models\UserChat::find()->asArray()->where(['rec_uid'=>$this->user_id,'is_read'=>0,'status'=>1])->all();
+        $no_read_count = 0;
+        $send_list = [];
+        if(!empty($msg_list)){
+            $no_read_count = count($msg_list);
+        }
+
+        return $this->asJson([$no_read_count,$send_list]);
+    }
 }

@@ -69,11 +69,14 @@
 
             <ol class="breadcrumb" style="float: none;position: unset;right:unset; font-size: 14px">
                 <?php
+                /*
                     if(isset($this->params['crumb']))
                     foreach($this->params['crumb'] as $key=>$vo) {
                 ?>
                     <?= '<li><a href="javascript:;">'.(empty($key)?'<i class="fa fa-dashboard"></i>':'').$vo.'</a></li>'?>
-                <?php }?>
+                <?php
+                } */
+                ?>
             </ol>
         </section>
 

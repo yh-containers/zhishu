@@ -50,7 +50,7 @@
                             <td></td>
                             <td></td>
                             <td>邀请者id</td>
-                            <td><a href="<?=\yii\helpers\Url::to(['user-detail','id'=>$model['fuid1']])?>"><?=$model['fuid1']?></a></td>
+                            <td><a href="<?=\yii\helpers\Url::to(['user-detail','id'=>$model['fuid1']])?>"><?=$req_user_info['username']?></a></td>
                         </tr>
 
                         </tbody>

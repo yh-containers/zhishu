@@ -14,6 +14,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
     const SCENARIO_MOD_EMAIL = 'mod_email';
     const SCENARIO_REST_PWD = 'rest_pwd';
     const SCENARIO_REST_PAY_PWD = 'rest_pay_pwd';
+    const SCENARIO_REST_PAY_PWD_EMAIL = 'rest_pay_pwd_email';
     const SCENARIO_MOD_MONEY = 'mod_MONEY';
 
     private $_com_sum; //用户产生的佣金
@@ -336,32 +337,51 @@ class User extends BaseModel implements \yii\web\IdentityInterface
      * */
     public function vote($id,$money,$is_up=1,$type=0)
     {
+        $current_month = (int)date('m');
+        $current_second = time();
         $date = date('H:i:s');
         //验证是否闭盘
         $is_close = Pan::getTypeState($type);
         if($is_close) throw new \Exception('已停盘,无法下注');
-        //判断是否为停盘前一分钟
+//
+        //是否等待状态
+        $is_wait = Pan::handleWait();
+        if($is_wait) throw new \Exception('等待结果,无法下注');
+//        //判断是否为停盘前一分钟
 
         $con = Pan::get_type($type,'con');
+        //首位停止交易时间
+        $stop_hl_second =  Pan::get_type($type,'stop_hl_second');
+        //开始时间-结束时间
+        $start_time = $end_time = 0;
         if($type){
             //德国指数
-            $con_temp = array_values($con);
-            $last_con = array_pop($con_temp);
-
-            if($date<$last_con && strtotime($last_con)-time()<=60){
-                throw new \Exception('最后一期无法进行投票');
+            foreach ($con as $key=>$vo){
+                $pointer_month = $vo[1]; //指定月份时间
+                $open_time = $vo[0]; //开盘时间
+                if(in_array($current_month, $pointer_month)){
+                    $start_time = strtotime(key($open_time));
+                    $end_time = strtotime(end($open_time));
+                    break;
+                }
             }
         }else{
             //上证指数
-            foreach ($con as $key=>$vo) {
-                if($date>=$key && $date<=$vo){
-                    if(strtotime($vo)-time()<=60){
-                        throw new \Exception('最后一期无法进行投票');
-                    }
-                }
-            }
-
+            $start_time = strtotime(key($con));
+            $end_time = strtotime(end($con));
         }
+
+        if(empty($start_time) || empty($end_time)){
+            throw new \Exception('下注时间异常');
+        }elseif ($current_second-$start_time<=0 || $end_time-$current_second<=0){
+            throw new \Exception('未到下注时段无法下注');
+        }elseif ($current_second-$start_time<=$stop_hl_second || $end_time-$current_second<=$stop_hl_second){
+            throw new \Exception('未开放下注');
+        }
+
+
+
+
         //只能压涨和跌
         $push_info = Vote::getPushType($is_up);
         if($is_up<1 || $push_info===false)  throw new \Exception('压注类型异常');
@@ -372,10 +392,10 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         $wallet_money = $this->getAttribute('money');
         if($wallet_money<$money) throw new \Exception('余额不足');
         //获取等待开奖盘
-        $wait_pan=Pan::findOne($id);
-        if(empty($wait_pan)) throw new \Exception('下注对象异常');
-        if($wait_pan['up_price']>0) throw new \Exception('该期已开奖无法下注');
-        $times = Vote::find()->where(['uid'=>$this->id,'wid'=>$id])->count();
+//        $wait_pan=Pan::findOne($id);
+//        if(empty($wait_pan)) throw new \Exception('下注对象异常');
+//        if($wait_pan['compare']>0) throw new \Exception('该期已开奖无法下注');
+        $times = Vote::find()->where(['uid'=>$this->id,'wid'=>null])->count();
         if($times>0) throw new \Exception('无法再次操作');
 
         try{
@@ -391,7 +411,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             //投票数据
             $model_vote = new Vote();
             $model_vote->uid         = $this->getAttribute('id');
-            $model_vote->wid         = $id;
+//            $model_vote->wid         = $id;
             $model_vote->type        = $type;
             $model_vote->money       = $money;
             $model_vote->per         = $per;
@@ -700,6 +720,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         $scenarios[self::SCENARIO_MOD_EMAIL] = ['old_email','old_verify','verify', 'email'];
         $scenarios[self::SCENARIO_REST_PWD] = ['old_pwd', 'password','re_password'];
         $scenarios[self::SCENARIO_REST_PAY_PWD] = ['old_pay_pwd', 'pay_pwd','re_pay_pwd'];
+        $scenarios[self::SCENARIO_REST_PAY_PWD_EMAIL] = ['email','verify', 'pay_pwd','re_pay_pwd'];
         $scenarios[self::SCENARIO_MOD_MONEY] = ['money', 'history_money','com_money'];
 
         return $scenarios;
@@ -733,6 +754,27 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             ];
             //修改支付
             return $rule;
+
+        }elseif($scenario==self::SCENARIO_REST_PAY_PWD_EMAIL){
+            //邮箱  修改支付密码
+            return [
+                [['verify','email','pay_pwd'], 'required','message'=>'{attribute}必须输入'],
+                [['pay_pwd'], 'match','pattern'=>'/^\d+$/','message'=>'{attribute}只能为数字'],
+                [['pay_pwd'], 'string','length'=>[6,6],'tooLong'=>'{attribute}不得超过{max}个字符','tooShort'=>'{attribute}不得低于{min}个字符'],
+                ['pay_pwd', 'compare', 'compareAttribute' => 're_pay_pwd','message'=>'两次支付密码不一致'],
+                [['email'],function($attribute, $params){
+                    if($this->getOldAttribute('email')!=$this->email){
+                        $this->addError($attribute,'请输入帐号邮箱');
+                    }
+                }],
+                [['verify'], function ($attribute, $params) {
+                    try{
+                        Mail::checkVerify($this->email,$this->verify,4);
+                    }catch (\Exception $e) {
+                        $this->addError($attribute, $e->getMessage());
+                    }
+                }],
+            ];
 
         }elseif($scenario==self::SCENARIO_REST_PWD){
             //密码
@@ -801,13 +843,17 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             //其它验证
             return [
                 //注册
-                [['code'], 'required','message'=>'邀请码必须输入','on'=>self::SCENARIO_REGISTER],
+                [['code'], 'required', 'when' => function ($model,$attribute) {
+                    return (!empty($model->$attribute))?true:false;
+                },'message'=>'邀请码必须输入'],
                 [['code'], function($attribute,$params){
                     $user_req_info = self::find()->where(['username'=>$this->code])->one();
                     if(empty($user_req_info)){
                         $this->addError($attribute, '邀请码异常');
                     }
-                },'on'=>self::SCENARIO_REGISTER],
+                }, 'when' => function ($model,$attribute) {
+                    return  !empty($model->$attribute)?true:false;
+                }],
                 //最后验证验证码
                 // 和上一个相同，只是明确指定了需要对比的属性字段
                 ['password', 'compare', 'compareAttribute' => 're_password','message'=>'密码不一致','on'=>self::SCENARIO_REGISTER],

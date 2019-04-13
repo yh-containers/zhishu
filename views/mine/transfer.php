@@ -17,7 +17,7 @@ $this->params = [
         <div class="top">
             <div class="avatar"><img src="<?=$charge_user_info['face']?>"><?=$charge_user_info['type']?'<i class="icon iconfont icon-vip"></i>':''?></div>
             <div class="text">
-                <h2>ID：<?=$charge_user_info['id']?><span><?=!empty($charge_user_info)?$charge_user_info->getTypeName():''?></span></h2>
+                <h2>ID：<?=$charge_user_info['username']?><span><?=!empty($charge_user_info)?$charge_user_info->getTypeName():''?></span></h2>
                 <p>（<?=$charge_user_info ? ($charge_user_info->getOnline()?'在线':'离线'):'离线'?>）</p>
             </div>
         </div>

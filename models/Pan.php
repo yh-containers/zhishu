@@ -67,20 +67,28 @@ class Pan extends BaseModel
     }
 
     //缓存数据
-    public function recordCacheData($event)
-    {
-        //缓存数据
-        \Yii::$app->cache->set('open_pan_data_'.$this->type,[$this->time,$this->current_price]);
-        \Yii::$app->cache->set('close_pan_data_'.$this->type,[$this->up_time,$this->up_price]);
-        //最后一次开盘时间
-        \Yii::$app->cache->set('last_open_time'.$this->type,$this->up_time);
-    }
+//    public function recordCacheData($event)
+//    {
+//        //缓存数据
+//        \Yii::$app->cache->set('open_pan_data_'.$this->type,[$this->time,$this->current_price]);
+//        \Yii::$app->cache->set('close_pan_data_'.$this->type,[$this->up_time,$this->up_price]);
+//        //最后一次开盘时间
+//        \Yii::$app->cache->set('last_open_time'.$this->type,$this->up_time);
+//    }
 
     //处理交易数据
     public function handleVote($event)
     {
         //是否开奖
-        if($this->getAttribute('up_date')){
+        if($this->getAttribute('compare')){
+            if(!empty($event)){
+                //缓存数据
+                \Yii::$app->cache->set('open_pan_data_'.$this->type,[substr($this->time,0,5),$this->current_price]);
+                \Yii::$app->cache->set('close_pan_data_'.$this->type,[substr($this->up_time,0,5),$this->up_price]);
+                //最后一次开盘时间
+                \Yii::$app->cache->set('last_open_time'.$this->type,substr($this->up_time,0,5));
+            }
+
 //            var_dump($this->getAttributes());
             //当前开奖id
             $id = $this->getAttribute('id');
@@ -120,6 +128,15 @@ class Pan extends BaseModel
 
                 $user_vote_info = [];
                 foreach ($model->each() as $item){
+                    $charge = $item['per_money']; //平台手续费
+                    if(array_key_exists($item['uid'],$user_vote_info)){
+                        $user_vote_info[$item['uid']] += $charge;
+                    }else{
+                        $user_vote_info[$item['uid']] = $charge;
+                    }
+
+
+
                     $get_money = 0;
 
                     if($compare==3){
@@ -134,19 +151,14 @@ class Pan extends BaseModel
                         //开奖
                         $item->award_state = $award_state;  //1涨 2跌
                         if(empty($win_num) || empty($lose_num)){
-                            if($is_win==1){ //获胜返回
+//                            if($is_win==1){ //获胜返回
                                 $get_money = $item['result_money'];
                                 $item->award_state = 4;  //默认 4返还
                                 User::modMoney($item['uid'],$get_money,'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK]);
-                            }
+//                            }
                         }else{
 
-                            $charge = $item['money']-$item['result_money']; //平台手续费
-                            if(array_key_exists($item['uid'],$user_vote_info)){
-                                $user_vote_info[$item['uid']] += $charge;
-                            }else{
-                                $user_vote_info[$item['uid']] = $charge;
-                            }
+
 
 
 
@@ -195,7 +207,7 @@ class Pan extends BaseModel
                     if($f_user_model['fuid3']){
                         $per = self::commissionMoney(2);
                         $money = $vo*$per;//获得比例
-                        $u_l_f_key = $f_user_model['fuid2'].'_'.$key;
+                        $u_l_f_key = $f_user_model['fuid3'].'_'.$key;
                         $commission_money[$u_l_f_key] = ['money'=>$money,'extra'=>['com'=>$vo,'per'=>$per]];
                     }
                 }
@@ -233,10 +245,10 @@ class Pan extends BaseModel
         $behaviors[]=[
             'class' => AttributesBehavior::className(),
             'attributes' =>  [
-                'up_price'  =>[
-                    ActiveRecord::EVENT_AFTER_UPDATE => [$this,'recordCacheData'],
-                ],
-                'up_date'  =>[
+//                'up_price'  =>[
+//                    ActiveRecord::EVENT_AFTER_UPDATE => [$this,'recordCacheData'],
+//                ],
+                'compare'  =>[
                     ActiveRecord::EVENT_AFTER_UPDATE => [$this,'handleVote'],
                 ],
             ],
@@ -279,8 +291,23 @@ class Pan extends BaseModel
     public static function get_type($type=null,$fields='')
     {
         $data = [
-            ['name'=>'上证指数','url'=>'http://hq.sinajs.cn/list=sh000001','con'=>['09:00:00'=>'11:30:00','14:00:00'=>'15:00:00'],'stop_week'=>['0','6']],
-            ['name'=>'德国','url'=>'','con'=>['16:00:00'=>'23:30:00'],'stop_week'=>['0','6']],
+            [
+                'name'=>'上证指数',
+                'url'=>'http://hq.sinajs.cn/list=sh000001',
+                'con'=>['90:30:00'=>'11:30:00','13:00:00'=>'15:00:00'],
+                'stop_week'=>['0','6'],
+                'stop_hl_second'=> 120,
+            ],
+            [
+                'name'=>'德国',
+                'url'=>'',
+                'con'=>[
+                    [['15:00:00'=>'23:30:00'],[4,5,6,7,8,9,10,11]],
+                    [['16:00:00'=>'00:30:00'],[12,1,2,3]],
+                ],
+                'stop_week'=>['0','6'],
+                'stop_hl_second'=> 120,
+            ],
         ];
         if(is_null($type)){
             return $data;
@@ -295,6 +322,19 @@ class Pan extends BaseModel
             return false;
         }
     }
+    /*
+     * 处理开盘等待
+     * */
+    public static function handleWait()
+    {
+        $minutes = date('i');
+        if($minutes%2){
+            return 1;
+        }else{
+            return 0;
+        }
+
+    }
 
     /**
      * 获取盘数据
@@ -307,16 +347,21 @@ class Pan extends BaseModel
     {
 //        $fnc = ['getSHData'];
         $pool=[];
-        $need_field = ['time'=>'','today_price'=>'','current_price'=>'','down_price'=>'','top_price'=>'','compare'=>0];
+//        $need_field = ['time'=>'','today_price'=>'','current_price'=>'','down_price'=>'','top_price'=>'','compare'=>0];
+        $need_field = ['time'=>'','current_price'=>'','up_price'=>'','top_price'=>'','down_price'=>'','compare'=>0];
+        $query = self::find()->asArray();
+//        $query = $query->where(['>','compare',0]);
         if(!$next_data) {
             //初始化页面数据
-            $data = self::find()->asArray()->where(['type'=>$type,'date'=>$this->watch])->orderBy('id desc')->limit(15)->all();
+            $data = $query->where(['type'=>$type,'date'=>$this->watch])->orderBy('id desc')->limit(15)->all();
             foreach ($data as $vo){
                 array_unshift($pool,self::handleNeedData($need_field,$vo));
             }
         }else{
-            $data = self::find()->asArray()->where(['type'=>$type,'date'=>$this->watch])->orderBy('id desc')->limit(1)->one();
-            $pool = $data?self::handleNeedData($need_field,$data):[];
+            $data = $query->where(['type'=>$type,'date'=>$this->watch])->orderBy('id desc')->limit(2)->all();
+            foreach ($data as $vo){
+                array_unshift($pool,self::handleNeedData($need_field,$vo));
+            }
         }
 
 //        if(isset($fnc[$type])){

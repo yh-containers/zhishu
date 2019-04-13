@@ -20,8 +20,8 @@ $this->params = [
             <div class="top">
                 <div class="avatar"><img src="<?=$complaint_user_info['face']?>"><?=$complaint_user_info['type']?'<i class="icon iconfont icon-vip"></i>':''?></div>
                 <div class="text">
-                    <p><?=!empty($charge_user_info)?$charge_user_info->getTypeName():''?></p>
-                    <h3>ID：<?=$complaint_user_info['id']?></h3>
+                    <p><?=!empty($complaint_user_info)?$complaint_user_info->getTypeName():''?></p>
+                    <h3>ID：<?=$complaint_user_info['username']?></h3>
                 </div>
             </div>
             <div class="textarea"><textarea placeholder="投诉原因：" name="content"></textarea></div>

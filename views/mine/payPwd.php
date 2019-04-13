@@ -14,7 +14,7 @@ $this->params = [
     <div class="pay_settings">
         <ul>
             <li><a href="<?=\yii\helpers\Url::to(['rest-pay-pwd'])?>">设置支付密码</a></li>
-            <li><a href="<?=\yii\helpers\Url::to(['rest-pay-pwd','mod'=>1])?>">修改支付密码</a></li>
+            <li><a href="<?=\yii\helpers\Url::to(['rest-pay-pwd-email'])?>">找回支付密码</a></li>
         </ul>
     </div>
 </main>

@@ -33,6 +33,13 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label for="inputPassword3" class="col-sm-2 control-label">邀请码</label>
+
+                        <div class="col-sm-10">
+                            <input type="text" maxlength="20" class="form-control" name="code" value="<?= $req_user_info['username'] ?>" placeholder="邀请码">
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="inputPassword3" class="col-sm-2 control-label"><?= \Yii::$app->params['money_name']?></label>
 
                         <div class="col-sm-10">

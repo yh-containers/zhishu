@@ -36,7 +36,7 @@ $this->title = '注册';
             </div>
             <div class="box">
                 <i class="icon iconfont icon-tuijianma"></i>
-                <input type="text" name="code" placeholder="推荐码（必填）">
+                <input type="text" name="code" value="<?=\Yii::$app->session->get('req_code');?>" placeholder="推荐码（必填）">
             </div>
             <div class="agree"><input type="checkbox" name="" id="agree" class="on_checkbox"><label for="agree">我已阅读并同意</label><a href="javascript:;">《用户协议》</a></div>
             <div class="btn"><input type="button" name="" id="submit" value="立即注册"></div>

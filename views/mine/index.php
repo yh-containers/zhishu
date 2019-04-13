@@ -40,7 +40,7 @@ $this->params = [
             <li><a href="<?=\yii\helpers\Url::to(['req-code'])?>"><i class="icon iconfont icon-xingxing"></i><span>推荐码邀请</span></a></li>
             <li><a href="<?=\yii\helpers\Url::to(['rest-mail'])?>"><i class="icon iconfont icon-youxiang"></i><span>重置邮箱</span></a></li>
             <li><a href="<?=\yii\helpers\Url::to(['rest-pwd'])?>"><i class="icon iconfont icon-mima"></i><span>修改登录密码</span></a></li>
-            <li><a href="<?=\yii\helpers\Url::to(['rest-pay-pwd'])?>"><i class="icon iconfont icon-pay-key"></i><span>设置支付密码</span></a></li>
+            <li><a href="<?=\yii\helpers\Url::to(['pay-pwd'])?>"><i class="icon iconfont icon-pay-key"></i><span>支付密码</span></a></li>
         </ul>
     </div>
 </main>

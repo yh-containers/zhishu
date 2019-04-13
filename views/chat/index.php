@@ -3,6 +3,7 @@ $this->title = '聊天大厅';
 $this->params = [
         'body_style' => 'style="background: #fff;"',
         'current_active'   => 'chat/index',
+        'hide_ajax_chat'   => 1,
 ];
 ?>
 

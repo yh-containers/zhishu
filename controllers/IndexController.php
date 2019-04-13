@@ -7,21 +7,65 @@ use app\models\Pan;
 
 class IndexController extends CommonController
 {
-    protected $ignore_action = 'login,registered,send-mailer,forget,handle,handle-gdaxi';
+    protected $ignore_action = 'login,registered,send-mailer,forget,handle,handle-gdaxi,handle-vote';
+//
+//    public function actionIndex()
+//    {
+//        $type = (int)$this->request->get('type',0);
+//        $is_lock = (int)$this->request->get('is_lock',0);
+//        if(!$is_lock){
+//
+//            //是否锁定主页--德国时间
+//            $gdaxi_con = \app\models\Pan::get_type(1,'con');
+//            foreach ($gdaxi_con as $key=>$vo){
+//                $pointer_month = $vo[1]; //指定月份时间
+//                $open_time = $vo[0]; //开盘时间
+//                if(in_array((int)date('m'), $pointer_month)){
+//                    $start_time = strtotime(key($open_time));
+//                    $end_time = strtotime(end($open_time));
+//                    if(time()>$start_time){
+//                        $this->redirect(\yii\helpers\Url::to(['','is_lock'=>1,'type'=>1]));
+//                    }
+//                    break;
+//                }
+//            }
+//
+//        }
+//        //获取用户信息
+//        $user_info = \app\models\User::findOne($this->user_id);
+//        if(!empty($user_info) && empty($user_info['is_show_protocol'])){
+//            $is_show_protocol=1;
+//            $user_info->is_show_protocol=$is_show_protocol;
+//            $user_info->save(false);
+//        }
+//        return $this->render('index',[
+//            'user_info' => $user_info,
+//            'type' => $type,
+//            'is_show_protocol' => isset($is_show_protocol)?$is_show_protocol:0,
+//        ]);
+//    }
 
     public function actionIndex()
     {
         $type = (int)$this->request->get('type',0);
         $is_lock = (int)$this->request->get('is_lock',0);
         if(!$is_lock){
-
             //是否锁定主页--德国时间
             $gdaxi_con = \app\models\Pan::get_type(1,'con');
             foreach ($gdaxi_con as $key=>$vo){
-                if(date('H:i:m')>$key){
-                    $this->redirect(\yii\helpers\Url::to(['','is_lock'=>1,'type'=>1]));
+                $pointer_month = $vo[1]; //指定月份时间
+                $open_time = $vo[0]; //开盘时间
+                if(in_array((int)date('m'), $pointer_month)){
+
+                    $start_time = strtotime(key($open_time));
+                    $end_time = strtotime(end($open_time));
+                    if(time()>$start_time){
+                        $this->redirect(\yii\helpers\Url::to(['','is_lock'=>1,'type'=>1]));
+                    }
+                    break;
                 }
             }
+
         }
         //获取用户信息
         $user_info = \app\models\User::findOne($this->user_id);
@@ -30,10 +74,18 @@ class IndexController extends CommonController
             $user_info->is_show_protocol=$is_show_protocol;
             $user_info->save(false);
         }
+        $is_open = (int)!(\app\models\Pan::getTypeState($type));
+
+        //自己下注多少金额
+        $press_info = \app\models\Vote::find()->where(['type'=>$type,'status'=>1,'uid'=>$this->user_id, 'wid'=>null])->one();
+
         return $this->render('index',[
             'user_info' => $user_info,
             'type' => $type,
             'is_show_protocol' => isset($is_show_protocol)?$is_show_protocol:0,
+            //是否开放
+            'is_open'  => $is_open,
+            'press_info'  => $press_info,
         ]);
     }
 
@@ -83,6 +135,8 @@ class IndexController extends CommonController
             if(empty($user_info))  throw new  \yii\base\UserException('帐号或密码异常');
             //验证密码
             if(\app\models\User::generatePwd($password,$user_info['salt'])!=$user_info['password'])  throw new  \yii\base\UserException('帐号或密码异常');
+            //状态判断
+            if($user_info['status']!=1)  throw new  \yii\base\UserException('帐号已被禁用');
 
             //登录成功
             $session = \Yii::$app->session;
@@ -182,7 +236,7 @@ class IndexController extends CommonController
             $up_compare = !empty($model_up['compare'])?$model_up['compare']:0;
             //是否中奖--非初始化数据
             $award_info = \app\models\Vote::find()->where(['uid'=>$this->user_id,'wid'=>$model_up['id']])->one();
-            $award_money = $award_info['is_win']==1?$award_info['get_money']:"0";
+            $award_money = $award_info['is_win']==1?$award_info['get_money']:($award_info['award_state']==4?-$award_info['per_money']:-$award_info['money']);
         }
 
         $data = $model->getPanData($type,$is_init);
@@ -225,10 +279,13 @@ class IndexController extends CommonController
             'ons'       => (int)$open_next_second,
             //开盘价
             'open_data' => $open_data,
-            //上一次开盘结果
-            'up_data' => [$up_compare,$award_money],
             //收盘价
             'close_data' => $close_data,
+            //上一次开盘结果
+            'up_data' => [$up_compare,$award_money],
+            //上一次开盘结果
+            'is_wait' => \app\models\Pan::handleWait(),
+
             'data' => $data,
             'user_money' => $model_user['money']?$model_user['money']:0.00,
             'o_data' => [
@@ -279,6 +336,25 @@ class IndexController extends CommonController
         ]);
     }
 
+    //获取其它信息
+    public function actionOtherInfo()
+    {
+        $type = $this->request->get('type',0);
+        $model_user = \app\models\User::findOne($this->user_id);
+        //下注数量
+        $press_info = \app\models\Vote::find()->where(['type'=>$type,'status'=>1,'uid'=>$this->user_id, 'wid'=>null])->one();
+        $is_up = empty($press_info)?0:$press_info['is_up'];
+        $press_money = empty($press_info)?0:$press_info['money'];
+        //获取之前开盘数据
+        $open_data =\app\models\Pan::getCachePanData($type);
+
+        return $this->asJson([
+            $model_user['money']?$model_user['money']:0,
+            [$is_up,$press_money],
+            $open_data
+        ]);
+    }
+
     //检测是否可以开奖
     public function checkAwardStatus()
     {
@@ -290,10 +366,29 @@ class IndexController extends CommonController
     //test入口
     public function actionTest()
     {
-        $id = $this->request->get('id',10);
-        $model = \app\models\User::findOne($id);
-        $model->vote_times=$model->vote_times+1;
-        $model->save();
+        $data = [["21:10:00", 11940.18, 11939.77, 11942.07, 11939.77, 0],["21:09:00", 11939.77, 11941.35, 11941.35, 11939.77, 0]
+ ,       ["21:14:00", 11939.69, 11942.31, 11942.31, 11939.69, 0]
+,["21:13:00", 11942.31, 11941.77, 11942.31, 11941.77, 0]
+,["21:11:00", 11941.19, 11940.18, 11941.22, 11939.78, 0]
+        ];
+        var_dump($data);
+        $sort_times = array_column($data,0);
+        array_multisort($sort_times,SORT_STRING,SORT_ASC,$data);
+        var_dump($data);
+
+        $arr = [1,2,3,4,5,6];
+        var_dump($arr);
+        array_shift($arr);
+        array_pop($arr);
+        $arr[]=7;
+        var_dump($arr);
+        var_dump(date_default_timezone_get());
+        var_dump(date('Y-m-d H:i:s'));
+        var_dump(\app\models\Pan::handleWait());
+//        $id = $this->request->get('id',10);
+//        $model = \app\models\User::findOne($id);
+//        $model->vote_times=$model->vote_times+1;
+//        $model->save();
         exit;
 //        $week = date("w");
 //        var_dump($week);
@@ -314,30 +409,66 @@ class IndexController extends CommonController
 //        var_dump($content);exit;
 
     }
+    //处理投票数据
+    public function actionHandleVote()
+    {
+        $type = $this->request->get('type',0);
+        $time = $this->request->get('time',time());
+        //查询所有未开奖数据--上证指数
+        $info = \app\models\Pan::find()->where(['type'=>$type, 'is_wait'=>1])->orderBy('id desc')->limit(1)->one();
+        if(!empty($info)){
+            //查询投票数据
+            \app\models\Vote::updateAll([
+                'wid'=>$info['id'],
+                'record_wid_date'=>date('Y-m-d H:i:s',$time)
+            ],['wid'=>null]);
+        }
+
+
+    }
+
+
+
 
     //处理结果--上证指数
     public function actionHandle()
     {
+
         //查询所有未开奖数据--上证指数
         $data = \app\models\Pan::find()->where(['type'=>0, 'compare'=>0])->orderBy('id asc')->all();
         foreach($data as $key=>$vo) {
-
             $current_model = $vo;
             //下一条数据
-            $next_model = isset($data[$key+1])?$data[$key+1]:null;
+//            $next_model = isset($data[$key+1])?$data[$key+1]:null;
+//
+//            //获取上一条数据
+//            if(!isset($up_model)){
+//                $up_model = \app\models\Pan::find()->where(['<', 'id',$vo['id']])->andWhere(['type'=>0])->orderBy('id desc')->limit(1)->one();
+//            }else{
+//                $up_model = $data[$key-1];
+//            }
+
+//            var_dump($up_model->getAttributes());
 
             //下一条数据有值
-            if(!empty($next_model)) {
+//            if(!empty($next_model)) {
 
                 //说明有数据--更新此次同步数据
-                $current_model->up_date=$next_model['date'];
-                $current_model->up_time=$next_model['time'];
-                $current_model->up_price=$next_model['current_price'];//当前价格
+//                $current_model->up_date=$next_model['date'];
+//                $current_model->up_time=$next_model['time'];
+//                $current_model->up_price=$next_model['current_price'];//当前价格
+//
+////                $current_model->top_price=empty($up_model['top_price'])?$current_model['current_price']:($current_model['current_price']>$up_model['top_price']?$current_model['current_price']:$up_model['top_price']);//最高价
+////                $current_model->down_price=empty($up_model['down_price'])?$current_model['current_price']:($current_model['current_price']<$up_model['down_price']?$current_model['current_price']:$up_model['down_price']);//最低价
+//                $current_model->top_price = $current_model['current_price']>$next_model['current_price']?$current_model['current_price']:$next_model['current_price'];
+//                $current_model->down_price = $current_model['current_price']>$next_model['current_price']?$next_model['current_price']:$current_model['current_price'];
+
                 $current_model->compare=$current_model['current_price']>$current_model['up_price']?2:($current_model['current_price']<$current_model['up_price']?1:3);//价格比较1涨 2跌 3平
+//                var_dump($current_model->getAttributes());exit;
                 $current_model->save();
 //                var_dump($state);
 //                var_dump($current_model->getAttributes());
-            }
+//            }
         }
     }
     //处理结果--德国指数
@@ -349,21 +480,34 @@ class IndexController extends CommonController
         foreach($data as $key=>$vo) {
 
             $current_model = $vo;
-            //下一条数据
-            $next_model = isset($data[$key+1])?$data[$key+1]:null;
+//            //下一条数据
+//            $next_model = isset($data[$key+1])?$data[$key+1]:null;
+//
+//            //获取上一条数据
+//            if(!isset($up_model)){
+//                $up_model = \app\models\Pan::find()->where(['<', 'id',$vo['id']])->andWhere(['type'=>1])->orderBy('id desc')->limit(1)->one();
+//            }else{
+//                $up_model = $data[$key-1];
+//            }
 
             //下一条数据有值
-            if(!empty($next_model)) {
+//            if(!empty($next_model)) {
 
-                //说明有数据--更新此次同步数据
-                $current_model->up_date=$next_model['date'];
-                $current_model->up_time=$next_model['time'];
-                $current_model->up_price=$next_model['current_price'];//当前价格
+//                //说明有数据--更新此次同步数据
+//                $current_model->up_date=$next_model['date'];
+//                $current_model->up_time=$next_model['time'];
+//                $current_model->up_price=$next_model['current_price'];//当前价格
+//
+////                $current_model->top_price=empty($up_model['top_price'])?$current_model['current_price']:($current_model['current_price']>$up_model['top_price']?$current_model['current_price']:$up_model['top_price']);//最高价
+////                $current_model->down_price=empty($up_model['down_price'])?$current_model['current_price']:($current_model['current_price']<$up_model['down_price']?$current_model['current_price']:$up_model['down_price']);//最低价
+//                $current_model->top_price = $current_model['current_price']>$next_model['current_price']?$current_model['current_price']:$next_model['current_price'];
+//                $current_model->down_price = $current_model['current_price']>$next_model['current_price']?$next_model['current_price']:$current_model['current_price'];
+
                 $current_model->compare=$current_model['current_price']>$current_model['up_price']?2:($current_model['current_price']<$current_model['up_price']?1:3);//价格比较1涨 2跌 3平
                 $current_model->save();
 //                var_dump($state);
 //                var_dump($current_model->getAttributes());
-            }
+//            }
 
         }
     }

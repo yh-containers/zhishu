@@ -229,9 +229,10 @@ class MineController extends CommonController
     public function actionShowList()
     {
         $type = $this->request->get('type',0);
-        $query = \app\models\User::find()->joinWith(['linkChat'=>function($query){
+        $user_id = $this->user_id;
+        $query = \app\models\User::find()->joinWith(['linkChat'=>function($query)use($user_id){
             return $query
-                ->onCondition(['{{%user_chat}}.is_read' =>0]);
+                ->onCondition(['{{%user_chat}}.is_read' =>0,'rec_uid'=>$user_id]);
         }]);
         if($type){
             //我的好友

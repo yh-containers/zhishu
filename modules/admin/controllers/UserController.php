@@ -78,13 +78,18 @@ class UserController extends DefaultController
     }
 
 
-    //管理员--删除
+    //用户--删除
     public function actionUserDel()
     {
         $request = \Yii::$app->request;
         $id = $request->get('id');
+        if($request->isPost){
+            $id = $request->post('id');
+        }
+
         $model = new \app\models\User();
-        $result = $model->actionDel(['id'=>$id]);
+        var_dump($id);exit;
+        $result = $model->actionDel(['in','id',$id]);
         return $this->asJson($result);
     }
 

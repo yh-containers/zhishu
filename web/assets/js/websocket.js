@@ -38,7 +38,7 @@ ws.onmessage = function (evt)
         //绑定的数据++--初始化
         if(received_msg.hasOwnProperty('type') && received_msg.type=='init_data'){
             // console.log('--------------');
-            handlePageData(received_msg.type,received_msg.data)
+            handlePageData(received_msg.type,received_msg.data,received_msg)
         }
 
         //停盘
@@ -50,7 +50,7 @@ ws.onmessage = function (evt)
             //绑定的数据
             if(received_msg.hasOwnProperty('type') ){
                 // console.log('--------------');
-                handlePageData(received_msg.type,received_msg.data)
+                handlePageData(received_msg.type,received_msg.data,received_msg)
             }
 
             //倒计时功能
@@ -62,6 +62,7 @@ ws.onmessage = function (evt)
             }
             //数据展示
             if(received_msg.type==='vote_data' && received_msg.payload.hasOwnProperty(0)){
+
                 if( init_type == received_msg.payload[0]){
                     //押涨
                     received_msg.payload.hasOwnProperty(1) && $("#up-money").text(received_msg.payload[1])
@@ -72,6 +73,13 @@ ws.onmessage = function (evt)
                     received_msg.payload.hasOwnProperty(2) && $("#up_per").text(received_msg.payload[2])
                     //跌百分比
                     received_msg.payload.hasOwnProperty(4) && $("#down_per").text(received_msg.payload[4])
+                    //先删除高度
+                    $(".look .high").removeClass('high')
+                    //判断幅度
+                    if(received_msg.payload[1]!==received_msg.payload[3]){
+
+                        parseFloat(received_msg.payload[1])>parseFloat(received_msg.payload[3]) ?$(".look .red").addClass('high'):$(".look .green").addClass('high')
+                    }
                 }
 
 
@@ -100,6 +108,7 @@ ws.onclose = function()
     //关闭心跳
     clearTimeout(websocket_is_close);
     // 关闭 websocket
+    alert('网络异常，请点击右上角刷新')
     console.log('连接已关闭')
 };
 //每隔30秒发送一次心跳包
@@ -164,7 +173,7 @@ if(is_test===1){
                     htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:#fff;"></span>';
                     //圆点后面显示的文本
                     htmlStr += '收盘价:'+value[2]+'<br>' ;
-                    htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:#fff;"></span>';
+                    // htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:#fff;"></span>';
                     //圆点后面显示的文本
                     // htmlStr += '涨跌:'+(value[5]>0?(value[5]==1?'涨':(value[5]==2?'跌':'平')):'待开奖')+'<br>' ;
 
@@ -211,7 +220,10 @@ if(is_test===1){
                     data: [
                         {
                             name: 'Y 轴值为 100 的水平线',
-                            yAxis:  0
+                            yAxis:  0,
+                            lineStyle:{
+                                color: '#fff500'
+                            }
                         },
                     ]
                 }
@@ -222,9 +234,10 @@ if(is_test===1){
 // 使用刚指定的配置项和数据显示图表。
 //     myChart.setOption(option);
     var is_temp_step  = 1;
-    function handlePageData(type,data) {
+    function handlePageData(type,data,obj) {
         // console.log(type)
         // console.log(data)
+        var is_wait = obj.hasOwnProperty('is_wait')?obj.is_wait:false
         data=data?data:[]
         if(type==='init_data'){
             //初始化数据
@@ -278,14 +291,14 @@ if(is_test===1){
                 var show_temp_data = showData(item);
                 option.xAxis.data.push(showxAxisData(item));
                 option.series.data.push(show_temp_data);
-                option.series.markLine.data[0].yAxis=show_temp_data[0]
+                option.series.markLine.data[0].yAxis=show_temp_data[1]
 
             })
         }
 
         //更新页面数据
         if(type==='init_data'||type==='table'){
-            updateOtherInfo()
+            updateOtherInfo(is_wait)
         }
 
 
@@ -293,20 +306,31 @@ if(is_test===1){
         myChart.setOption(option);
     }
     //加载投票倒计时
-    var vote_info = function(second,is_close){
+    var second_int=null;
+    function vote_info(second,is_close){
         second=second?second:3
+
+        if(second_int) {clearInterval(second_int)}
+
+
         if(is_close){
             $("#vote-second").text('已停盘')
             return false;
         }
 
-        var second_int = setInterval(function(){
+        second_int = setInterval(function(){
             second--
             $("#vote-second").text(second)
             //小于零重新请求数据
             if(second<=0){
                 //清空倒计时
                 clearInterval(second_int)
+
+                //监听倒计时问题
+                setTimeout(function(){
+                    ws.send('4,0');
+                },1000);
+
             }
         },1000)
     }
@@ -319,29 +343,59 @@ if(is_test===1){
         return [+item[1], +item[2], +item[3], +item[4], +item[5]];
     }
 
+    //是否第一次加载
+    var is_init=1
     //押注数量
-    function updateOtherInfo() {
-        $.get("/index/other-info",{type:type},function(result){
+    function updateOtherInfo(is_wait) {
+        $.get("/index/other-info",{type:type,is_init:is_init},function(result){
             var user_money=result.hasOwnProperty(0)?parseFloat(result[0]):0.00;
             var press_info=result.hasOwnProperty(1)?result[1]:[];
             var open_data=result.hasOwnProperty(2)?result[2]:[];
+            var award_money=result.hasOwnProperty(3)?parseFloat(result[3][0]):0;
+            console.log(result)
+            // if(is_wait===1){
+            //     //等待开奖
+            //     $("#open-pan h2").text(0)
+            //     $("#open-pan .time").text('--')
+            //
+            //     $("#close-pan h2").text(0)
+            //     $("#close-pan .time").text('--')
+            //
+            // }else{
+                //先删除高度
+                $(".look .high").removeClass('high')
+
+                //开盘金额
+                if(open_data.hasOwnProperty(0)){
+                    $("#open-pan h2").text(open_data[0][1])
+                    $("#open-pan .time").text(open_data[0][0])
+                }
+                //收盘价
+                if(open_data.hasOwnProperty(1)){
+                    $("#close-pan h2").text(open_data[1][1])
+                    $("#close-pan .time").text(open_data[1][0])
+                }
+                //下压金额
+                if(press_info.hasOwnProperty(0) && press_info[0]>0){
+                    press_info[0]===1 ? $("#press-up-money").text(press_info[1]):$("#press-down-money").text(press_info[1])
+                }else{
+                    //清空下注数量
+                    $("#press-up-money").text(0)
+                    $("#press-down-money").text(0)
+                }
+            //是否中奖
+            if(award_money!=0){
+                //中奖效果
+                $(".income_pop #up_get_money").text((award_money>0?'+':'')+award_money);
+                $(".income_pop").show();
+            }
+
+            // }
             //用户余额
-            user_money>0 && $("#user-money").text(result.user_money);
-            //开盘金额
-            if(open_data.hasOwnProperty(0)){
-                $("#open-pan h2").text(open_data[0][1])
-                $("#open-pan .time").text(open_data[0][0])
-            }
-            //收盘价
-            if(open_data.hasOwnProperty(1)){
-                $("#close-pan h2").text(open_data[1][1])
-                $("#close-pan .time").text(open_data[1][0])
-            }
-            //下压金额
-            if(press_info.hasOwnProperty(0) && press_info[0]>0){
-                press_info[0]===1 ? $("#press-up-money").text(press_info[1]):$("#press-down-money").text(press_info[1])
-            }
+            user_money>0 && $("#user-money").text(user_money);
         })
+
+        is_init = 0;
     }
 
 
@@ -368,7 +422,7 @@ if(is_test===1){
                         layer.msg(result.msg)
                         layer.close(index)
                         //获取下压数量
-                        updateOtherInfo()
+                        updateOtherInfo(false)
 
                     })
 

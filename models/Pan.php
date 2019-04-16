@@ -76,18 +76,32 @@ class Pan extends BaseModel
 //        \Yii::$app->cache->set('last_open_time'.$this->type,$this->up_time);
 //    }
 
+    //设置开盘数据
+    public function setOpenData()
+    {
+//        获取上一条数据
+//        $up_info = Pan::find()->where(['<','id',$this->id])->orderBy('id desc')->one();
+        if($this->is_wait==1){
+            \Yii::$app->cache->set('open_pan_data_'.$this->type,[substr($this->up_time,0,5),$this->current_price]);
+            \Yii::$app->cache->set('close_pan_data_'.$this->type,[0,0]);
+        }else{
+
+            //缓存数据
+            \Yii::$app->cache->set('close_pan_data_'.$this->type,[substr($this->up_time,0,5),$this->current_price]);
+
+        }
+
+
+        //最后一次开盘时间
+//        \Yii::$app->cache->set('last_open_time'.$this->type,substr($this->up_time,0,5));
+    }
+
     //处理交易数据
     public function handleVote($event)
     {
         //是否开奖
         if($this->getAttribute('compare')){
-            if(!empty($event)){
-                //缓存数据
-                \Yii::$app->cache->set('open_pan_data_'.$this->type,[substr($this->time,0,5),$this->current_price]);
-                \Yii::$app->cache->set('close_pan_data_'.$this->type,[substr($this->up_time,0,5),$this->up_price]);
-                //最后一次开盘时间
-                \Yii::$app->cache->set('last_open_time'.$this->type,substr($this->up_time,0,5));
-            }
+
 
 //            var_dump($this->getAttributes());
             //当前开奖id
@@ -142,7 +156,7 @@ class Pan extends BaseModel
                     if($compare==3){
                         //平
                         $get_money = $item['result_money'];
-                        $item->award_state==4; //默认 4返还
+                        $item->award_state=4; //默认 4返还
                         User::modMoney($item['uid'],$get_money,'返还',['id'=>$item['id'],'money_change_type'=>UserMoneyLogs::TYPE_BACK]);
                     }else{
                         $award_state = $compare==1 ? 1 : 2; //1涨 2跌
@@ -263,19 +277,35 @@ class Pan extends BaseModel
      * */
     public static function getTypeState($type=0)
     {
+        $str_to_time = time();
         //当前周几
         $week = date('w');
         $is_close = 1; //1bi 0open
         $current_date_time = date('H:i:s');
         $con = self::get_type($type,'con');
         $stop_week = self::get_type($type,'stop_week');
-        foreach ($con as $key=>$vo) {
-            if($current_date_time<$vo && $current_date_time>$key) {
-                $is_close=0;
-                break;
+        if($type==1){
+            foreach ($con as $key=>$vo){
+                $pointer_month = $vo[1]; //指定月份时间
+                $open_time = $vo[0]; //开盘时间
+                if(in_array((int)date('m'), $pointer_month)){
+                    $start_time = strtotime(key($open_time));
+                    $end_time = strtotime(end($open_time));
+                    if($start_time<$str_to_time && $end_time>$str_to_time){
+                        $is_close=0;
+                    }
+                    break;
+                }
+            }
+        }else{
+            foreach ($con as $key=>$vo) {
+                if($current_date_time<$vo && $current_date_time>$key) {
+                    $is_close=0;
+                    break;
+                }
             }
         }
-        
+
         if(in_array($week,$stop_week)){
             $is_close=1;
         }
@@ -294,7 +324,7 @@ class Pan extends BaseModel
             [
                 'name'=>'上证指数',
                 'url'=>'http://hq.sinajs.cn/list=sh000001',
-                'con'=>['90:30:00'=>'11:30:00','13:00:00'=>'15:00:00'],
+                'con'=>['09:30:00'=>'11:30:00','13:00:00'=>'15:00:00'],
                 'stop_week'=>['0','6'],
                 'stop_hl_second'=> 120,
             ],

@@ -11,6 +11,7 @@
     <div class="box">
         <div class="box-header">
             <a href="<?=\yii\helpers\Url::to(['user-add'])?>" class="btn bg-olive margin">新增</a>
+            <button id="user-del" class="btn  margin btn-danger">删除</button>
             <div class="box-tools margin">
                 <form>
                 <div class="input-group input-group-sm" style="width: 250px; margin-right: 50px">
@@ -41,7 +42,7 @@
                 <tbody>
                 <?php foreach ($list as $key=>$vo) {?>
                     <tr>
-                        <td><?=$key+1?></td>
+                        <td><input type="checkbox" name="id[]" value="<?=$vo['id']?>"/></td>
                         <td><?=$vo['username']?></td>
                         <td><?=$vo->typeName?></td>
                         <td><?=$vo['email']?> </td>
@@ -51,7 +52,7 @@
                         <td>
                             <a href="<?=\yii\helpers\Url::to(['user-add','id'=>$vo['id']])?>">编辑</a>
                             <a href="<?=\yii\helpers\Url::to(['user-detail','id'=>$vo['id']])?>">查看</a>
-                           <!-- <a  href="javascript:;" onclick="$.common.del('<?/*= \yii\helpers\Url::to(['user-del','id'=>$vo['id']])*/?>','删除')" class="ml-5">  删除</a>-->
+                            <a  href="javascript:;" onclick="$.common.del('<?= \yii\helpers\Url::to(['user-del','id'=>$vo['id']])?>','删除')" class="ml-5">  删除</a>
                         </td>
                     </tr>
                 <?php }?>
@@ -64,5 +65,30 @@
         </div>
     </div>
 
+
+<?php $this->endBlock()?>
+
+<?php $this->beginBlock('script')?>
+<script>
+    var _csrf = '<?= Yii::$app->request->csrfToken ?>';
+    $(function(){
+        $("#user-del").click(function(){
+            var ids = []
+            $('.table tbody tr input:checked').each(function(){
+                ids.push($(this).val())
+            })
+            if(ids.length===0){
+                layer.msg('请选择要删除的会员');
+                return false;
+            }
+            $.post('<?= \yii\helpers\Url::to(['user-del'])?>',{id:ids,_csrf:_csrf},function(result){
+                layer.msg(result.msg)
+                if(result.code===1){
+                    setTimeout(function(){location.reload()},1000)
+                }
+            })
+        })
+    })
+</script>
 
 <?php $this->endBlock()?>

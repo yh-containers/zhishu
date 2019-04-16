@@ -23,6 +23,7 @@ $this->params = [
             <a href="<?=\yii\helpers\Url::to(['mine/money-logs'])?>"><i class="icon iconfont icon-jiaoyijilu-"></i><span>账单</span></a>
             <a href="<?=\yii\helpers\Url::to(['mine/recharge'])?>"><i class="icon iconfont icon-chongzhi1"></i><span>充值</span></a>
             <a href="<?=\yii\helpers\Url::to(['mine/withdraw'])?>"><i class="icon iconfont icon-tixian1"></i><span>提现</span></a>
+            <a href="javascript:location.reload();"><i class="icon iconfont icon-shuaxin"></i><span>刷新</span></a>
         </div>
     </div>
 </header>
@@ -143,6 +144,13 @@ $this->params = [
 <script type="text/javascript" src="/assets/js/leftTime.min.js"></script>
 <script type="text/javascript" src="/assets/js/echarts.min.js"></script>
 <script type="text/javascript">
-
+    function isWeiXin(){
+        var ua = window.navigator.userAgent.toLowerCase();
+        if(ua.match(/MicroMessenger/i) == 'micromessenger'){
+            return true;
+        }else{
+            return false;
+        }
+    }
 </script>
 <?php $this->endBlock()?>

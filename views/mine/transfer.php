@@ -5,6 +5,17 @@ $this->params = [
 ];
 ?>
 
+
+<?php $this->beginBlock('style')?>
+<style>
+    #chat-box .message .info p img{display: inline-block}
+    .layui-layer .layui-layer-content{text-align: center;}
+    .layui-layer .layui-layer-btn .layui-layer-btn0{float: right;background: #c50000;color: #fff;border: none;margin: 10px;}
+    .layui-layer .layui-layer-btn .layui-layer-btn1{float: left;background: #00c500;color: #fff;border: none;margin: 10px;}
+</style>
+<?php $this->endBlock()?>
+
+
 <?php $this->beginBlock('content')?>
 
 <header class="header red">

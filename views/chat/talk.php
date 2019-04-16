@@ -6,9 +6,13 @@ $this->params = [
 ];
 ?>
 
+
 <?php $this->beginBlock('style')?>
 <style>
     #chat-box .message .info p img{display: inline-block}
+    .layui-layer .layui-layer-content{text-align: center;}
+    .layui-layer .layui-layer-btn .layui-layer-btn0{float: right;background: #c50000;color: #fff;border: none;margin: 10px;}
+    .layui-layer .layui-layer-btn .layui-layer-btn1{float: left;background: #00c500;color: #fff;border: none;margin: 10px;}
 </style>
 <?php $this->endBlock()?>
 
@@ -130,6 +134,10 @@ $this->params = [
 
 
         function sendMsg(content,type) {
+            if(!content.length){
+                layer.msg('请输入发送内容')
+                return false;
+            }
             var index=layer.load(0, {time: 3000});
             $.post('<?=\yii\helpers\Url::to(['chat/say'])?>',{_csrf:_csrf,content:content,type:type,rec_uid:chat_obj_uid},function(result){
                 layer.close(index)

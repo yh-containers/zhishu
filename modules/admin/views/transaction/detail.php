@@ -33,24 +33,35 @@ $this->params = [
                         <tbody>
 
                         <tr>
-                            <td>时间</td>
-                            <td><?=$model['date'].' '.$model['time']?></td>
-                            <td>下一时刻时间</td>
+                            <td>上次收盘时间</td>
+                            <td><?=$open_model['up_date'].' '.$open_model['up_time']?></td>
+                            <td>上次收盘价格</td>
+                            <td><?=$open_model['current_price']?></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+
+                        <tr>
+                            <td>收盘时间</td>
                             <td><?=$model['up_date'].' '.$model['up_time']?></td>
+                            <td>收盘价格</td>
+                            <td><?=$model['current_price']?></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
                         </tr>
                         <tr>
-                            <td>当前价格</td>
-                            <td><?=$model['current_price']?></td>
-                            <td>下一时刻价格</td>
-                            <td><?=$model['up_price']?></td>
                             <td></td>
                             <td></td>
                             <td>对比状态</td>
                             <td><?=\app\models\Pan::getCompareInfo($model['compare'])?></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
                         </tr>
 
                         </tbody>

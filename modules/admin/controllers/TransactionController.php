@@ -39,9 +39,13 @@ class TransactionController extends DefaultController
     public function actionDetail()
     {
         $id = $this->request->get('id',0);
+        $open_model = \app\models\Pan::find()->where(['<','id',$id])->orderBy('id desc')->limit(1)->one();
+
         $model = \app\models\Pan::find()->with(['linkVote.linkUser'])->where(['id'=>$id])->one();
         return $this->render('detail',[
             'model' => $model,
+            'open_model' => $open_model,
+
         ]);
     }
 

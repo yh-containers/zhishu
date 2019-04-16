@@ -51,9 +51,11 @@ $this->params = [
                         <td><?=$vo['y_count']?></td>
                         <td><?=$vo['up_money_total']?></td>
                         <td><?=$vo['down_money_total']?></td>
-                        <td><?=\app\models\Pan::getCompareInfo($vo['compare'])?></td>
+                        <td><?=$vo['is_wait']?'---':\app\models\Pan::getCompareInfo($vo['compare'])?></td>
                         <td>
-                            <a href="<?=\yii\helpers\Url::to(['detail','id'=>$vo['id']])?>">查看</a>
+                            <?php if(!$vo['is_wait']){?>
+                                <a href="<?=\yii\helpers\Url::to(['detail','id'=>$vo['id']])?>">查看</a>
+                            <?php }?>
                         </td>
                     </tr>
                 <?php }?>

@@ -39,7 +39,7 @@ class UserWithdraw extends BaseModel
             return [
                 [['uid','label'],'required','message'=>'{attribute}信息异常'],
                 [['money','price','label'],'required','message'=>'{attribute}信息异常'],
-                ['money','integer','min'=>0,'tooSmall'=>'{attribute}不得低于{min}'],
+                ['money','integer','min'=>1,'tooSmall'=>'{attribute}不得低于{min}'],
                 ['money','compare','compareAttribute'=>'my_money','operator'=>'<=','message'=>'出售'.$money_name.'数量必须小于拥有数量'],
                 ['price', 'number','min'=>0,'max'=>100,'tooBig'=>'{attribute}不能超过{max}','tooSmall'=>'{attribute}不能低于{min}','message'=>'{attribute}必须是正数'],
 //                ['label', 'in','range' => [1, 2, 3],'message'=>'{attribute}选择异常'],

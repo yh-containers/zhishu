@@ -28,6 +28,13 @@ $this->params = [
                             <span class="help-block">手续费0-1之间的两位小数(0或空则不限制)</span>
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-sm-2 control-label">系统开关</label>
+                        <div class="col-sm-10">
+                            <input type="radio"  name="content[switch]" value="1" <?= isset($normal_content['switch'])?($normal_content['switch']==1?'checked':''):'checked'?>>开
+                            <input type="radio"  name="content[switch]" value="2" <?= isset($normal_content['switch']) && $normal_content['switch']==2?'checked':''?>>关
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>

@@ -39,7 +39,7 @@ class Menu extends Widget
                 'child' => [
                     ['name' => '常用设置','href'=>'system/setting','child'=>[]],
                     ['name' => '用户投诉','href'=>'system/complaint','child'=>[]],
-                    ['name' => '用户协议','href'=>'system/protocol','child'=>[]],
+                    ['name' => '用户提示','href'=>'system/protocol','child'=>[]],
                     ['name' => '用户注册协议','href'=>'system/protocol-reg','child'=>[]],
                     ['name' => '帮助中心','href'=>'system/help-center','child'=>[]],
                     ['name' => '管理员列表','href'=>'system/manage','child'=>[]],

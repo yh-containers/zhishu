@@ -366,9 +366,13 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 }
             }
         }else{
-            //上证指数
-            $start_time = strtotime(key($con));
-            $end_time = strtotime(end($con));
+            foreach ($con as $key=>$vo){
+                if($key<$date && $vo>$date){
+                    //上证指数
+                    $start_time = strtotime($key);
+                    $end_time = strtotime($vo);
+                }
+            }
         }
 
         if(empty($start_time) || empty($end_time)){
@@ -376,7 +380,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         }elseif ($current_second-$start_time<=0 || $end_time-$current_second<=0){
             throw new \Exception('未到下注时段无法下注');
         }elseif ($current_second-$start_time<=$stop_hl_second || $end_time-$current_second<=$stop_hl_second){
-            throw new \Exception('未开放下注');
+            throw new \Exception('开盘后/停盘前两分钟无法下注');
         }
 
 
@@ -516,7 +520,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
         }else{
             $state=$model_friend->is_know?0:1;
             //移入陌生日取消黑名单
-            $state && $model_friend->is_black = 0;
+            !$state && $model_friend->is_black = 0;
             $model_friend->is_know=$state;
             $model_friend->save();
         }
@@ -577,12 +581,12 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             if(!$result['code']) throw new \Exception($result['msg']);
 
             //上架冻结月
-            self::modMoney($this->id,-$data['money'],'上架冻结:'.$data['money'].\Yii::$app->params['money_name'],['money_change_type'=>UserMoneyLogs::TYPE_WITHDRAW_UP]);
+            self::modMoney($this->id,-$data['money'],'出售冻结:'.$data['money'].\Yii::$app->params['money_name'],['money_change_type'=>UserMoneyLogs::TYPE_WITHDRAW_UP]);
 
             $transaction->commit();
         }catch (\Exception $e){
             $transaction->rollBack();
-            throw new \Exception('转账异常:'.$e->getMessage());
+            throw new \Exception('异常:'.$e->getMessage());
         }
     }
 
@@ -605,7 +609,7 @@ class User extends BaseModel implements \yii\web\IdentityInterface
             $transaction->commit();
         }catch (\Exception $e){
             $transaction->rollBack();
-            throw new \Exception('转账异常:'.$e->getMessage());
+            throw new \Exception('异常:'.$e->getMessage());
         }
 
     }
@@ -769,7 +773,8 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                 }],
                 [['verify'], function ($attribute, $params) {
                     try{
-                        Mail::checkVerify($this->email,$this->verify,4);
+                        if(!$this->hasErrors())
+                            Mail::checkVerify($this->email,$this->verify,4);
                     }catch (\Exception $e) {
                         $this->addError($attribute, $e->getMessage());
                     }

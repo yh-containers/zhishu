@@ -110,6 +110,72 @@
         </div>
 
 
+    </div>
+
+    <div class="col-md-12">
+        <!-- LINE CHART -->
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">交易信息</h3>
+
+                <div class="box-tools pull-right">
+                    <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+                </div>
+            </div>
+            <div class="box-body">
+                <div id="main" style="width: inherit;height:400px;"></div>
+            </div>
+            <!-- /.box-body -->
+        </div>
+        <!-- /.box -->
+
 
     </div>
+<?php $this->endBlock()?>
+
+<?php $this->beginBlock('script')?>
+<script type="text/javascript" src="/assets/js/echarts.min.js"></script>
+<script>
+// 基于准备好的dom，初始化echarts实例
+var myChart = echarts.init(document.getElementById('main'));
+option = {
+    title: {
+        text: '近30日交易数据'
+    },
+    tooltip: {
+        trigger: 'axis'
+    },
+    legend: {
+        data:<?=json_encode($charge_legend,JSON_UNESCAPED_UNICODE)?>
+    },
+    grid: {
+        left: '3%',
+        right: '4%',
+        bottom: '3%',
+        containLabel: true
+    },
+    toolbox: {
+        feature: {
+            saveAsImage: {}
+        }
+    },
+    xAxis: {
+        type: 'category',
+        boundaryGap: false,
+        data: <?=json_encode($charge_date,JSON_UNESCAPED_UNICODE)?>
+    },
+    yAxis: {
+        type: 'value'
+    },
+    series: <?=json_encode($charge_data,JSON_UNESCAPED_UNICODE)?>
+};
+
+
+
+
+// 使用刚指定的配置项和数据显示图表。
+myChart.setOption(option);
+</script>
 <?php $this->endBlock()?>

@@ -3,7 +3,7 @@ $this->title = '系统设置';
 //用于显示左侧栏目选中状态
 $this->params = [
     'current_active' => ['system','system/protocol'],
-    'crumb'          => ['系统设置','用户协议'],
+    'crumb'          => ['系统设置','用户提示'],
 ];
 ?>
 <?php $this->beginBlock('content'); ?>
@@ -15,7 +15,7 @@ $this->params = [
                 <input name="_csrf" type="hidden" id="_csrf" value="<?= Yii::$app->request->csrfToken ?>">
                 <input name="type" type="hidden" value="protocol">
                 <div class="box-header with-border">
-                    <h3 class="box-title">用户协议</h3>
+                    <h3 class="box-title">用户提示</h3>
                     <div class="box-tools pull-right">
                         <button type="button" class="btn btn-info btn-sm bg-yellow save-btn"  onclick="$.common.formSubmit($(this).parents('form'),1)">保存</button>
                     </div>

@@ -87,9 +87,16 @@ class UserController extends DefaultController
             $id = $request->post('id');
         }
 
-        $model = new \app\models\User();
-        var_dump($id);exit;
-        $result = $model->actionDel(['in','id',$id]);
+        $users = \app\models\User::find()->where(['in','id',$id])->all();
+
+        foreach ($users as $user){
+            $state = $user->delete();
+        }
+        if($state) {
+            $result = ['code'=>1,'msg'=>'删除成功'];
+        }else{
+            $result = ['code'=>0,'msg'=>'删除异常'];
+        }
         return $this->asJson($result);
     }
 
@@ -107,4 +114,40 @@ class UserController extends DefaultController
             'req_user_info' => $req_user_info,
         ]);
     }
+
+
+    //交易明细
+    public function actionUserCharge()
+    {
+        $id = $this->request->get('id',0);
+        $type = $this->request->get('type',null);
+
+        $query = \app\models\UserMoneyLogs::find();
+        $query = $query->where(['uid'=>$id]);
+
+        if(!is_null($type)){
+            $query = $query->andWhere(['type'=>$type]);
+        }
+
+        !empty($keyword) && $query=$query->andwhere(['or',['like','username',$keyword],['like','email',$keyword]]);
+        $count = $query->count();
+        $pagination = new \yii\data\Pagination(['totalCount' => $count]);
+        //更新时间-默认排序
+        $query->orderBy('id desc');
+
+        $list = $query->offset($pagination->offset)->limit($pagination->limit)->all();
+        //交易类型
+        $logs_type = \app\models\UserMoneyLogs::getType();
+        $logs_type = array_column($logs_type,null,'type');
+
+        return $this->render('userCharge',[
+            'id' => $id,
+            'list' => $list,
+            'pagination' => $pagination,
+            'type'  => $type,
+            'logs_type'  => $logs_type,
+        ]);
+    }
+
+
 }

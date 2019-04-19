@@ -36,13 +36,19 @@ ws.onmessage = function (evt)
             ws.send('3,'+init_type);
         }
         //绑定的数据++--初始化
-        if(received_msg.hasOwnProperty('type') && received_msg.type=='init_data'){
+        if(received_msg.hasOwnProperty('type') && received_msg.type==='init_data'){
             // console.log('--------------');
             handlePageData(received_msg.type,received_msg.data,received_msg)
         }
-
         //停盘
-        if(received_msg.hasOwnProperty('type') && received_msg.type==='is_open_state' && received_msg.state){
+        if(
+            received_msg.hasOwnProperty('type') &&
+            received_msg.type==='is_open_state' &&
+            received_msg.data===0 &&
+            ((received_msg.mode==='zhishu' && parseInt(init_type)===0) || (received_msg.mode==='gdaxi' && parseInt(init_type)===1))
+        ){
+            console.log(received_msg.mode)
+            console.log(init_type)
             is_open=0
         }
 
@@ -108,7 +114,7 @@ ws.onclose = function()
     //关闭心跳
     clearTimeout(websocket_is_close);
     // 关闭 websocket
-    alert('网络异常，请点击右上角刷新')
+    alert('您的网络不稳定,请点击右上角刷新')
     console.log('连接已关闭')
 };
 //每隔30秒发送一次心跳包

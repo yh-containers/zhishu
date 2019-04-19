@@ -23,7 +23,7 @@ $this->params = [
             <div class="box">
                 <i class="icon iconfont icon-yanzhengma"></i>
                 <input type="text" name="verify" class="code" placeholder="旧邮箱接收的验证码">
-                <button type="button" id="get-verify"  onclick="$.common.sendVerify(this,$('#old-email'))"  data-type="3" class="code">获取验证码</button>
+                <button type="button" id="get-verify"  onclick="$.common.sendVerify(this,$('#old-email'))"  data-type="4" class="code">获取验证码</button>
             </div>
             <div class="box">
                 <i class="icon iconfont icon-pay-key"></i>

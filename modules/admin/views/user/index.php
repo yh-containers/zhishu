@@ -29,7 +29,7 @@
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th>#</th>
+                    <th><input type="checkbox"  id="full-checkbox"/></th>
                     <th>用户名（ID）</th>
                     <th><a href="<?=\yii\helpers\Url::to(['','o_type'=>$o_type=='desc'?'asc':'desc'])?>">用户类型</a></th>
                     <th>邮箱</th>
@@ -52,6 +52,7 @@
                         <td>
                             <a href="<?=\yii\helpers\Url::to(['user-add','id'=>$vo['id']])?>">编辑</a>
                             <a href="<?=\yii\helpers\Url::to(['user-detail','id'=>$vo['id']])?>">查看</a>
+                            <a href="<?=\yii\helpers\Url::to(['user-charge','id'=>$vo['id']])?>">账单明细</a>
                             <a  href="javascript:;" onclick="$.common.del('<?= \yii\helpers\Url::to(['user-del','id'=>$vo['id']])?>','删除')" class="ml-5">  删除</a>
                         </td>
                     </tr>
@@ -72,6 +73,10 @@
 <script>
     var _csrf = '<?= Yii::$app->request->csrfToken ?>';
     $(function(){
+        $("#full-checkbox").change(function(){
+            var bool = $(this).prop('checked')
+            $("table tbody input[type='checkbox']").attr('checked',bool)
+        })
         $("#user-del").click(function(){
             var ids = []
             $('.table tbody tr input:checked').each(function(){
@@ -81,12 +86,15 @@
                 layer.msg('请选择要删除的会员');
                 return false;
             }
-            $.post('<?= \yii\helpers\Url::to(['user-del'])?>',{id:ids,_csrf:_csrf},function(result){
-                layer.msg(result.msg)
-                if(result.code===1){
-                    setTimeout(function(){location.reload()},1000)
-                }
+            layer.confirm('是否删除选中的会员',function(){
+                $.post('<?= \yii\helpers\Url::to(['user-del'])?>',{id:ids,_csrf:_csrf},function(result){
+                    layer.msg(result.msg)
+                    if(result.code===1){
+                        setTimeout(function(){location.reload()},1000)
+                    }
+                })
             })
+
         })
     })
 </script>

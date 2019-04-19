@@ -29,10 +29,19 @@ $this->title = '登录';
     </div>
 </main>
 
+<div class="maintain" style="display: <?= $sys_switch==1?'':'block'?>">
+    <div class="content">
+        <p><img src="/assets/images/maintain.png"></p>
+        <p>系统在升级维护中，请稍后再试</p>
+    </div>
+</div>
+
+
 <?php $this->endBlock(); ?>
 
 <?php $this->beginBlock('script')?>
 <script>
+
     $(function(){
 
 

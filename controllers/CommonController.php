@@ -31,6 +31,28 @@ class CommonController extends Controller
      */
     public function beforeAction($action)
     {
+        //验证系统是否关闭
+        $normal_content = \app\models\Setting::getContent('normal');
+        $normal_content = json_decode($normal_content,true);
+        if(isset($normal_content['switch']) && $normal_content['switch']!=1 && \Yii::$app->controller->action->id!='login'){
+            if($this->request->isAjax){
+                //需要登录才能访问
+                \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+                \Yii::$app->response->data = array(
+                    'code' => 0,
+                    'msg' => '系统已关闭',
+                    'url' => \yii\helpers\Url::to(['index/login'])
+                );
+                return false;
+//                return $this->asJson(['code'=>0,'msg'=>'请先登录','url'=>\yii\helpers\Url::to(['index/login'])]);
+            }else{
+                //需要登录才能访问
+                $this->redirect(\yii\helpers\Url::to(['/index/login']));
+                return false;
+            }
+        }
+
+
         if(!$this->user_id && strpos($this->ignore_action,$action->id)===false){
             if($this->request->isAjax){
                 //需要登录才能访问

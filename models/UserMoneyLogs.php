@@ -42,4 +42,19 @@ class UserMoneyLogs extends BaseModel
     }
 
 
+    public static function getType()
+    {
+        return [
+            ['type'=>self::TYPE_DEFAULT,'name'=>'其它'],
+            ['type'=>self::TYPE_CHARGE_OUT,'name'=>'充值-给予'],
+            ['type'=>self::TYPE_CHARGE_IN,'name'=>'来源-获得'],
+            ['type'=>self::TYPE_CHOOSE,'name'=>'下注'],
+            ['type'=>self::TYPE_CHOOSE_WIN,'name'=>'下注-获胜'],
+            ['type'=>self::TYPE_COMMISSION,'name'=>'佣金'],
+            ['type'=>self::TYPE_BACK,'name'=>'返还'],
+            ['type'=>self::TYPE_WITHDRAW_UP,'name'=>'上架'],
+            ['type'=>self::TYPE_WITHDRAW_DOWN,'name'=>'下架'],
+        ];
+    }
+
 }

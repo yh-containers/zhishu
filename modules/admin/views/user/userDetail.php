@@ -56,6 +56,9 @@
                         </tbody>
                     </table>
                 </div>
+                <div class="col-sm-4">
+                    <a class="btn  bg-olive margin" href="<?= \yii\helpers\Url::to(['user-charge','id'=>$model['id']])?>">查看交易明细</a>
+                </div>
             </div>
            <div class="row">
                    <div class="col-sm-4">

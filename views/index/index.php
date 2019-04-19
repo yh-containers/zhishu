@@ -18,12 +18,12 @@ $this->params = [
 <?php $this->beginBlock('content')?>
 <header class="header index_header">
     <div class="content">
-        <div class="left"><i class="icon iconfont icon-yuanbao-copy"></i><span id="user-money"><?=$user_info['money']?></span></div>
+        <div class="left"><i class="icon iconfont icon-yuanbao-copy"></i><span id="user-money"><?=empty($user_info['money'])?0.00:$user_info['money']?></span></div>
         <div class="right">
             <a href="<?=\yii\helpers\Url::to(['mine/money-logs'])?>"><i class="icon iconfont icon-jiaoyijilu-"></i><span>账单</span></a>
             <a href="<?=\yii\helpers\Url::to(['mine/recharge'])?>"><i class="icon iconfont icon-chongzhi1"></i><span>充值</span></a>
             <a href="<?=\yii\helpers\Url::to(['mine/withdraw'])?>"><i class="icon iconfont icon-tixian1"></i><span>提现</span></a>
-            <a href="javascript:location.reload();"><i class="icon iconfont icon-shuaxin"></i><span>刷新</span></a>
+            <a href="#" onclick="isWeiXin()"><i class="icon iconfont icon-shuaxin"></i><span>刷新</span></a>
         </div>
     </div>
 </header>
@@ -34,20 +34,20 @@ $this->params = [
                 <div class="num">
                     <h2>00.00</h2>
                     <p>收盘价</p>
+                    <div class="time">10:02</div>
                 </div>
-                <div class="time">10:02</div>
             </div>
             <div class="center"><h2>VS</h2><p><?=$type?'德国指数一分钟线':'上证指数一分钟线'?><!--<span id="then-open-time">10：58</p>--></div>
             <div class="plate right" id="close-pan">
                 <div class="num">
                     <h2>00.00</h2>
                     <p>收盘价</p>
+                    <div class="time">10:04</div>
                 </div>
-                <div class="time">10:04</div>
             </div>
         </div>
         <div class="zhishu">
-            <div id="main" style="height:calc(100vh - 446px);width:100%;"></div>
+            <div id="main" style="height:calc(100vh - 450px);width:100%;"></div>
         </div>
 
         <div class="look">
@@ -145,11 +145,11 @@ $this->params = [
 <script type="text/javascript" src="/assets/js/echarts.min.js"></script>
 <script type="text/javascript">
     function isWeiXin(){
-        var ua = window.navigator.userAgent.toLowerCase();
-        if(ua.match(/MicroMessenger/i) == 'micromessenger'){
-            return true;
+        var len = window.location.href.indexOf("?");
+        if(len>0){
+            window.location.href=window.location.href.substring(0,len)+"?"+Math.random();
         }else{
-            return false;
+            window.location.href=window.location.href+"?"+Math.random();
         }
     }
 </script>

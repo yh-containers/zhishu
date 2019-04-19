@@ -25,7 +25,7 @@
         var _csrf = "<?= Yii::$app->request->csrfToken ?>";
     </script>
 </head>
-<body <?= isset($this->params['body_style'])?$this->params['body_style']:'' ?>>
+<body <?= isset($this->params['body_style'])?$this->params['body_style']:'' ?> oncontextmenu=self.event.returnValue=false>
 
 <?php if(isset($this->blocks['content'])){?>
     <?=$this->blocks['content']?>

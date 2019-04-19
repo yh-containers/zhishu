@@ -146,8 +146,12 @@ class IndexController extends CommonController
             ]);
             return $this->asJson(['code'=>1,'msg'=>'登录成功','url'=>\yii\helpers\Url::to(['index/index'])]);
         }
+        //验证系统是否关闭
+        $normal_content = \app\models\Setting::getContent('normal');
+        $normal_content = json_decode($normal_content,true);
+        $sys_switch = (isset($normal_content['switch']) && $normal_content['switch']!=1)?2:1;
         return $this->render('login',[
-
+            'sys_switch'=>$sys_switch
         ]);
     }
 
@@ -355,14 +359,14 @@ class IndexController extends CommonController
         //一定得开奖 -- 开奖状态
         if(!empty($model_pan) && empty($model_pan['is_wait'])){
 
-            $i=5; //延迟 4秒
+            $i=5; //延迟 5*2秒
             while ($i>0){
                 $i--;
                 if($model_pan['compare']>0){
                     break;
                 }else{
                     //等会再查
-                    sleep(1);
+                    sleep(2);
                     $model_pan = \app\models\Pan::findOne($model_pan['id']);
                 }
             }

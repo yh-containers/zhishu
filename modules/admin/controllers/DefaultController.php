@@ -26,8 +26,20 @@ class DefaultController extends Controller
         //当前路由
         //登录信息
         $admin_user_info = $session->get('admin_user_info');
+
+
         $this->user_id = !empty($admin_user_info['user_id'])?$admin_user_info['user_id']:0;
         $this->user_name = !empty($admin_user_info['name'])?$admin_user_info['name']:'';
+
+        if($this->user_id){
+            $model = \app\models\Manage::findOne($this->user_id);
+            //禁用session
+            if(empty($model) || $model['status']!=1){
+                $this->user_id = 0;
+                \Yii::$app->session->destroy();
+            }
+        }
+
     }
 
 

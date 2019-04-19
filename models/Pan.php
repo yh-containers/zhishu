@@ -79,21 +79,21 @@ class Pan extends BaseModel
     //设置开盘数据
     public function setOpenData()
     {
-//        获取上一条数据
-//        $up_info = Pan::find()->where(['<','id',$this->id])->orderBy('id desc')->one();
-        if($this->is_wait==1){
-            \Yii::$app->cache->set('open_pan_data_'.$this->type,[substr($this->up_time,0,5),$this->current_price]);
+        //停盘清空数据
+        $is_close = self::getTypeState($this->type);
+        if($is_close){
+            \Yii::$app->cache->set('open_pan_data_'.$this->type,[0,0]);
             \Yii::$app->cache->set('close_pan_data_'.$this->type,[0,0]);
         }else{
-
-            //缓存数据
-            \Yii::$app->cache->set('close_pan_data_'.$this->type,[substr($this->up_time,0,5),$this->current_price]);
-
+            if($this->is_wait==1){
+                \Yii::$app->cache->set('open_pan_data_'.$this->type,[substr($this->up_time,0,5),$this->current_price]);
+                \Yii::$app->cache->set('close_pan_data_'.$this->type,[0,0]);
+            }else{
+                //缓存数据
+                \Yii::$app->cache->set('close_pan_data_'.$this->type,[substr($this->up_time,0,5),$this->current_price]);
+            }
         }
 
-
-        //最后一次开盘时间
-//        \Yii::$app->cache->set('last_open_time'.$this->type,substr($this->up_time,0,5));
     }
 
     //处理交易数据
@@ -285,18 +285,14 @@ class Pan extends BaseModel
         $con = self::get_type($type,'con');
         $stop_week = self::get_type($type,'stop_week');
         if($type==1){
-            foreach ($con as $key=>$vo){
-                $pointer_month = $vo[1]; //指定月份时间
-                $open_time = $vo[0]; //开盘时间
-                if(in_array((int)date('m'), $pointer_month)){
-                    $start_time = strtotime(key($open_time));
-                    $end_time = strtotime(end($open_time));
-                    if($start_time<$str_to_time && $end_time>$str_to_time){
-                        $is_close=0;
-                    }
-                    break;
-                }
+            if(
+                (in_array((int)date('m'),[4,5,6,7,8,9,10,11]) && $current_date_time>'15:00:00' && $current_date_time<'23:30:00')
+                ||
+                (in_array((int)date('m'),[12,1,2,3]) && ($current_date_time>'16:00:00' || $current_date_time<'00:30:00'))
+            ){
+                $is_close=0;
             }
+
         }else{
             foreach ($con as $key=>$vo) {
                 if($current_date_time<$vo && $current_date_time>$key) {
@@ -309,10 +305,7 @@ class Pan extends BaseModel
         if(in_array($week,$stop_week)){
             $is_close=1;
         }
-
-
         return $is_close;
-
     }
 
     /**

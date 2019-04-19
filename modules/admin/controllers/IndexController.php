@@ -36,6 +36,53 @@ class IndexController extends DefaultController
         //今日下注数量
         $press_count = \app\models\Vote::find()->where(['>=','create_time',strtotime(date('Y-m-d'))])->count();
 
+        //查看投票数据--只看近30天的数据
+        $_30_time = strtotime('-30 days',strtotime(date('Y-m-d')));
+
+        $vote_data = \app\models\Vote::find()
+            ->asArray()
+            ->select([
+                'vote_times'=>'count(*)',
+                'sum_money'=>'sum(money)',
+                'current_date'=>'left(open_time,10)',
+                'type'
+            ])->
+            where(['>','create_time',$_30_time])
+            ->groupBy(['type', 'left(open_time,10)'])
+            ->all();
+//        var_dump($vote_data);exit;
+
+        //德国指数
+        $gdaxi_data = $zhishu_data = [];
+        foreach ($vote_data as $vo){
+            if($vo['type']){
+                $gdaxi_data[] = $vo;
+            }else{
+                $zhishu_data[] = $vo;
+            }
+        }
+        //按日期显示数据
+        $gdaxi_data = array_column($gdaxi_data,null,'current_date');
+        $zhishu_data = array_column($zhishu_data,null,'current_date');
+
+        $charge_legend = ['德国指数交易金额','德国指数交易次数','上证指数交易金额','上证指数交易次数',];
+        $charge_date = [];
+        $charge_data = [
+            ['name'=>'德国指数交易金额','type'=>'line','stack'=>'交易金额','data'=>[]],
+            ['name'=>'德国指数交易次数','type'=>'line','stack'=>'交易次数','data'=>[]],
+            ['name'=>'上证指数交易金额','type'=>'line','stack'=>'交易金额','data'=>[]],
+            ['name'=>'上证指数交易次数','type'=>'line','stack'=>'交易次数','data'=>[]],
+        ];
+        for($i=0;$i<=30;$i++){
+            $date = date('Y-m-d',strtotime($i.' days',$_30_time));
+            $charge_date[] = $date;
+            //德国
+            $charge_data[0]['data'][] = isset($gdaxi_data[$date])?$gdaxi_data[$date]['sum_money']:0;
+            $charge_data[1]['data'][] = isset($gdaxi_data[$date])?$gdaxi_data[$date]['vote_times']:0;
+            //指数
+            $charge_data[2]['data'][] = isset($zhishu_data[$date])?$zhishu_data[$date]['sum_money']:0;
+            $charge_data[3]['data'][] = isset($zhishu_data[$date])?$zhishu_data[$date]['vote_times']:0;
+        }
         return $this->render('index',[
             'user_count' => $user_count,
             'sum_money' => $sum_money,
@@ -44,6 +91,10 @@ class IndexController extends DefaultController
             'press_count' => $press_count,
             'sz_open_time' => $sz_open_time,
             'gdaxi_open_time' => $gdaxi_open_time,
+
+            'charge_legend' => $charge_legend,
+            'charge_date' => $charge_date,
+            'charge_data' => $charge_data,
         ]);
     }
 
@@ -68,6 +119,7 @@ class IndexController extends DefaultController
             if(empty($manage)) return $this->asJson(['code'=>0,'msg'=>'用户不存在']);
             $generate_pwd = \app\models\Manage::generatePwd($password,$manage->salt);
             if($generate_pwd!=$manage->password) return  $this->asJson(['code'=>0,'msg'=>'用户名或密码不正确']);
+            if($manage->status!=1) return  $this->asJson(['code'=>0,'msg'=>'帐号已被禁用']);
 
             $session = \yii::$app->session;
             // 开启session
@@ -85,6 +137,7 @@ class IndexController extends DefaultController
 
         ]);
     }
+
 
 
     /*

@@ -86,6 +86,10 @@ class SystemController extends DefaultController
     {
         $request = \Yii::$app->request;
         $id = $request->get('id');
+        if($id==1){
+            return $this->asJson(['code'=>0,'msg'=>'系统指定数据无法删除']);
+        }
+
         $model = new \app\models\Manage();
         $result = $model->actionDel(['id'=>$id]);
         return $this->asJson($result);

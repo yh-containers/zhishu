@@ -1,11 +1,11 @@
 <div class="explanation_pop">
     <div class="explanation">
-        <div class="title">用户协议</div>
+        <div class="title">用户提示</div>
         <div class="content">
             <p><?=$content?></p>
         </div>
         <div class="bottom">
-            <div class="time"><span id="dd">15</span><span>秒</span>后关闭</div>
+            <div class="time"><span id="dd">60</span><span>秒</span>后关闭</div>
             <div class="close">跳过</div>
         </div>
     </div>

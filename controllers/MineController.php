@@ -438,7 +438,7 @@ class MineController extends CommonController
             $php_input = $this->request->post();
             try{
                 $this->user_model->upWithdraw($php_input);
-                return $this->asJson(['code'=>1,'msg'=>'上架成功']);
+                return $this->asJson(['code'=>1,'msg'=>'出售挂单成功']);
             }catch (\Exception $e){
                 return $this->asJson(['code'=>0,'msg'=>$e->getMessage()]);
             }

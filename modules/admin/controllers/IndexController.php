@@ -65,23 +65,27 @@ class IndexController extends DefaultController
         $gdaxi_data = array_column($gdaxi_data,null,'current_date');
         $zhishu_data = array_column($zhishu_data,null,'current_date');
 
-        $charge_legend = ['德国指数交易金额','德国指数交易次数','上证指数交易金额','上证指数交易次数',];
+        $charge_legend = ['德国指数交易金额','德国指数交易次数','上证指数交易金额','上证指数交易次数','交易总量'];
         $charge_date = [];
         $charge_data = [
-            ['name'=>'德国指数交易金额','type'=>'line','stack'=>'交易金额','data'=>[]],
-            ['name'=>'德国指数交易次数','type'=>'line','stack'=>'交易次数','data'=>[]],
-            ['name'=>'上证指数交易金额','type'=>'line','stack'=>'交易金额','data'=>[]],
-            ['name'=>'上证指数交易次数','type'=>'line','stack'=>'交易次数','data'=>[]],
+            ['name'=>'德国指数交易金额','type'=>'line','itemStyle'=>['color'=>'#990099'],'data'=>[]],
+            ['name'=>'德国指数交易次数','type'=>'line','itemStyle'=>['color'=>'#ff0000'],'data'=>[]],
+            ['name'=>'上证指数交易金额','type'=>'line','itemStyle'=>['color'=>'#0000ff'],'data'=>[]],
+            ['name'=>'上证指数交易次数','type'=>'line','itemStyle'=>['color'=>'#00FF06'],'data'=>[]],
+            ['name'=>'交易总量','type'=>'line','itemStyle'=>['color'=>'#FFC000'],'data'=>[]],
         ];
         for($i=0;$i<=30;$i++){
             $date = date('Y-m-d',strtotime($i.' days',$_30_time));
             $charge_date[] = $date;
             //德国
-            $charge_data[0]['data'][] = isset($gdaxi_data[$date])?$gdaxi_data[$date]['sum_money']:0;
-            $charge_data[1]['data'][] = isset($gdaxi_data[$date])?$gdaxi_data[$date]['vote_times']:0;
+            $gdaxi_money = isset($gdaxi_data[$date])?$gdaxi_data[$date]['sum_money']:0;
+            $charge_data[0]['data'][] = (float)$gdaxi_money;
+            $charge_data[1]['data'][] = intval(isset($gdaxi_data[$date])?$gdaxi_data[$date]['vote_times']:0);
             //指数
-            $charge_data[2]['data'][] = isset($zhishu_data[$date])?$zhishu_data[$date]['sum_money']:0;
-            $charge_data[3]['data'][] = isset($zhishu_data[$date])?$zhishu_data[$date]['vote_times']:0;
+            $zhishu_money = isset($zhishu_data[$date])?$zhishu_data[$date]['sum_money']:0;
+            $charge_data[2]['data'][] = (float)$zhishu_money;
+            $charge_data[3]['data'][] = intval(isset($zhishu_data[$date])?$zhishu_data[$date]['vote_times']:0);
+            $charge_data[4]['data'][] = (float)($gdaxi_money+$zhishu_money);
         }
         return $this->render('index',[
             'user_count' => $user_count,

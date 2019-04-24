@@ -807,21 +807,26 @@ class User extends BaseModel implements \yii\web\IdentityInterface
                     return !empty($model->$attribute)?true:false;
                 },'message'=>''],
                 [['old_verify'], function ($attribute, $params) {
-                    try{
-                        Mail::checkVerify($this->old_email,$this->old_verify,3);
-                    }catch (\Exception $e) {
-                        $this->addError($attribute, $e->getMessage());
+                    if(!$this->hasErrors()){
+                        try{
+                            Mail::checkVerify($this->getOldAttribute('email'),$this->old_verify,3);
+                        }catch (\Exception $e) {
+                            $this->addError($attribute, $e->getMessage().'.');
+                        }
                     }
+
                 },'when' => function ($model,$attribute) {
                     return !empty($model->$attribute)?true:false;
                 },'message'=>'{attribute}必须输入'],
                 [['email'], 'email','message'=>'请输入正确的{attribute}'],
                 [['email'], 'unique','message'=>'{attribute}已被注册'],
                 [['verify'], function ($attribute, $params) {
-                    try{
-                        Mail::checkVerify($this->email,$this->verify,2);
-                    }catch (\Exception $e) {
-                        $this->addError($attribute, $e->getMessage());
+                    if(!$this->hasErrors()) {
+                        try {
+                            Mail::checkVerify($this->email, $this->verify, 2);
+                        } catch (\Exception $e) {
+                            $this->addError($attribute, $e->getMessage());
+                        }
                     }
                 }],
             ];

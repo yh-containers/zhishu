@@ -58,7 +58,11 @@ class UserController extends DefaultController
         $id = $request->get('id',0);
         $model = new \app\models\User();
         if($request->isAjax){
+            $money = $request->post('money');
+            if($money<0) return $this->asJson(['code'=>0,'msg'=>\Yii::$app->params['money_name'].'只能为正数']);
+            
             $php_input = $request->post();
+
 //            if(empty($php_input['password']))  unset($php_input['password']);
 //            if(empty($php_input['pay_pwd']))  unset($php_input['pay_pwd']);
 //            var_dump($php_input);exit;
@@ -149,5 +153,35 @@ class UserController extends DefaultController
         ]);
     }
 
+    //导出
+    public function actionUserExport()
+    {
+        $filename = '用户邮箱导出';
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment;filename="'.$filename.'.csv"');
+        header('Cache-Control: max-age=0');
+
+        // 打开PHP文件句柄，php://output 表示直接输出到浏览器
+        $fp = fopen('php://output', 'a');
+
+        $header_data = [
+            'email' =>'邮箱',
+        ];
+
+        mb_convert_variables('GBK', 'UTF-8', $header_data);
+        fputcsv($fp, $header_data);
+        foreach (\app\models\User::find()->batch() as $users){
+            foreach ($users as $vo){
+                $temp_data=[];
+                foreach($header_data as $key=>$item){
+                    $temp_data[] = isset($vo[$key])? iconv('utf-8', 'gb2312',$vo[$key]):'';
+                }
+                mb_convert_variables('GBK', 'UTF-8', $temp_data);
+                fputcsv($fp, $temp_data);
+            }
+        }
+        fclose($fp);
+        exit;
+    }
 
 }

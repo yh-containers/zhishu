@@ -18,7 +18,7 @@ $this->params = [
             <input name="_csrf" type="hidden" id="_csrf" value="<?= Yii::$app->request->csrfToken ?>">
             <div class="box">
                 <i class="icon iconfont icon-youxiang"></i>
-                <input type="text" name="old_email" value="<?=$user_model['email']?>" id="old-email" placeholder="请输入旧邮箱">
+                <input type="text" value="<?=$user_model['email']?>" id="old-email"  disabled="disabled">
             </div>
             <div class="box">
                 <i class="icon iconfont icon-yanzhengma"></i>

@@ -169,16 +169,16 @@ if(is_test===1){
                     //为了保证和原来的效果一样，这里自己实现了一个点的效果
                     htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:#fff;"></span>';
                     //圆点后面显示的文本
-                    htmlStr += '最高价:'+value[3]+'<br>' ;
+                    htmlStr += '最高价:'+value[3].toFixed(2)+'<br>' ;
                     htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:#fff;"></span>';
                     //圆点后面显示的文本
-                    htmlStr += '最低价:'+value[4]+'<br>' ;
+                    htmlStr += '最低价:'+value[4].toFixed(2)+'<br>' ;
                     htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:#fff;"></span>';
                     //圆点后面显示的文本
-                    htmlStr += '开盘价:'+value[1]+'<br>' ;
+                    htmlStr += '开盘价:'+value[1].toFixed(2)+'<br>' ;
                     htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:#fff;"></span>';
                     //圆点后面显示的文本
-                    htmlStr += '收盘价:'+value[2]+'<br>' ;
+                    htmlStr += '收盘价:'+value[2].toFixed(2)+'<br>' ;
                     // htmlStr += '<span style="margin-right:5px;display:inline-block;width:10px;height:10px;border-radius:5px;background-color:#fff;"></span>';
                     //圆点后面显示的文本
                     // htmlStr += '涨跌:'+(value[5]>0?(value[5]==1?'涨':(value[5]==2?'跌':'平')):'待开奖')+'<br>' ;
@@ -392,13 +392,13 @@ if(is_test===1){
             //是否中奖
             if(award_money!=0){
                 //中奖效果
-                $(".income_pop #up_get_money").text((award_money>0?'+':'')+award_money);
+                $(".income_pop #up_get_money").text((award_money>0?'+':'')+award_money.toFixed(2));
                 $(".income_pop").show();
             }
 
             // }
             //用户余额
-            user_money>0 && $("#user-money").text(user_money);
+            user_money>0 && $("#user-money").text(user_money.toFixed(2));
         })
 
         is_init = 0;

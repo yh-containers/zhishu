@@ -40,7 +40,7 @@ $this->params = [
         </div>
 
     </div>
-    <div class="col-sm-6">
+    <div class="col-sm-6" style="display: none;">
         <div class="box box-info">
             <form class="form-horizontal" action="<?= \yii\helpers\Url::to(['setting-save'])?>">
                 <input name="_csrf" type="hidden" id="_csrf" value="<?= Yii::$app->request->csrfToken ?>">

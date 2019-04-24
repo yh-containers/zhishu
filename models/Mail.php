@@ -20,11 +20,16 @@ class Mail extends BaseModel
         list($content,$data) = self::handleContent($email_info['content']);
         $error_info = null;
         try{
+            $html = '<div>
+<h5>尊敬的用户您好:</h5>
+<div>您正在进行的操作需要一段授权码</div>
+<div>【'.(isset($data['{__VERIFY__}'])?$data['{__VERIFY__}']:null).'】</div>
+</div>';
             \Yii::$app->mailer->compose()
                 ->setTo($email)
                 ->setSubject($email_info['title'])
-                ->setTextBody($content)
-//            ->setHtmlBody('<b>HTML content</b>')
+//                ->setTextBody($content)
+            ->setHtmlBody($html)
                 ->send();
         }catch (\Exception $e){
             $error_info = $e->getMessage();
@@ -51,6 +56,13 @@ class Mail extends BaseModel
             ['title'=>'修改邮箱','content'=>'此次修改新邮箱验证码为:{__VERIFY__}'],
             ['title'=>'验证旧邮箱','content'=>'此次旧邮箱验证码为:{__VERIFY__}'],
             ['title'=>'找回支付密码','content'=>'此次找回支付密码验证码为:{__VERIFY__}'],
+        ];
+        $info = [
+            ['title'=>'邮件简单信息','content'=>'您好,您正在进行的此次操作授权码为:【{__VERIFY__}】，请勿回复邮件'],
+            ['title'=>'邮件简单信息','content'=>'您好,您正在进行的此次操作授权码为:【{__VERIFY__}】，请勿回复邮件'],
+            ['title'=>'邮件简单信息','content'=>'您好,您正在进行的此次操作授权码为:【{__VERIFY__}】，请勿回复邮件'],
+            ['title'=>'邮件简单信息','content'=>'您好,您正在进行的此次操作授权码为:【{__VERIFY__}】，请勿回复邮件'],
+            ['title'=>'邮件简单信息','content'=>'您好,您正在进行的此次操作授权码为:【{__VERIFY__}】，请勿回复邮件'],
         ];
         if(is_null($type)){
             return $info;

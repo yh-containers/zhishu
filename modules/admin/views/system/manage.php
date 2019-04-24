@@ -31,7 +31,7 @@
                         <td><?=$key+1?></td>
                         <td><?=$vo['name']?></td>
                         <td><?=$vo['account']?> </td>
-                        <td><?=$vo['update_time']?></td>
+                        <td><?=$vo->updateTime?></td>
                         <td>
                             <a href="<?=\yii\helpers\Url::to(['manage-add','id'=>$vo['id']])?>">编辑</a>
                             <a  href="javascript:;" onclick="$.common.del('<?= \yii\helpers\Url::to(['manage-del','id'=>$vo['id']])?>','删除')" class="ml-5">  删除</a>

@@ -37,15 +37,15 @@ $config = [
             'useFileTransport' => false,
             'transport' => [
                 'class' => 'Swift_SmtpTransport',
-                'host' => 'smtp.qq.com',  //每种邮箱的host配置不一样
-                'username' => '1304389308@qq.com',
-                'password' => 'pmokvhtnxfcahaaj',   //注意这里不是邮箱登录密码，而是QQ邮箱后台开启STMP服务后给的授权码
-                'port' => '587',//将发送服务器的端口号修改成465或587；
+                'host' => 'smtp.163.com',  //每种邮箱的host配置不一样
+                'username' => 'yy19841009@163.com',
+                'password' => 'SZhulian20300',   //注意这里不是邮箱登录密码，而是QQ邮箱后台开启STMP服务后给的授权码
+                'port' => '25',
                 'encryption' => 'tls',
             ],
             'messageConfig'=>[
                 'charset'=>'UTF-8',
-                'from'=>['1304389308@qq.com'=>'指数']
+                'from'=>['yy19841009@163.com'=>'指数163邮件']
             ],
         ],
         'log' => [

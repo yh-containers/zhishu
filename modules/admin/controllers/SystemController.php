@@ -169,4 +169,27 @@ class SystemController extends DefaultController
             'pagination' => $pagination
         ]);
     }
+
+    //用户--删除
+    public function actionComplaintDel()
+    {
+        $request = \Yii::$app->request;
+        $id = $request->get('id');
+        if($request->isPost){
+            $id = $request->post('id');
+        }
+
+        $complaints = \app\models\UserComplaint::find()->where(['in','id',$id])->all();
+
+        foreach ($complaints as $complaint){
+            $state = $complaint->delete();
+        }
+        if($state) {
+            $result = ['code'=>1,'msg'=>'删除成功'];
+        }else{
+            $result = ['code'=>0,'msg'=>'删除异常'];
+        }
+        return $this->asJson($result);
+    }
+
 }

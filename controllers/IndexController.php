@@ -392,7 +392,7 @@ class IndexController extends CommonController
 
 
         return $this->asJson([
-            $model_user['money']?$model_user['money']:0,
+            $model_user['money']?$model_user['money']:0.00,
             [$is_up,$press_money],
             $open_data,
             [$award_money,$model_pan['id'],$model_pan['compare']],

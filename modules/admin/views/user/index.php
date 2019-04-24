@@ -12,6 +12,7 @@
         <div class="box-header">
             <a href="<?=\yii\helpers\Url::to(['user-add'])?>" class="btn bg-olive margin">新增</a>
             <button id="user-del" class="btn  margin btn-danger">删除</button>
+            <a href="<?=\yii\helpers\Url::to(['user-export'])?>" class="btn  margin  btn-warning">导出excel</a>
             <div class="box-tools margin">
                 <form>
                 <div class="input-group input-group-sm" style="width: 250px; margin-right: 50px">
